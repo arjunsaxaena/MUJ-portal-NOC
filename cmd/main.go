@@ -3,25 +3,34 @@ package main
 import (
 	"MUJ_automated_mail_generation/pkg/database"
 	"MUJ_automated_mail_generation/pkg/handler"
+	"MUJ_automated_mail_generation/pkg/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// Establish database connection
 	database.Connect()
 
-	// Initialize Gin router
 	r := gin.Default()
 
-	// Routes for student submission (existing)
 	r.POST("/submit", handler.SubmitHandler)
 
-	// Routes for reviewer management
-	r.POST("/reviewer", handler.CreateReviewerHandler)              // Create reviewer
-	r.POST("/reviewer/login", handler.LoginReviewerHandler)         // Reviewer login
-	r.GET("/reviewer/:username", handler.GetReviewerDetailsHandler) // Get reviewer details
+	r.POST("/reviewer", handler.CreateReviewerHandler)
+	r.POST("/reviewer/login", handler.LoginReviewerHandler)
+	r.GET("/reviewer/:username", handler.GetReviewerDetailsHandler)
 
-	// Start the server on port 8080
+	authReviewer := r.Group("/reviewer")
+	authReviewer.Use(middleware.AuthMiddleware())
+	{
+		authReviewer.POST("/reviews", handler.CreateReviewHandler)
+		authReviewer.PUT("/reviews/:id", handler.UpdateReviewHandler)
+		authReviewer.GET("/reviews", handler.GetAllReviewsHandler)
+		authReviewer.GET("/reviews/submission/:submission_id", handler.GetReviewsBySubmissionHandler)
+		authReviewer.GET("/reviews/reviewer/:reviewer_id", handler.GetReviewsByReviewerHandler)
+	}
+
+	r.GET("/submissions", handler.GetAllSubmissionsHandler)
+	r.GET("/reviewers", handler.GetAllReviewersHandler)
+
 	r.Run(":8080")
 }

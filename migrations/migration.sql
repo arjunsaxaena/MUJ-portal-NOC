@@ -16,8 +16,8 @@ CREATE TABLE student_submissions (
     offer_type_detail VARCHAR(100),
     package_ppo DECIMAL(10, 2),
     stipend_amount DECIMAL(10, 2),
-    internship_start_date DATE,
-    internship_end_date DATE,
+    internship_start_date DATE NOT NULL,
+    internship_end_date DATE NOT NULL,
     offer_letter_path VARCHAR(255),
     mail_copy_path VARCHAR(255),
     terms_accepted BOOLEAN DEFAULT FALSE,
@@ -32,3 +32,16 @@ CREATE TABLE reviewers (
     department VARCHAR(50) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE reviews (                           
+    id SERIAL PRIMARY KEY,
+    submission_id INT NOT NULL,
+    reviewer_id INT NOT NULL,
+    status VARCHAR(20) NOT NULL, -- Accepted, Rejected, Rework
+    comments TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (submission_id) REFERENCES student_submissions(id),
+    FOREIGN KEY (reviewer_id) REFERENCES reviewers(id)
+);
+
+ALTER TABLE reviews ADD COLUMN updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();

@@ -3,6 +3,7 @@ package model
 import "time"
 
 type StudentSubmission struct {
+	ID                  int       `json:"id" db:"id"`
 	RegistrationNumber  string    `json:"registration_number" form:"registration_number" binding:"required" db:"registration_number"`
 	Name                string    `json:"name" form:"name" binding:"required" db:"name"`
 	OfficialMailID      string    `json:"official_mail_id" form:"official_mail_id" binding:"required,email" db:"official_mail_id"`
@@ -15,10 +16,11 @@ type StudentSubmission struct {
 	OfferTypeDetail     string    `json:"offer_type_detail" form:"offer_type_detail" db:"offer_type_detail"`
 	PackagePPO          string    `json:"package_ppo" form:"package_ppo" db:"package_ppo"`
 	StipendAmount       string    `json:"stipend_amount" form:"stipend_amount" db:"stipend_amount"`
-	InternshipStartDate time.Time `json:"internship_start_date" db:"internship_start_date"`
-	InternshipEndDate   time.Time `json:"internship_end_date" db:"internship_end_date"`
+	InternshipStartDate string    `json:"internship_start_date" form:"internship_start_date" db:"internship_start_date"`
+	InternshipEndDate   string    `json:"internship_end_date"  form:"internship_end_date" db:"internship_end_date"`
 	OfferLetterPath     string    `json:"offer_letter_path" db:"offer_letter_path"`
 	MailCopyPath        string    `json:"mail_copy_path" db:"mail_copy_path"`
 	TermsAccepted       bool      `json:"terms_accepted" form:"terms_accepted" binding:"required" db:"terms_accepted"`
 	Status              string    `json:"status" db:"status"`
+	CreatedAt           time.Time `json:"created_at" db:"created_at"`
 }

@@ -2,10 +2,11 @@ package handler
 
 import (
 	"MUJ_automated_mail_generation/pkg/database"
-	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -28,7 +29,6 @@ func CreateReviewerHandler(c *gin.Context) {
 		return
 	}
 
-	// Create the reviewer
 	id, err := database.CreateReviewer(input.Username, string(hashedPassword), input.Department)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create reviewer"})
@@ -38,8 +38,9 @@ func CreateReviewerHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"id": id, "message": "Reviewer created successfully"})
 }
 
-// LoginReviewerHandler handles reviewer login.
+var jwtSecretKey = []byte("your_secret_key") // Secret key for signing the JWT token
 
+// LoginReviewerHandler handles reviewer login.
 func LoginReviewerHandler(c *gin.Context) {
 	var input struct {
 		Username string `json:"username"`
@@ -51,30 +52,43 @@ func LoginReviewerHandler(c *gin.Context) {
 		return
 	}
 
-	// Fetch the reviewer
+	// Fetch the reviewer from the database
 	reviewer, err := database.GetReviewerByUsername(input.Username)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
 
-	fmt.Printf("Fetched reviewer for login: %+v\n", reviewer) // Debug log
-
 	// Validate the password
 	if err := bcrypt.CompareHashAndPassword([]byte(reviewer.PasswordHash), []byte(input.Password)); err != nil {
-		fmt.Printf("Password comparison failed: %v\n", err) // Debug log
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+	// Generate JWT token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"username":   reviewer.Username,
+		"department": reviewer.Department,
+		"exp":        time.Now().Add(time.Hour * 24).Unix(), // Expire in 24 hours
+	})
+
+	// Sign the token
+	tokenString, err := token.SignedString(jwtSecretKey)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+		return
+	}
+
+	// Respond with the token
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Login successful",
+		"token":   tokenString,
+	})
 }
 
-// GetReviewerDetailsHandler handles fetching reviewer details.
 func GetReviewerDetailsHandler(c *gin.Context) {
 	username := c.Param("username")
 
-	// Call the database function
 	reviewer, err := database.GetReviewerByUsername(username)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Reviewer not found"})
@@ -82,4 +96,14 @@ func GetReviewerDetailsHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, reviewer)
+}
+
+func GetAllReviewersHandler(c *gin.Context) {
+	reviewers, err := database.GetAllReviewers()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch reviewers"})
+		return
+	}
+
+	c.JSON(http.StatusOK, reviewers)
 }

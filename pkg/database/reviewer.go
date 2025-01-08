@@ -8,7 +8,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// CreateReviewer inserts a new reviewer into the database.
 func CreateReviewer(username, passwordHash, department string) (int, error) {
 	query := `
 		INSERT INTO reviewers (username, password_hash, department)
@@ -23,7 +22,6 @@ func CreateReviewer(username, passwordHash, department string) (int, error) {
 	return id, nil
 }
 
-// GetReviewerByUsername fetches a reviewer by their username.
 func GetReviewerByUsername(username string) (*model.Reviewer, error) {
 	query := `
 		SELECT id, username, password_hash, department, created_at
@@ -36,11 +34,10 @@ func GetReviewerByUsername(username string) (*model.Reviewer, error) {
 		fmt.Printf("Error fetching reviewer: %v\n", err)
 		return nil, err
 	}
-	fmt.Printf("Fetched reviewer: %+v\n", reviewer) // Debug log
+	fmt.Printf("Fetched reviewer: %+v\n", reviewer)
 	return &reviewer, nil
 }
 
-// ValidateReviewerPassword validates a password for a given reviewer.
 func ValidateReviewerPassword(username, password string) (bool, error) {
 	reviewer, err := GetReviewerByUsername(username)
 	if err != nil {
@@ -53,4 +50,10 @@ func ValidateReviewerPassword(username, password string) (bool, error) {
 		return false, errors.New("invalid credentials")
 	}
 	return true, nil
+}
+
+func GetAllReviewers() ([]model.Reviewer, error) {
+	var reviewers []model.Reviewer
+	err := DB.Select(&reviewers, "SELECT * FROM reviewers")
+	return reviewers, err
 }

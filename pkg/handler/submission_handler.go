@@ -4,40 +4,25 @@ import (
 	"MUJ_automated_mail_generation/pkg/database"
 	"MUJ_automated_mail_generation/pkg/model"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SubmitHandler(c *gin.Context) {
 	var submission model.StudentSubmission
+
+	// for debug: print the raw form data
+	fmt.Println("Form data received:")
+
 	if err := c.ShouldBind(&submission); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Log the struct before database insertion (for debugging)
 	fmt.Printf("Struct before DB insert: %+v\n", submission)
-
-	// Parse internship_start_date (which is a string in form data) into time.Time
-	startDate, err := time.Parse("2006-01-02", submission.InternshipStartDate.Format("2006-01-02"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid internship_start_date format, use YYYY-MM-DD"})
-		return
-	}
-
-	// Parse internship_end_date (which is a string in form data) into time.Time
-	endDate, err := time.Parse("2006-01-02", submission.InternshipEndDate.Format("2006-01-02"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid internship_end_date format, use YYYY-MM-DD"})
-		return
-	}
-
-	// Assign the parsed time values back to the struct (which expects time.Time)
-	submission.InternshipStartDate = startDate
-	submission.InternshipEndDate = endDate
 
 	// Convert PackagePPO and StipendAmount to float64
 	packagePPO, err := strconv.ParseFloat(submission.PackagePPO, 64)
@@ -51,7 +36,6 @@ func SubmitHandler(c *gin.Context) {
 		return
 	}
 
-	// Assign parsed values back to submission
 	submission.PackagePPO = fmt.Sprintf("%.2f", packagePPO)
 	submission.StipendAmount = fmt.Sprintf("%.2f", stipendAmount)
 
@@ -79,29 +63,24 @@ func SubmitHandler(c *gin.Context) {
 		submission.MailCopyPath = mailCopyPath
 	}
 
-	// Set additional fields
-	submission.Status = "Pending"
+	submission.Status = "Pending" // Set additional fields
 
-	// Insert into database
-	_, err = database.DB.NamedExec(`
-		INSERT INTO student_submissions (
-			registration_number, name, official_mail_id, mobile_number, department, section, offer_type, 
-			company_name, company_address, offer_type_detail, package_ppo, stipend_amount, 
-			internship_start_date, internship_end_date, offer_letter_path, terms_accepted, 
-			status, created_at
-		) 
-		VALUES (
-			:registration_number, :name, :official_mail_id, :mobile_number, :department, :section, :offer_type, 
-			:company_name, :company_address, :offer_type_detail, :package_ppo, :stipend_amount, 
-			:internship_start_date, :internship_end_date, :offer_letter_path, :terms_accepted, 
-			:status, CURRENT_TIMESTAMP
-		)
-	`, &submission)
-
+	err = database.CreateSubmission(&submission)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save data"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Submission received successfully"})
+}
+
+func GetAllSubmissionsHandler(c *gin.Context) {
+	submissions, err := database.GetAllSubmissions()
+	if err != nil {
+		log.Printf("Error fetching submissions: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submissions"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"submissions": submissions})
 }
