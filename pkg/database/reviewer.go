@@ -60,7 +60,6 @@ func ValidateReviewerPassword(email, password string) (bool, error) {
 		return false, err
 	}
 
-	// Compare the hashed password.
 	err = bcrypt.CompareHashAndPassword([]byte(reviewer.PasswordHash), []byte(password))
 	if err != nil {
 		return false, errors.New("invalid credentials")

@@ -23,14 +23,13 @@ func CreateReviewerHandler(c *gin.Context) {
 		return
 	}
 
-	// Hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return
 	}
 
-	id, err := database.CreateReviewer(input.Email, string(hashedPassword), input.Department) // Changed username to email
+	id, err := database.CreateReviewer(input.Email, string(hashedPassword), input.Department)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create reviewer"})
 		return
@@ -39,10 +38,9 @@ func CreateReviewerHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"id": id, "message": "Reviewer created successfully"})
 }
 
-// LoginReviewerHandler handles reviewer login.
 func LoginReviewerHandler(c *gin.Context) {
 	var input struct {
-		Email    string `json:"email"` // Changed username to email
+		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 
@@ -51,14 +49,12 @@ func LoginReviewerHandler(c *gin.Context) {
 		return
 	}
 
-	// Fetch the reviewer from the database
-	reviewer, err := database.GetReviewerByEmail(input.Email) // Changed username to email
+	reviewer, err := database.GetReviewerByEmail(input.Email)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
 
-	// Validate the password
 	if err := bcrypt.CompareHashAndPassword([]byte(reviewer.PasswordHash), []byte(input.Password)); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
@@ -66,7 +62,7 @@ func LoginReviewerHandler(c *gin.Context) {
 
 	// Generate JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email":      reviewer.Email, // Changed username to email
+		"email":      reviewer.Email,
 		"department": reviewer.Department,
 		"exp":        time.Now().Add(time.Hour * 24).Unix(), // Expire in 24 hours
 	})

@@ -8,7 +8,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// CreateHoD adds a new HoD to the database.
 func CreateHoD(email, passwordHash, department string) (int, error) {
 	query := `
 		INSERT INTO hod (email, password_hash, department)
@@ -23,7 +22,6 @@ func CreateHoD(email, passwordHash, department string) (int, error) {
 	return id, nil
 }
 
-// GetHoDByEmail retrieves a HoD's details by email.
 func GetHoDByEmail(email string) (*model.HoD, error) {
 	query := `
 		SELECT id, email, password_hash, department, created_at
@@ -39,7 +37,6 @@ func GetHoDByEmail(email string) (*model.HoD, error) {
 	return &hod, nil
 }
 
-// GetHoDsByDepartment retrieves all HoDs for a specific department.
 func GetHoDsByDepartment(department string) ([]model.HoD, error) {
 	query := `
 		SELECT id, email, password_hash, department, created_at
@@ -55,7 +52,6 @@ func GetHoDsByDepartment(department string) ([]model.HoD, error) {
 	return hods, nil
 }
 
-// ValidateHoDPassword checks if the provided password matches the stored hash.
 func ValidateHoDPassword(email, password string) (bool, error) {
 	hod, err := GetHoDByEmail(email)
 	if err != nil {

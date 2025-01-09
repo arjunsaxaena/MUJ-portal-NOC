@@ -34,14 +34,12 @@ func GetAllSubmissions() ([]model.StudentSubmission, error) {
 	return submissions, err
 }
 
-// GetSubmissionsByDepartment fetches submissions filtered by department.
 func GetSubmissionsByDepartment(department string) ([]model.StudentSubmission, error) {
 	var submissions []model.StudentSubmission
 	err := DB.Select(&submissions, "SELECT * FROM student_submissions WHERE department = ?", department)
 	return submissions, err
-}
+} // Have to implement handler
 
-// UpdateSubmissionStatus updates the status of a submission based on the reviewer's action.
 func UpdateSubmissionStatus(submissionID int, status, remarks string) error {
 	query := `
 		UPDATE student_submissions
@@ -50,4 +48,4 @@ func UpdateSubmissionStatus(submissionID int, status, remarks string) error {
 	`
 	_, err := DB.Exec(query, status, remarks, submissionID)
 	return err
-}
+} // Have to implement handler
