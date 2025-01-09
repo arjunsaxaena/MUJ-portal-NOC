@@ -8,28 +8,28 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateReviewer(username, passwordHash, department string) (int, error) {
+func CreateReviewer(email, passwordHash, department string) (int, error) {
 	query := `
-		INSERT INTO reviewers (username, password_hash, department)
+		INSERT INTO reviewers (email, password_hash, department)
 		VALUES ($1, $2, $3)
 		RETURNING id
 	`
 	var id int
-	err := DB.QueryRow(query, username, passwordHash, department).Scan(&id)
+	err := DB.QueryRow(query, email, passwordHash, department).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
 	return id, nil
 }
 
-func GetReviewerByUsername(username string) (*model.Reviewer, error) {
+func GetReviewerByEmail(email string) (*model.Reviewer, error) {
 	query := `
-		SELECT id, username, password_hash, department, created_at
+		SELECT id, email, password_hash, department, created_at
 		FROM reviewers
-		WHERE username = $1
+		WHERE email = $1
 	`
 	var reviewer model.Reviewer
-	err := DB.Get(&reviewer, query, username)
+	err := DB.Get(&reviewer, query, email)
 	if err != nil {
 		fmt.Printf("Error fetching reviewer: %v\n", err)
 		return nil, err
@@ -38,8 +38,8 @@ func GetReviewerByUsername(username string) (*model.Reviewer, error) {
 	return &reviewer, nil
 }
 
-func ValidateReviewerPassword(username, password string) (bool, error) {
-	reviewer, err := GetReviewerByUsername(username)
+func ValidateReviewerPassword(email, password string) (bool, error) {
+	reviewer, err := GetReviewerByEmail(email)
 	if err != nil {
 		return false, err
 	}

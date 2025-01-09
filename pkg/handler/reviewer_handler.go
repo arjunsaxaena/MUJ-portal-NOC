@@ -12,7 +12,7 @@ import (
 
 func CreateReviewerHandler(c *gin.Context) {
 	var input struct {
-		Username   string `json:"username"`
+		Email      string `json:"email"` // Replaced Username with Email
 		Password   string `json:"password"`
 		Department string `json:"department"`
 	}
@@ -29,7 +29,7 @@ func CreateReviewerHandler(c *gin.Context) {
 		return
 	}
 
-	id, err := database.CreateReviewer(input.Username, string(hashedPassword), input.Department)
+	id, err := database.CreateReviewer(input.Email, string(hashedPassword), input.Department) // Changed username to email
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create reviewer"})
 		return
@@ -43,7 +43,7 @@ var jwtSecretKey = []byte("your_secret_key") // Secret key for signing the JWT t
 // LoginReviewerHandler handles reviewer login.
 func LoginReviewerHandler(c *gin.Context) {
 	var input struct {
-		Username string `json:"username"`
+		Email    string `json:"email"` // Changed username to email
 		Password string `json:"password"`
 	}
 
@@ -53,7 +53,7 @@ func LoginReviewerHandler(c *gin.Context) {
 	}
 
 	// Fetch the reviewer from the database
-	reviewer, err := database.GetReviewerByUsername(input.Username)
+	reviewer, err := database.GetReviewerByEmail(input.Email) // Changed username to email
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
@@ -67,7 +67,7 @@ func LoginReviewerHandler(c *gin.Context) {
 
 	// Generate JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"username":   reviewer.Username,
+		"email":      reviewer.Email, // Changed username to email
 		"department": reviewer.Department,
 		"exp":        time.Now().Add(time.Hour * 24).Unix(), // Expire in 24 hours
 	})
@@ -87,9 +87,9 @@ func LoginReviewerHandler(c *gin.Context) {
 }
 
 func GetReviewerDetailsHandler(c *gin.Context) {
-	username := c.Param("username")
+	email := c.Param("email") // Changed username to email
 
-	reviewer, err := database.GetReviewerByUsername(username)
+	reviewer, err := database.GetReviewerByEmail(email) // Changed username to email
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Reviewer not found"})
 		return

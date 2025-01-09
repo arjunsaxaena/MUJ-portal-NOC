@@ -27,7 +27,7 @@ CREATE TABLE student_submissions (
 
 CREATE TABLE reviewers (                       
     id SERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     department VARCHAR(50) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

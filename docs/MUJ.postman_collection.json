@@ -1,0 +1,395 @@
+{
+	"info": {
+		"_postman_id": "9b92b96d-d3c8-4680-8f48-c82c08ad0200",
+		"name": "MUJ",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39713995"
+	},
+	"item": [
+		{
+			"name": "get - submissions",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/submissions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"submissions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post - submission",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "registration_number",
+							"value": "12345",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "John Doe",
+							"type": "text"
+						},
+						{
+							"key": "official_mail_id",
+							"value": "johndoe@example.com",
+							"type": "text"
+						},
+						{
+							"key": "mobile_number",
+							"value": "9876543210",
+							"type": "text"
+						},
+						{
+							"key": "department",
+							"value": "CSE",
+							"type": "text"
+						},
+						{
+							"key": "section",
+							"value": "A",
+							"type": "text"
+						},
+						{
+							"key": "offer_type",
+							"value": "PPO",
+							"type": "text"
+						},
+						{
+							"key": "company_name",
+							"value": "TechCorp",
+							"type": "text"
+						},
+						{
+							"key": "company_address",
+							"value": "123 Tech Street",
+							"type": "text"
+						},
+						{
+							"key": "offer_type_detail",
+							"value": "Full-time",
+							"type": "text"
+						},
+						{
+							"key": "package_ppo",
+							"value": "1500000",
+							"type": "text"
+						},
+						{
+							"key": "stipend_amount",
+							"value": "50000",
+							"type": "text"
+						},
+						{
+							"key": "internship_start_date",
+							"value": "2025-02-01",
+							"type": "text"
+						},
+						{
+							"key": "internship_end_date",
+							"value": "2025-07-01",
+							"type": "text"
+						},
+						{
+							"key": "terms_accepted",
+							"value": "true",
+							"type": "text"
+						},
+						{
+							"key": "offer_letter",
+							"type": "file",
+							"src": "/C:/Users/arjun/OneDrive/Documents/Certificates/Cisco/ArjunSaxena_229301555_IPT.pdf"
+						},
+						{
+							"key": "mail_copy",
+							"type": "file",
+							"src": "/C:/Users/arjun/OneDrive/Documents/Certificates/Cisco/ArjunSaxena_229301555_SRWE.pdf"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/submit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"submit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post - submission - 2",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "registration_number",
+							"value": "123456",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "John Doe 2",
+							"type": "text"
+						},
+						{
+							"key": "official_mail_id",
+							"value": "johndoe2@example.com",
+							"type": "text"
+						},
+						{
+							"key": "mobile_number",
+							"value": "9876543211",
+							"type": "text"
+						},
+						{
+							"key": "department",
+							"value": "CSE",
+							"type": "text"
+						},
+						{
+							"key": "section",
+							"value": "A",
+							"type": "text"
+						},
+						{
+							"key": "offer_type",
+							"value": "PPO",
+							"type": "text"
+						},
+						{
+							"key": "company_name",
+							"value": "TechCorp 2",
+							"type": "text"
+						},
+						{
+							"key": "company_address",
+							"value": "123 Tech Street xyz",
+							"type": "text"
+						},
+						{
+							"key": "offer_type_detail",
+							"value": "Full-time",
+							"type": "text"
+						},
+						{
+							"key": "package_ppo",
+							"value": "150",
+							"type": "text"
+						},
+						{
+							"key": "stipend_amount",
+							"value": "50",
+							"type": "text"
+						},
+						{
+							"key": "internship_start_date",
+							"value": "2025-02-01",
+							"type": "text"
+						},
+						{
+							"key": "internship_end_date",
+							"value": "2025-07-01",
+							"type": "text"
+						},
+						{
+							"key": "terms_accepted",
+							"value": "true",
+							"type": "text"
+						},
+						{
+							"key": "offer_letter",
+							"type": "file",
+							"src": "/C:/Users/arjun/OneDrive/Documents/Certificates/Coursera/Coursera Golang.pdf"
+						},
+						{
+							"key": "mail_copy",
+							"type": "file",
+							"src": "/C:/Users/arjun/OneDrive/Documents/Certificates/Coursera/Coursera prog in c.pdf"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/submit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"submit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get- reviewer",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZXhwIjoxNzM2NDQzOTc5LCJ1c2VybmFtZSI6InJldmlld2VyMSJ9.9j14wQ41e8tefGDvWu2RdomwdK9iaT0xP_Y4dle1Plg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/reviewers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reviewers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reviewer - login",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"reviewer1@example.com\",\r\n  \"password\": \"securepassword123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/reviewer/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reviewer",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get - reviewer - reviews",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZXhwIjoxNzM2NDQzOTc5LCJ1c2VybmFtZSI6InJldmlld2VyMSJ9.9j14wQ41e8tefGDvWu2RdomwdK9iaT0xP_Y4dle1Plg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/reviewer/reviews",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reviewer",
+						"reviews"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post - review",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZXhwIjoxNzM2NDQzOTc5LCJ1c2VybmFtZSI6InJldmlld2VyMSJ9.9j14wQ41e8tefGDvWu2RdomwdK9iaT0xP_Y4dle1Plg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"submission_id\": 11,\r\n  \"reviewer_id\": 4,\r\n  \"status\": \"Accepted\",\r\n  \"comments\": \"All good and checked\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/reviewer/reviews",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reviewer",
+						"reviews"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
