@@ -38,6 +38,22 @@ func GetReviewerByEmail(email string) (*model.Reviewer, error) {
 	return &reviewer, nil
 }
 
+func GetReviewerByDepartment(department string) ([]model.Reviewer, error) {
+	query := `
+		SELECT id, email, password_hash, department, created_at
+		FROM reviewers
+		WHERE department = $1
+	`
+	var reviewers []model.Reviewer
+	err := DB.Select(&reviewers, query, department)
+	if err != nil {
+		fmt.Printf("Error fetching reviewers: %v\n", err)
+		return nil, err
+	}
+	fmt.Printf("Fetched reviewers: %+v\n", reviewers)
+	return reviewers, nil
+}
+
 func ValidateReviewerPassword(email, password string) (bool, error) {
 	reviewer, err := GetReviewerByEmail(email)
 	if err != nil {

@@ -17,7 +17,7 @@ func main() {
 
 	r.POST("/reviewer", handler.CreateReviewerHandler)
 	r.POST("/reviewer/login", handler.LoginReviewerHandler)
-	r.GET("/reviewer/:username", handler.GetReviewerDetailsHandler)
+	r.GET("/reviewer/:department", handler.GetReviewerDetailsHandler)
 
 	authReviewer := r.Group("/reviewer")
 	authReviewer.Use(middleware.AuthMiddleware())

@@ -87,15 +87,15 @@ func LoginReviewerHandler(c *gin.Context) {
 }
 
 func GetReviewerDetailsHandler(c *gin.Context) {
-	email := c.Param("email") // Changed username to email
+	department := c.Param("department")
 
-	reviewer, err := database.GetReviewerByEmail(email) // Changed username to email
+	reviewers, err := database.GetReviewerByDepartment(department)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Reviewer not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Reviewers not found"})
 		return
 	}
 
-	c.JSON(http.StatusOK, reviewer)
+	c.JSON(http.StatusOK, reviewers)
 }
 
 func GetAllReviewersHandler(c *gin.Context) {
