@@ -33,3 +33,21 @@ func GetAllSubmissions() ([]model.StudentSubmission, error) {
 	err := DB.Select(&submissions, "SELECT * FROM student_submissions")
 	return submissions, err
 }
+
+// GetSubmissionsByDepartment fetches submissions filtered by department.
+func GetSubmissionsByDepartment(department string) ([]model.StudentSubmission, error) {
+	var submissions []model.StudentSubmission
+	err := DB.Select(&submissions, "SELECT * FROM student_submissions WHERE department = ?", department)
+	return submissions, err
+}
+
+// UpdateSubmissionStatus updates the status of a submission based on the reviewer's action.
+func UpdateSubmissionStatus(submissionID int, status, remarks string) error {
+	query := `
+		UPDATE student_submissions
+		SET status = $1, remarks = $2
+		WHERE id = $3
+	`
+	_, err := DB.Exec(query, status, remarks, submissionID)
+	return err
+}

@@ -84,3 +84,50 @@ func GetAllSubmissionsHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"submissions": submissions})
 }
+
+// GetSubmissionsByDepartmentHandler fetches submissions filtered by the logged-in reviewer's department.
+func GetSubmissionsByDepartmentHandler(c *gin.Context) {
+	// Retrieve the department from the context (set by the middleware)
+	department := c.MustGet("department").(string)
+
+	// Fetch submissions for the reviewer's department
+	submissions, err := database.GetSubmissionsByDepartment(department)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submissions"})
+		return
+	}
+
+	// Return the list of submissions
+	c.JSON(http.StatusOK, gin.H{"submissions": submissions})
+}
+
+// UpdateSubmissionStatusHandler updates the status of a submission based on reviewer's action.
+func UpdateSubmissionStatusHandler(c *gin.Context) {
+	// Extract submission ID from the URL
+	submissionID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid submission ID"})
+		return
+	}
+
+	// Get the status and remarks from the request body
+	var input struct {
+		Status  string `json:"status"`
+		Remarks string `json:"remarks"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	// Update the submission status
+	err = database.UpdateSubmissionStatus(submissionID, input.Status, input.Remarks)
+	if err != nil {
+		log.Printf("Error updating submission status: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Submission status updated successfully"})
+}

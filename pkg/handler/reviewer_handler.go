@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"MUJ_automated_mail_generation/pkg/config"
 	"MUJ_automated_mail_generation/pkg/database"
 	"net/http"
 	"time"
@@ -12,7 +13,7 @@ import (
 
 func CreateReviewerHandler(c *gin.Context) {
 	var input struct {
-		Email      string `json:"email"` // Replaced Username with Email
+		Email      string `json:"email"`
 		Password   string `json:"password"`
 		Department string `json:"department"`
 	}
@@ -37,8 +38,6 @@ func CreateReviewerHandler(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{"id": id, "message": "Reviewer created successfully"})
 }
-
-var jwtSecretKey = []byte("your_secret_key") // Secret key for signing the JWT token
 
 // LoginReviewerHandler handles reviewer login.
 func LoginReviewerHandler(c *gin.Context) {
@@ -73,7 +72,7 @@ func LoginReviewerHandler(c *gin.Context) {
 	})
 
 	// Sign the token
-	tokenString, err := token.SignedString(jwtSecretKey)
+	tokenString, err := token.SignedString(config.JwtSecretKey)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
