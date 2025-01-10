@@ -13,6 +13,12 @@ func main() {
 
 	r := gin.Default()
 
+	r.LoadHTMLGlob("templates/*")
+
+	r.GET("/submit-form", func(c *gin.Context) {
+		c.HTML(200, "student-submit.html", nil)
+	})
+
 	// Student form data collection
 	r.POST("/submit", handler.SubmitHandler)
 
