@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -15,28 +14,8 @@ var jwtSecretKey = []byte("your_secret_key")
 // AuthMiddleware validates the JWT token for protected routes.
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Get the token from the "Authorization" header
-		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization token is missing"})
-			c.Abort()
-			return
-		}
-
-		// Split the token and the "Bearer" prefix
-		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
-		if tokenString == authHeader {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization token format is incorrect"})
-			c.Abort()
-			return
-		}
-
-		// Parse and validate the token
+		tokenString := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			// Make sure that the token's signing method is what we expect
-			if token.Method != jwt.SigningMethodHS256 {
-				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-			}
 			return jwtSecretKey, nil
 		})
 
@@ -46,7 +25,21 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// Token is valid, pass the request to the next handler
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+			c.Abort()
+			return
+		}
+
+		department, ok := claims["department"].(string)
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Department not found in token"})
+			c.Abort()
+			return
+		}
+
+		c.Set("department", department)
 		c.Next()
 	}
 }

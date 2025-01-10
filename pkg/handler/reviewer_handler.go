@@ -3,6 +3,8 @@ package handler
 import (
 	"MUJ_automated_mail_generation/pkg/config"
 	"MUJ_automated_mail_generation/pkg/database"
+	"MUJ_automated_mail_generation/pkg/model"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -40,8 +42,8 @@ func CreateReviewerHandler(c *gin.Context) {
 
 func LoginReviewerHandler(c *gin.Context) {
 	var input struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
+		Email    string `json:"email" binding:"required,email"`
+		Password string `json:"password" binding:"required,min=6"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -62,9 +64,10 @@ func LoginReviewerHandler(c *gin.Context) {
 
 	// Generate JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":         reviewer.ID, // Include reviewer ID for identification
 		"email":      reviewer.Email,
-		"department": reviewer.Department,
-		"exp":        time.Now().Add(time.Hour * 24).Unix(), // Expire in 24 hours
+		"department": reviewer.Department,                   // Include department in claims
+		"exp":        time.Now().Add(time.Hour * 24).Unix(), // Expiration time (24 hours)
 	})
 
 	// Sign the token
@@ -101,4 +104,13 @@ func GetAllReviewersHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, reviewers)
+}
+
+func GetReviewerByEmail(email string) (model.Reviewer, error) {
+	var reviewer model.Reviewer
+	err := database.DB.Get(&reviewer, "SELECT * FROM reviewers WHERE email = $1", email)
+	if err != nil {
+		return reviewer, fmt.Errorf("unable to fetch reviewer: %w", err)
+	}
+	return reviewer, nil
 }

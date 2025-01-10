@@ -74,10 +74,45 @@ func SubmitHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Submission received successfully"})
 }
 
-func GetAllSubmissionsHandler(c *gin.Context) {
-	submissions, err := database.GetAllSubmissions()
+func GetSubmissionsHandler(c *gin.Context) {
+	department, exists := c.Get("department")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	departmentStr, ok := department.(string)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid department format"})
+		return
+	}
+
+	submissions, err := database.GetSubmissionsByDepartment(departmentStr)
 	if err != nil {
-		log.Printf("Error fetching submissions: %v", err)
+		log.Printf("Error fetching submissions for department %s: %v", departmentStr, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submissions"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"submissions": submissions})
+}
+
+func GetSubmissionsByDepartmentHandler(c *gin.Context) {
+	department, exists := c.Get("department")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	departmentStr, ok := department.(string)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid department format"})
+		return
+	}
+
+	submissions, err := database.GetSubmissionsByDepartment(departmentStr)
+	if err != nil {
+		log.Printf("Error fetching submissions for department %s: %v", departmentStr, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submissions"})
 		return
 	}

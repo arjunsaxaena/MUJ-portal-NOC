@@ -17,11 +17,12 @@ func main() {
 
 	r.POST("/reviewer", handler.CreateReviewerHandler)
 	r.POST("/reviewer/login", handler.LoginReviewerHandler)
-	r.GET("/reviewer/:department", handler.GetReviewerDetailsHandler)
+	r.GET("/reviewer/:department", handler.GetReviewerDetailsHandler) // just for me useful while doing testing not to implement.
 
 	authReviewer := r.Group("/reviewer")
 	authReviewer.Use(middleware.AuthMiddleware()) // Middleware for authentication
 	{
+		authReviewer.GET("/submissions", handler.GetSubmissionsHandler)
 		authReviewer.POST("/reviews", handler.CreateReviewHandler)
 		authReviewer.PUT("/reviews/:id", handler.UpdateReviewHandler)
 		authReviewer.GET("/reviews", handler.GetAllReviewsHandler)
@@ -41,7 +42,6 @@ func main() {
 		// HoD review actions (To be added later)
 	}
 
-	r.GET("/submissions", handler.GetAllSubmissionsHandler)
 	r.GET("/reviewers", handler.GetAllReviewersHandler)
 
 	r.Run(":8080")

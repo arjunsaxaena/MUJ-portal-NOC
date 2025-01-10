@@ -3,6 +3,7 @@ package database
 import (
 	"MUJ_automated_mail_generation/pkg/model"
 	"fmt"
+	"log"
 )
 
 func CreateSubmission(submission *model.StudentSubmission) error {
@@ -36,9 +37,13 @@ func GetAllSubmissions() ([]model.StudentSubmission, error) {
 
 func GetSubmissionsByDepartment(department string) ([]model.StudentSubmission, error) {
 	var submissions []model.StudentSubmission
-	err := DB.Select(&submissions, "SELECT * FROM student_submissions WHERE department = ?", department)
+	query := "SELECT * FROM student_submissions WHERE department = $1"
+	err := DB.Select(&submissions, query, department)
+	if err != nil {
+		log.Printf("Error executing query: %v", err)
+	}
 	return submissions, err
-} // Have to implement handler
+}
 
 func UpdateSubmissionStatus(submissionID int, status, remarks string) error {
 	query := `
