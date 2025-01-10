@@ -1,5 +1,3 @@
 uploads/
 pkg/util/
 main.go
-templates\submissions.html
-templates\reviewer-login.html
