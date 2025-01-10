@@ -2,6 +2,8 @@ package handler
 
 import (
 	"MUJ_automated_mail_generation/pkg/database"
+	"MUJ_automated_mail_generation/pkg/model"
+	"MUJ_automated_mail_generation/pkg/util"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -35,9 +37,39 @@ func CreateReviewHandler(c *gin.Context) {
 	if input.Status == "Approved" {
 		err := database.UpdateSubmissionStatus(input.SubmissionID, "Approved")
 		if err != nil {
-			// If updating the submission fails, return an error response
 			fmt.Printf("Error updating submission status: %v\n", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
+			return
+		}
+	}
+
+	// If the submission is rejected or rework, send an email from the reviewer's email
+	if input.Status == "Rejected" || input.Status == "Rework" {
+		// Fetch the student submission from the database
+		var submission model.StudentSubmission
+		err := database.DB.Get(&submission, "SELECT * FROM student_submissions WHERE id = $1", input.SubmissionID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch student submission"})
+			return
+		}
+
+		// Fetch the reviewer's details (including email) from the database
+		var reviewer model.Reviewer
+		err = database.DB.Get(&reviewer, "SELECT * FROM reviewers WHERE id = $1", input.ReviewerID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch reviewer details"})
+			return
+		}
+
+		// Create the email subject and body
+		subject := "Your Placement Application Status"
+		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been %s.\n\nComments: %s\n\nBest regards",
+			submission.Name, input.Status, input.Comments) // Add reviewer's name in the email
+
+		// Send email using the reviewer's email ID as the sender
+		err = util.SendEmail(reviewer.Email, submission.OfficialMailID, subject, body)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send email to student"})
 			return
 		}
 	}
