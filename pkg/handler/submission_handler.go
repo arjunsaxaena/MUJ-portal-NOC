@@ -119,3 +119,25 @@ func GetSubmissionsByDepartmentHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"submissions": submissions})
 }
+
+func GetApprovedSubmissionsByDepartmentHandler(c *gin.Context) {
+	department, exists := c.Get("department")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	departmentStr, ok := department.(string)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid department format"})
+		return
+	}
+
+	submissions, err := database.GetApprovedSubmissionsByDepartment(departmentStr)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch approved submissions"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"submissions": submissions})
+}

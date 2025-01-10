@@ -45,12 +45,20 @@ func GetSubmissionsByDepartment(department string) ([]model.StudentSubmission, e
 	return submissions, err
 }
 
-func UpdateSubmissionStatus(submissionID int, status, remarks string) error {
+func GetApprovedSubmissionsByDepartment(department string) ([]model.StudentSubmission, error) {
+	var submissions []model.StudentSubmission
 	query := `
-		UPDATE student_submissions
-		SET status = $1, remarks = $2
-		WHERE id = $3
+		SELECT * 
+		FROM student_submissions 
+		WHERE department = $1 
+		AND status = 'Approved'
 	`
-	_, err := DB.Exec(query, status, remarks, submissionID)
-	return err
-} // Have to implement handler
+
+	err := DB.Select(&submissions, query, department)
+	if err != nil {
+		log.Printf("Error fetching approved submissions for department %s: %v", department, err)
+		return nil, err
+	}
+
+	return submissions, nil
+}

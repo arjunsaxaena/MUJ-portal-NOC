@@ -64,6 +64,7 @@ func LoginHoDHandler(c *gin.Context) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"email":      hod.Email,
 		"department": hod.Department,
+		"role":       "hod",
 		"exp":        time.Now().Add(time.Hour * 24).Unix(), // Expire in 24 hours
 	})
 

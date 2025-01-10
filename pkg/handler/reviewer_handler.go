@@ -66,7 +66,8 @@ func LoginReviewerHandler(c *gin.Context) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":         reviewer.ID, // Include reviewer ID for identification
 		"email":      reviewer.Email,
-		"department": reviewer.Department,                   // Include department in claims
+		"department": reviewer.Department, // Include department in claims
+		"role":       "reviewer",
 		"exp":        time.Now().Add(time.Hour * 24).Unix(), // Expiration time (24 hours)
 	})
 
