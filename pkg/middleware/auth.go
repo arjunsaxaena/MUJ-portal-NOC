@@ -20,9 +20,7 @@ func AuthMiddleware(requiredRole string) gin.HandlerFunc {
 		}
 
 		// Remove "Bearer " prefix if present
-		if strings.HasPrefix(tokenString, "Bearer ") {
-			tokenString = strings.TrimPrefix(tokenString, "Bearer ") // removing this causing invalid token error dk why
-		}
+		tokenString = strings.TrimPrefix(tokenString, "Bearer ") // removing this causing invalid token error dk why
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			return []byte(config.JwtSecretKey), nil
