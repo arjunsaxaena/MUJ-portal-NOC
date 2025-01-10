@@ -45,6 +45,9 @@ CREATE TABLE reviews (
 );
 
 ALTER TABLE reviews ADD COLUMN updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+ALTER TABLE reviews 
+ADD COLUMN hod_action VARCHAR(20), -- 'Approved', 'Rejected'
+ADD COLUMN hod_remarks TEXT;
 
 CREATE TABLE hod ( 
     id SERIAL PRIMARY KEY,

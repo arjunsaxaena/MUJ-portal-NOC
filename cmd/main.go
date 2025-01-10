@@ -13,6 +13,7 @@ func main() {
 
 	r := gin.Default()
 
+	// Student form data collection
 	r.POST("/submit", handler.SubmitHandler)
 
 	r.POST("/reviewer", handler.CreateReviewerHandler)
@@ -30,16 +31,17 @@ func main() {
 		authReviewer.GET("/reviews/reviewer/:reviewer_id", handler.GetReviewsByReviewerHandler)
 	}
 
-	// Routes for HoD
 	r.POST("/hod/login", handler.LoginHoDHandler)
 	r.POST("/hod", handler.CreateHoDHandler)
-	r.GET("/hods", handler.GetAllHoDsHandler)
-	r.GET("/hod/:department", handler.GetHoDsByDepartmentHandler)
+	r.GET("/hods", handler.GetAllHoDsHandler)                     // just for me useful while doing testing not to implement.
+	r.GET("/hod/:department", handler.GetHoDsByDepartmentHandler) // just for me useful while doing testing not to implement.
 
 	authHoD := r.Group("/hod")
 	authHoD.Use(middleware.AuthMiddleware("hod")) // Middleware for authentication
 	{
 		authHoD.GET("/submissions/approved", handler.GetApprovedSubmissionsByDepartmentHandler)
+		authHoD.PUT("/reviews/:id", handler.UpdateHodReviewHandler)
+		authHoD.GET("/reviews", handler.GetAllReviewsHandler)
 	}
 
 	r.GET("/reviewers", handler.GetAllReviewersHandler)
