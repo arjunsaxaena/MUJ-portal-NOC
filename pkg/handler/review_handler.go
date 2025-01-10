@@ -22,17 +22,30 @@ func CreateReviewHandler(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("Creating review with submission_id: %d, reviewer_id: %d, status: %s, comments: %s\n",
+	fmt.Printf("Creating reviewer review with submission_id: %d, reviewer_id: %d, status: %s, comments: %s\n",
 		input.SubmissionID, input.ReviewerID, input.Status, input.Comments)
 
-	reviewID, err := database.CreateReview(input.SubmissionID, input.ReviewerID, input.Status, input.Comments)
+	reviewID, err := database.CreateReviewerReview(input.SubmissionID, input.ReviewerID, input.Status, input.Comments)
 	if err != nil {
-		fmt.Printf("Error creating review: %v\n", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create review"})
+		fmt.Printf("Error creating reviewer review: %v\n", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create reviewer review"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"review_id": reviewID, "message": "Review created successfully"})
+	if input.Status == "Approved" {
+		err := database.UpdateSubmissionStatus(input.SubmissionID, "Approved")
+		if err != nil {
+			// If updating the submission fails, return an error response
+			fmt.Printf("Error updating submission status: %v\n", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
+			return
+		}
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"review_id": reviewID,
+		"message":   "Reviewer review created successfully",
+	})
 }
 
 func UpdateReviewHandler(c *gin.Context) {
@@ -52,40 +65,16 @@ func UpdateReviewHandler(c *gin.Context) {
 		return
 	}
 
-	// Update the review status and comments
-	err = database.UpdateReview(reviewID, input.Status, input.Comments)
+	err = database.UpdateReviewerReview(reviewID, input.Status, input.Comments)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update review status/comments"})
+		fmt.Printf("Error updating reviewer review: %v\n", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update reviewer review status/comments"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Review updated successfully"})
-}
-
-func UpdateHodReviewHandler(c *gin.Context) {
-	var input struct {
-		HodAction  string `json:"hod_action" binding:"required"`
-		HodRemarks string `json:"hod_remarks"`
-	}
-
-	reviewID, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid review ID"})
-		return
-	}
-
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
-		return
-	}
-
-	err = database.UpdateHodAction(reviewID, input.HodAction, input.HodRemarks)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update HoD action/remarks"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "Review updated with HoD action successfully"})
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Reviewer review updated successfully",
+	})
 }
 
 func GetReviewsBySubmissionHandler(c *gin.Context) {
@@ -95,7 +84,7 @@ func GetReviewsBySubmissionHandler(c *gin.Context) {
 		return
 	}
 
-	reviews, err := database.GetReviewsBySubmission(submissionID)
+	reviews, err := database.GetReviewerReviewsBySubmission(submissionID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch reviews"})
 		return
@@ -111,7 +100,7 @@ func GetReviewsByReviewerHandler(c *gin.Context) {
 		return
 	}
 
-	reviews, err := database.GetReviewsByReviewer(reviewerID)
+	reviews, err := database.GetReviewerReviewsByReviewer(reviewerID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch reviews"})
 		return
@@ -120,23 +109,13 @@ func GetReviewsByReviewerHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, reviews)
 }
 
-func GetAllReviewsHandler(c *gin.Context) {
-	reviews, err := database.GetAllReviews()
+func GetAllReviewerReviewsHandler(c *gin.Context) {
+	reviews, err := database.GetAllReviewerReviews()
 	if err != nil {
-		fmt.Printf("Error in GetAllReviews: %v\n", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch reviews"})
 		return
 	}
 
-	// Convert sql.NullString to regular string for JSON response
-	for i := range reviews {
-		if !reviews[i].HodAction.Valid {
-			reviews[i].HodAction.String = "" // Set to empty string if NULL
-		}
-		if !reviews[i].HodRemarks.Valid {
-			reviews[i].HodRemarks.String = ""
-		}
-	}
-
-	c.JSON(http.StatusOK, reviews)
+	// Return the reviews in a response
+	c.JSON(http.StatusOK, gin.H{"reviews": reviews})
 }

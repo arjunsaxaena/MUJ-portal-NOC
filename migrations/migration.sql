@@ -23,6 +23,7 @@ CREATE TABLE student_submissions (
     terms_accepted BOOLEAN DEFAULT FALSE,
     status VARCHAR(20) DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 );
 
 CREATE TABLE reviewers (                       
@@ -33,21 +34,18 @@ CREATE TABLE reviewers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE reviews (                           
+CREATE TABLE reviewer_reviews (
     id SERIAL PRIMARY KEY,
     submission_id INT NOT NULL,
     reviewer_id INT NOT NULL,
     status VARCHAR(20) NOT NULL, -- Accepted, Rejected, Rework
     comments TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     FOREIGN KEY (submission_id) REFERENCES student_submissions(id),
     FOREIGN KEY (reviewer_id) REFERENCES reviewers(id)
 );
 
-ALTER TABLE reviews ADD COLUMN updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
-ALTER TABLE reviews 
-ADD COLUMN hod_action VARCHAR(20), -- 'Approved', 'Rejected'
-ADD COLUMN hod_remarks TEXT;
 
 CREATE TABLE hod ( 
     id SERIAL PRIMARY KEY,
@@ -56,3 +54,16 @@ CREATE TABLE hod (
     department VARCHAR(50) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE hod_reviews (
+    id SERIAL PRIMARY KEY,
+    submission_id INT NOT NULL,
+    hod_id INT NOT NULL,
+    action VARCHAR(20) NOT NULL, -- Approved, Rejected, Rework
+    remarks TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (submission_id) REFERENCES student_submissions(id),
+    FOREIGN KEY (hod_id) REFERENCES hod(id)
+);
+

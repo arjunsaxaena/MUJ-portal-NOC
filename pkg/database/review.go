@@ -2,13 +2,14 @@ package database
 
 import (
 	"MUJ_automated_mail_generation/pkg/model"
-	"fmt"
 	"time"
 )
 
-func CreateReview(submissionID, reviewerID int, status, comments string) (int, error) {
+// Reviewer Review Functions
+
+func CreateReviewerReview(submissionID, reviewerID int, status, comments string) (int, error) {
 	query := `
-		INSERT INTO reviews (submission_id, reviewer_id, status, comments, created_at, updated_at)
+		INSERT INTO reviewer_reviews (submission_id, reviewer_id, status, comments, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id
 	`
@@ -20,9 +21,9 @@ func CreateReview(submissionID, reviewerID int, status, comments string) (int, e
 	return reviewID, nil
 }
 
-func UpdateReview(reviewID int, status, comments string) error {
+func UpdateReviewerReview(reviewID int, status, comments string) error {
 	query := `
-		UPDATE reviews
+		UPDATE reviewer_reviews
 		SET status = $1, comments = $2, updated_at = $3
 		WHERE id = $4
 	`
@@ -30,23 +31,13 @@ func UpdateReview(reviewID int, status, comments string) error {
 	return err
 }
 
-func UpdateHodAction(reviewID int, hodAction, hodRemarks string) error {
+func GetReviewerReviewsBySubmission(submissionID int) ([]model.ReviewerReview, error) {
 	query := `
-		UPDATE reviews
-		SET hod_action = $1, hod_remarks = $2, updated_at = $3
-		WHERE id = $4
-	`
-	_, err := DB.Exec(query, hodAction, hodRemarks, time.Now(), reviewID)
-	return err
-}
-
-func GetReviewsBySubmission(submissionID int) ([]model.Review, error) {
-	query := `
-		SELECT id, submission_id, reviewer_id, status, comments, hod_action, hod_remarks, created_at, updated_at
-		FROM reviews
+		SELECT id, submission_id, reviewer_id, status, comments, created_at, updated_at
+		FROM reviewer_reviews
 		WHERE submission_id = $1
 	`
-	var reviews []model.Review
+	var reviews []model.ReviewerReview
 	err := DB.Select(&reviews, query, submissionID)
 	if err != nil {
 		return nil, err
@@ -54,13 +45,13 @@ func GetReviewsBySubmission(submissionID int) ([]model.Review, error) {
 	return reviews, nil
 }
 
-func GetReviewsByReviewer(reviewerID int) ([]model.Review, error) {
+func GetReviewerReviewsByReviewer(reviewerID int) ([]model.ReviewerReview, error) {
 	query := `
-		SELECT id, submission_id, reviewer_id, status, comments, hod_action, hod_remarks, created_at, updated_at
-		FROM reviews
+		SELECT id, submission_id, reviewer_id, status, comments, created_at, updated_at
+		FROM reviewer_reviews
 		WHERE reviewer_id = $1
 	`
-	var reviews []model.Review
+	var reviews []model.ReviewerReview
 	err := DB.Select(&reviews, query, reviewerID)
 	if err != nil {
 		return nil, err
@@ -68,15 +59,14 @@ func GetReviewsByReviewer(reviewerID int) ([]model.Review, error) {
 	return reviews, nil
 }
 
-func GetAllReviews() ([]model.Review, error) {
+func GetAllReviewerReviews() ([]model.ReviewerReview, error) {
 	query := `
-        SELECT id, submission_id, reviewer_id, status, comments, hod_action, hod_remarks, created_at, updated_at
-        FROM reviews
-    `
-	var reviews []model.Review
+		SELECT id, submission_id, reviewer_id, status, comments, created_at, updated_at
+		FROM reviewer_reviews
+	`
+	var reviews []model.ReviewerReview
 	err := DB.Select(&reviews, query)
 	if err != nil {
-		fmt.Printf("Error fetching reviews: %v\n", err)
 		return nil, err
 	}
 	return reviews, nil

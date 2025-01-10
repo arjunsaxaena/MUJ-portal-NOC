@@ -4,6 +4,7 @@ import (
 	"MUJ_automated_mail_generation/pkg/model"
 	"fmt"
 	"log"
+	"time"
 )
 
 func CreateSubmission(submission *model.StudentSubmission) error {
@@ -61,4 +62,21 @@ func GetApprovedSubmissionsByDepartment(department string) ([]model.StudentSubmi
 	}
 
 	return submissions, nil
+}
+
+func UpdateSubmissionStatus(submissionID int, status string) error {
+	query := `
+		UPDATE student_submissions
+		SET status = $1, updated_at = $2
+		WHERE id = $3
+	`
+
+	// Execute the query to update the status
+	_, err := DB.Exec(query, status, time.Now(), submissionID)
+	if err != nil {
+		fmt.Printf("Error updating submission status: %v\n", err)
+		return err
+	}
+
+	return nil
 }
