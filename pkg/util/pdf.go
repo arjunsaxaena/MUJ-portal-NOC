@@ -2,14 +2,13 @@ package util
 
 import (
 	"MUJ_automated_mail_generation/pkg/model"
+	"bytes"
 	"fmt"
-	"os"
-	"path/filepath"
 
 	"github.com/jung-kurt/gofpdf"
 )
 
-func CreateNocPdf(submission model.StudentSubmission) (string, error) {
+func CreateNocPdf(submission model.StudentSubmission, bucketName, keyPrefix string) (string, error) {
 	// Log the submission details for debugging
 	fmt.Printf("Submission data: %+v\n", submission)
 
@@ -57,22 +56,25 @@ The University Placement Office`,
 	pdf.MultiCell(0, 10, body, "", "L", false)
 	pdf.Ln(10)
 
-	// Define output directory
-	outputDir := "generated_pdfs"
-	err := os.MkdirAll(outputDir, os.ModePerm)
+	// Write PDF data to a buffer
+	var pdfBuffer bytes.Buffer
+	err := pdf.Output(&pdfBuffer)
 	if err != nil {
-		return "", fmt.Errorf("failed to create output directory: %v", err)
+		return "", fmt.Errorf("failed to generate PDF: %v", err)
 	}
 
-	// Save the PDF to a file
+	// Define the S3 object key
 	fileName := fmt.Sprintf("NOC_%s.pdf", submission.RegistrationNumber)
-	outputPath := filepath.Join(outputDir, fileName)
+	s3Key := fmt.Sprintf("%s/%s", keyPrefix, fileName)
 
-	err = pdf.OutputFileAndClose(outputPath)
+	// Upload the PDF to S3
+	err = UploadFileToS3(bucketName, &pdfBuffer, s3Key)
 	if err != nil {
-		return "", fmt.Errorf("failed to save PDF: %v", err)
+		return "", fmt.Errorf("failed to upload NOC PDF to S3: %v", err)
 	}
 
-	fmt.Printf("PDF successfully saved at: %s\n", outputPath)
-	return outputPath, nil
+	s3URL := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", bucketName, s3Key)
+	fmt.Printf("PDF successfully uploaded to S3: %s\n", s3URL)
+
+	return s3URL, nil
 }

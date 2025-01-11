@@ -1,11 +1,14 @@
-// pkg/util/email.go
 package util
 
 import (
 	"encoding/base64"
 	"fmt"
+	"io"
 	"net/smtp"
-	"os"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 func SendEmail(from, to, subject, body string) error {
@@ -27,17 +30,49 @@ func SendEmail(from, to, subject, body string) error {
 	return err
 }
 
-func SendEmailWithAttachment(from string, to string, subject string, body string, attachmentPath string) error {
-	// Read the attachment file
-	attachment, err := os.ReadFile(attachmentPath)
+func downloadFileFromS3(s3URL string, bucket string) ([]byte, error) {
+	key := s3URL[len("https://muj-student-data.s3.amazonaws.com/"):]
+
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String("eu-north-1"),
+	})
 	if err != nil {
-		return fmt.Errorf("failed to read attachment: %v", err)
+		return nil, fmt.Errorf("failed to create AWS session: %v", err)
+	}
+	s3Client := s3.New(sess)
+
+	resp, err := s3Client.GetObject(&s3.GetObjectInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(key),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get file from S3: %v", err)
+	}
+	defer resp.Body.Close()
+
+	fileContent, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read S3 file content: %v", err)
+	}
+
+	return fileContent, nil
+}
+
+func SendEmailWithAttachment(from string, to string, subject string, body string, s3URL string) error {
+	// Log the input parameters
+	fmt.Printf("Sending email from: %s to: %s with subject: %s and attachment: %s\n", from, to, subject, s3URL)
+
+	attachment, err := downloadFileFromS3(s3URL, "muj-student-data")
+	if err != nil {
+		fmt.Printf("Error fetching attachment: %v\n", err)
+		return fmt.Errorf("failed to fetch attachment from S3: %v", err)
 	}
 
 	// Base64 encode the attachment
 	encodedAttachment := base64.StdEncoding.EncodeToString(attachment)
 
-	// Create the email body
+	fmt.Println("Attachment successfully encoded.")
+
 	message := ""
 	message += fmt.Sprintf("From: %s\n", from)
 	message += fmt.Sprintf("To: %s\n", to)
@@ -53,16 +88,20 @@ func SendEmailWithAttachment(from string, to string, subject string, body string
 	// Add the attachment
 	message += "--boundary\n"
 	message += "Content-Type: application/pdf\n"
-	message += fmt.Sprintf("Content-Disposition: attachment; filename=%s\n", attachmentPath)
+	message += "Content-Disposition: attachment; filename=\"attachment.pdf\"\n"
 	message += "Content-Transfer-Encoding: base64\n\n"
 	message += encodedAttachment + "\n"
 	message += "--boundary--"
 
+	fmt.Println("Email message successfully created.")
+
 	auth := smtp.PlainAuth("", from, "bjkwwhugjefvcdoa", "smtp.gmail.com")
 	err = smtp.SendMail("smtp.gmail.com:587", auth, from, []string{to}, []byte(message))
 	if err != nil {
+		fmt.Printf("Error sending email: %v\n", err)
 		return fmt.Errorf("failed to send email: %v", err)
 	}
 
+	fmt.Println("Email sent successfully.")
 	return nil
 }

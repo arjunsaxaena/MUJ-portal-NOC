@@ -57,7 +57,7 @@ func CreateHodReviewHandler(c *gin.Context) {
 	}
 
 	if input.Action == "Approved" {
-		nocFileName, err := util.CreateNocPdf(submission)
+		nocURL, err := util.CreateNocPdf(submission, "muj-student-data", "generated_pdfs")
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate NOC PDF"})
 			return
@@ -66,7 +66,7 @@ func CreateHodReviewHandler(c *gin.Context) {
 		subject := "Your No Objection Certificate (NOC)"
 		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been approved. Please find attached the No Objection Certificate (NOC) for your reference.\n\nBest regards,\nHoD", submission.Name)
 
-		err = util.SendEmailWithAttachment(hod.Email, submission.OfficialMailID, subject, body, nocFileName)
+		err = util.SendEmailWithAttachment(hod.Email, submission.OfficialMailID, subject, body, nocURL)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send NOC email to student"})
 			return
