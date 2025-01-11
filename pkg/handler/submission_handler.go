@@ -67,8 +67,9 @@ func SubmitHandler(c *gin.Context) {
 			fmt.Printf("Error uploading offer letter to S3: %v\n", err)
 			return
 		}
-		submission.OfferLetterPath = offerLetterKey
-		fmt.Printf("Offer letter uploaded successfully. Key: %s\n", offerLetterKey)
+		offerLetterURL := fmt.Sprintf("https://muj-student-data.s3.amazonaws.com/%s", offerLetterKey)
+		submission.OfferLetterPath = offerLetterURL
+		fmt.Printf("Offer letter uploaded successfully. URL: %s\n", offerLetterURL)
 	} else {
 		fmt.Println("No offer letter file received")
 	}
@@ -92,8 +93,9 @@ func SubmitHandler(c *gin.Context) {
 			fmt.Printf("Error uploading mail copy to S3: %v\n", err)
 			return
 		}
-		submission.MailCopyPath = mailCopyKey
-		fmt.Printf("Mail copy uploaded successfully. Key: %s\n", mailCopyKey)
+		mailCopyURL := fmt.Sprintf("https://muj-student-data.s3.amazonaws.com/%s", mailCopyKey)
+		submission.MailCopyPath = mailCopyURL
+		fmt.Printf("Mail copy uploaded successfully. URL: %s\n", mailCopyURL)
 	} else {
 		fmt.Println("No mail copy file received")
 	}
