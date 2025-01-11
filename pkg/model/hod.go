@@ -4,6 +4,7 @@ import "time"
 
 type HoD struct {
 	ID           int       `json:"id" db:"id"`
+	Name         string    `json:"name" db:"name"`
 	Email        string    `json:"email" db:"email"`
 	PasswordHash string    `json:"password_hash" db:"password_hash"`
 	Department   string    `json:"department" db:"department"`

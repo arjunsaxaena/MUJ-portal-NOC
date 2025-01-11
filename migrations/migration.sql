@@ -12,7 +12,9 @@ CREATE TABLE student_submissions (
     section VARCHAR(10),
     offer_type VARCHAR(50),
     company_name VARCHAR(100),
-    company_address VARCHAR(255),
+    company_state VARCHAR(100), 
+    company_city VARCHAR(100), 
+    pincode VARCHAR(20), 
     offer_type_detail VARCHAR(100),
     package_ppo DECIMAL(10, 2),
     stipend_amount DECIMAL(10, 2),
@@ -22,12 +24,13 @@ CREATE TABLE student_submissions (
     mail_copy_path VARCHAR(255),
     terms_accepted BOOLEAN DEFAULT FALSE,
     status VARCHAR(20) DEFAULT 'Pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE reviewers (                       
     id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL, 
     email VARCHAR(100) NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     department VARCHAR(50) NOT NULL,
@@ -49,6 +52,7 @@ CREATE TABLE reviewer_reviews (
 
 CREATE TABLE hod ( 
     id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL, 
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     department VARCHAR(50) NOT NULL,

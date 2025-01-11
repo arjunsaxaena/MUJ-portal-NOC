@@ -15,6 +15,7 @@ import (
 
 func CreateReviewerHandler(c *gin.Context) {
 	var input struct {
+		Name       string `json:"name"`
 		Email      string `json:"email"`
 		Password   string `json:"password"`
 		Department string `json:"department"`
@@ -31,7 +32,7 @@ func CreateReviewerHandler(c *gin.Context) {
 		return
 	}
 
-	id, err := database.CreateReviewer(input.Email, string(hashedPassword), input.Department)
+	id, err := database.CreateReviewer(input.Name, input.Email, string(hashedPassword), input.Department)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create reviewer"})
 		return

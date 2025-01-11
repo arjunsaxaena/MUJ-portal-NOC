@@ -3,6 +3,7 @@ package handler
 import (
 	"MUJ_automated_mail_generation/pkg/database"
 	"MUJ_automated_mail_generation/pkg/model"
+	"MUJ_automated_mail_generation/pkg/util"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,63 +16,100 @@ func SubmitHandler(c *gin.Context) {
 	var submission model.StudentSubmission
 
 	// for debug: print the raw form data
-	fmt.Println("Form data received:")
+	form, _ := c.MultipartForm()
+	fmt.Println("Raw Form Data Received:", form.Value)
+	fmt.Println("Files Received:", form.File)
 
+	// Log the form data for debugging purposes
 	if err := c.ShouldBind(&submission); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		fmt.Printf("Error binding form data: %v\n", err)
 		return
 	}
 
+	// Log the submission struct before processing
 	fmt.Printf("Struct before DB insert: %+v\n", submission)
 
-	// Convert PackagePPO and StipendAmount to float64
+	// Convert PackagePPO and StipendAmount to float64 and log errors
 	packagePPO, err := strconv.ParseFloat(submission.PackagePPO, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid package_ppo value"})
+		fmt.Printf("Error parsing PackagePPO: %v\n", err)
 		return
 	}
 	stipendAmount, err := strconv.ParseFloat(submission.StipendAmount, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid stipend_amount value"})
+		fmt.Printf("Error parsing StipendAmount: %v\n", err)
 		return
 	}
 
 	submission.PackagePPO = fmt.Sprintf("%.2f", packagePPO)
 	submission.StipendAmount = fmt.Sprintf("%.2f", stipendAmount)
+	fmt.Printf("Formatted PackagePPO: %s, Formatted StipendAmount: %s\n", submission.PackagePPO, submission.StipendAmount)
 
-	// Handle offer letter upload
 	offerLetter, _ := c.FormFile("offer_letter")
 	if offerLetter != nil {
-		offerLetterPath := fmt.Sprintf("./uploads/offer_letters/%s_%s", submission.RegistrationNumber, offerLetter.Filename)
-		err := c.SaveUploadedFile(offerLetter, offerLetterPath)
+		fmt.Printf("Received offer letter file: %s\n", offerLetter.Filename)
+
+		file, err := offerLetter.Open()
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save offer letter"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open offer letter file"})
+			fmt.Printf("Error opening offer letter file: %v\n", err)
 			return
 		}
-		submission.OfferLetterPath = offerLetterPath
+		defer file.Close()
+
+		offerLetterKey := fmt.Sprintf("offer_letters/%s_%s", submission.RegistrationNumber, offerLetter.Filename)
+		err = util.UploadFileToS3("muj-student-data", file, offerLetterKey)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload offer letter to S3"})
+			fmt.Printf("Error uploading offer letter to S3: %v\n", err)
+			return
+		}
+		submission.OfferLetterPath = offerLetterKey
+		fmt.Printf("Offer letter uploaded successfully. Key: %s\n", offerLetterKey)
+	} else {
+		fmt.Println("No offer letter file received")
 	}
 
-	// Handle mail copy upload
 	mailCopy, _ := c.FormFile("mail_copy")
 	if mailCopy != nil {
-		mailCopyPath := fmt.Sprintf("./uploads/mail_copies/%s_%s", submission.RegistrationNumber, mailCopy.Filename)
-		err := c.SaveUploadedFile(mailCopy, mailCopyPath)
+		fmt.Printf("Received mail copy file: %s\n", mailCopy.Filename)
+
+		file, err := mailCopy.Open()
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save mail copy"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open mail copy file"})
+			fmt.Printf("Error opening mail copy file: %v\n", err)
 			return
 		}
-		submission.MailCopyPath = mailCopyPath
+		defer file.Close()
+
+		mailCopyKey := fmt.Sprintf("mail_copies/%s_%s", submission.RegistrationNumber, mailCopy.Filename)
+		err = util.UploadFileToS3("muj-student-data", file, mailCopyKey)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload mail copy to S3"})
+			fmt.Printf("Error uploading mail copy to S3: %v\n", err)
+			return
+		}
+		submission.MailCopyPath = mailCopyKey
+		fmt.Printf("Mail copy uploaded successfully. Key: %s\n", mailCopyKey)
+	} else {
+		fmt.Println("No mail copy file received")
 	}
 
-	submission.Status = "Pending" // Set additional fields
+	submission.Status = "Pending"
+	fmt.Printf("Submission ready for DB insert: %+v\n", submission)
 
 	err = database.CreateSubmission(&submission)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save data"})
+		fmt.Printf("Error saving submission to DB: %v\n", err)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Submission received successfully"})
+	fmt.Println("Submission received successfully")
 }
 
 func GetSubmissionsHandler(c *gin.Context) {

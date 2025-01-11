@@ -8,14 +8,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateHoD(email, passwordHash, department string) (int, error) {
+func CreateHoD(name, email, passwordHash, department string) (int, error) {
 	query := `
-		INSERT INTO hod (email, password_hash, department)
-		VALUES ($1, $2, $3)
+		INSERT INTO hod (name, email, password_hash, department)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id
 	`
 	var id int
-	err := DB.QueryRow(query, email, passwordHash, department).Scan(&id)
+	err := DB.QueryRow(query, name, email, passwordHash, department).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
@@ -24,7 +24,7 @@ func CreateHoD(email, passwordHash, department string) (int, error) {
 
 func GetHoDByEmail(email string) (*model.HoD, error) {
 	query := `
-		SELECT id, email, password_hash, department, created_at
+		SELECT id, name, email, password_hash, department, created_at
 		FROM hod
 		WHERE email = $1
 	`
@@ -39,7 +39,7 @@ func GetHoDByEmail(email string) (*model.HoD, error) {
 
 func GetHoDsByDepartment(department string) ([]model.HoD, error) {
 	query := `
-		SELECT id, email, password_hash, department, created_at
+		SELECT id, name, email, password_hash, department, created_at
 		FROM hod
 		WHERE department = $1
 	`
@@ -67,7 +67,7 @@ func ValidateHoDPassword(email, password string) (bool, error) {
 
 func GetAllHoDs() ([]model.HoD, error) {
 	query := `
-		SELECT id, email, password_hash, department, created_at
+		SELECT id, name, email, password_hash, department, created_at
 		FROM hod
 	`
 	var hods []model.HoD

@@ -8,14 +8,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateReviewer(email, passwordHash, department string) (int, error) {
+func CreateReviewer(name, email, passwordHash, department string) (int, error) {
 	query := `
-		INSERT INTO reviewers (email, password_hash, department)
-		VALUES ($1, $2, $3)
+		INSERT INTO reviewers (name, email, password_hash, department)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id
 	`
 	var id int
-	err := DB.QueryRow(query, email, passwordHash, department).Scan(&id)
+	err := DB.QueryRow(query, name, email, passwordHash, department).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
@@ -24,7 +24,7 @@ func CreateReviewer(email, passwordHash, department string) (int, error) {
 
 func GetReviewerByEmail(email string) (*model.Reviewer, error) {
 	query := `
-		SELECT id, email, password_hash, department, created_at
+		SELECT id, name, email, password_hash, department, created_at
 		FROM reviewers
 		WHERE email = $1
 	`
@@ -40,7 +40,7 @@ func GetReviewerByEmail(email string) (*model.Reviewer, error) {
 
 func GetReviewerByDepartment(department string) ([]model.Reviewer, error) {
 	query := `
-		SELECT id, email, password_hash, department, created_at
+		SELECT id, name, email, password_hash, department, created_at
 		FROM reviewers
 		WHERE department = $1
 	`

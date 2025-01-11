@@ -11,15 +11,15 @@ func CreateSubmission(submission *model.StudentSubmission) error {
 	_, err := DB.NamedExec(`
 		INSERT INTO student_submissions (
 			registration_number, name, official_mail_id, mobile_number, department, section, offer_type, 
-			company_name, company_address, offer_type_detail, package_ppo, stipend_amount, 
+			company_name, company_state, company_city, pincode, offer_type_detail, package_ppo, stipend_amount, 
 			internship_start_date, internship_end_date, offer_letter_path, mail_copy_path, terms_accepted, 
-			status, created_at
+			status, created_at, updated_at
 		) 
 		VALUES (
 			:registration_number, :name, :official_mail_id, :mobile_number, :department, :section, :offer_type, 
-			:company_name, :company_address, :offer_type_detail, :package_ppo, :stipend_amount, 
+			:company_name, :company_state, :company_city, :pincode, :offer_type_detail, :package_ppo, :stipend_amount, 
 			:internship_start_date, :internship_end_date, :offer_letter_path, :mail_copy_path, :terms_accepted, 
-			:status, CURRENT_TIMESTAMP
+			:status, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
 		)
 	`, submission)
 

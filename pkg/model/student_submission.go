@@ -12,7 +12,9 @@ type StudentSubmission struct {
 	Section             string    `json:"section" form:"section" binding:"required" db:"section"`
 	OfferType           string    `json:"offer_type" form:"offer_type" binding:"required" db:"offer_type"`
 	CompanyName         string    `json:"company_name" form:"company_name" db:"company_name"`
-	CompanyAddress      string    `json:"company_address" form:"company_address" db:"company_address"`
+	CompanyState        string    `json:"company_state" form:"company_state" binding:"required" db:"company_state"`
+	CompanyCity         string    `json:"company_city" form:"company_city" binding:"required" db:"company_city"`
+	Pincode             string    `json:"pincode" form:"pincode" binding:"required" db:"pincode"`
 	OfferTypeDetail     string    `json:"offer_type_detail" form:"offer_type_detail" db:"offer_type_detail"`
 	PackagePPO          string    `json:"package_ppo" form:"package_ppo" db:"package_ppo"`
 	StipendAmount       string    `json:"stipend_amount" form:"stipend_amount" db:"stipend_amount"`

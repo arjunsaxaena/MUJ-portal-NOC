@@ -13,6 +13,7 @@ import (
 
 func CreateHoDHandler(c *gin.Context) {
 	var input struct {
+		Name       string `json:"name"`
 		Email      string `json:"email"`
 		Password   string `json:"password"`
 		Department string `json:"department"`
@@ -29,7 +30,7 @@ func CreateHoDHandler(c *gin.Context) {
 		return
 	}
 
-	id, err := database.CreateHoD(input.Email, string(hashedPassword), input.Department)
+	id, err := database.CreateHoD(input.Name, input.Email, string(hashedPassword), input.Department)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create HoD"})
 		return

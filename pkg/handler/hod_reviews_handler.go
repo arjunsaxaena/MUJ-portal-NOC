@@ -24,7 +24,6 @@ func CreateHodReviewHandler(c *gin.Context) {
 		return
 	}
 
-	// Fetch the student submission from the database
 	var submission model.StudentSubmission
 	err := database.DB.Get(&submission, "SELECT * FROM student_submissions WHERE id = $1", input.SubmissionID)
 	if err != nil {
@@ -32,28 +31,50 @@ func CreateHodReviewHandler(c *gin.Context) {
 		return
 	}
 
-	// Fetch the HoD's email from the database
-	var hod model.Reviewer
-	err = database.DB.Get(&hod, "SELECT * FROM reviewers WHERE id = $1", input.HodID)
+	var hod model.HoD
+	err = database.DB.Get(&hod, "SELECT * FROM hod WHERE id = $1", input.HodID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch HoD details"})
 		return
 	}
 
-	// Handle review actions: Rejected or Rework
 	if input.Action == "Rejected" || input.Action == "Rework" {
-		// Create email subject and body
+		err = database.UpdateSubmissionStatus(input.SubmissionID, input.Action)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
+			return
+		}
+
 		subject := "Your Placement Application Status - HoD Review"
 		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been %s.\n\nHoD Comments: %s\n\nBest regards",
 			submission.Name, input.Action, input.Remarks)
 
-		// Send email from HoD's email ID to student's email
 		err = util.SendEmail(hod.Email, submission.OfficialMailID, subject, body)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send email to student"})
 			return
 		}
 	}
+
+	//if input.Action == "Approved" {
+	//	// Generate NOC PDF
+	//	nocFileName, err := util.CreateNocPdf(submission)
+	//	if err != nil {
+	//		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate NOC PDF"})
+	//		return
+	//	}
+	//
+	//	// Create email subject and body for NOC email
+	//	subject := "Your No Objection Certificate (NOC)"
+	//	body := fmt.Sprintf("Dear %s,\n\nYour placement application has been approved. Please find attached the No Objection Certificate (NOC) for your reference.\n\nBest regards,\nHoD", submission.Name)
+	//
+	//	// Send email with the NOC PDF as attachment
+	//	err = util.SendEmailWithAttachment(hod.Email, submission.OfficialMailID, subject, body, nocFileName)
+	//	if err != nil {
+	//		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send NOC email to student"})
+	//		return
+	//	}
+	//}
 
 	reviewID, err := database.CreateHodReview(input.SubmissionID, input.HodID, input.Action, input.Remarks)
 	if err != nil {
