@@ -56,25 +56,22 @@ func CreateHodReviewHandler(c *gin.Context) {
 		}
 	}
 
-	//if input.Action == "Approved" {
-	//	// Generate NOC PDF
-	//	nocFileName, err := util.CreateNocPdf(submission)
-	//	if err != nil {
-	//		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate NOC PDF"})
-	//		return
-	//	}
-	//
-	//	// Create email subject and body for NOC email
-	//	subject := "Your No Objection Certificate (NOC)"
-	//	body := fmt.Sprintf("Dear %s,\n\nYour placement application has been approved. Please find attached the No Objection Certificate (NOC) for your reference.\n\nBest regards,\nHoD", submission.Name)
-	//
-	//	// Send email with the NOC PDF as attachment
-	//	err = util.SendEmailWithAttachment(hod.Email, submission.OfficialMailID, subject, body, nocFileName)
-	//	if err != nil {
-	//		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send NOC email to student"})
-	//		return
-	//	}
-	//}
+	if input.Action == "Approved" {
+		nocFileName, err := util.CreateNocPdf(submission)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate NOC PDF"})
+			return
+		}
+
+		subject := "Your No Objection Certificate (NOC)"
+		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been approved. Please find attached the No Objection Certificate (NOC) for your reference.\n\nBest regards,\nHoD", submission.Name)
+
+		err = util.SendEmailWithAttachment(hod.Email, submission.OfficialMailID, subject, body, nocFileName)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send NOC email to student"})
+			return
+		}
+	}
 
 	reviewID, err := database.CreateHodReview(input.SubmissionID, input.HodID, input.Action, input.Remarks)
 	if err != nil {

@@ -3,25 +3,30 @@ package util
 import (
 	"MUJ_automated_mail_generation/pkg/model"
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/jung-kurt/gofpdf"
 )
 
 func CreateNocPdf(submission model.StudentSubmission) (string, error) {
+	// Log the submission details for debugging
+	fmt.Printf("Submission data: %+v\n", submission)
+
 	// Create a new PDF document
 	pdf := gofpdf.New("P", "mm", "A4", "")
+	pdf.SetMargins(10, 10, 10) // Set margins
 	pdf.AddPage()
 
-	// Set font for the document
+	// Add title
 	pdf.SetFont("Arial", "B", 16)
+	pdf.CellFormat(0, 10, "No Objection Certificate (NOC)", "", 1, "C", false, 0, "")
+	pdf.Ln(10)
 
-	// Title of the document (NOC)
-	pdf.Cell(190, 10, "No Objection Certificate (NOC)")
-
-	// Set the font for the body text
+	// Set font for body text
 	pdf.SetFont("Arial", "", 12)
 
-	// Add the body of the NOC
+	// Add the body content
 	body := fmt.Sprintf(`This is to certify that %s, a student of the %s Department, Section %s, has been offered a placement at %s.
 
 The details of the placement offer are as follows:
@@ -46,20 +51,28 @@ The University Placement Office`,
 		submission.InternshipStartDate,
 		submission.InternshipEndDate)
 
-	// Add the body content (use MultiCell for multiline text)
-	// Here, we're providing values for border, align, and fill
-	pdf.MultiCell(0, 10, body, "", "", false)
+	// Log body content for debugging
+	fmt.Printf("Body content: \n%s\n", body)
+
+	pdf.MultiCell(0, 10, body, "", "L", false)
+	pdf.Ln(10)
+
+	// Define output directory
+	outputDir := "generated_pdfs"
+	err := os.MkdirAll(outputDir, os.ModePerm)
+	if err != nil {
+		return "", fmt.Errorf("failed to create output directory: %v", err)
+	}
 
 	// Save the PDF to a file
 	fileName := fmt.Sprintf("NOC_%s.pdf", submission.RegistrationNumber)
-	err := pdf.OutputFileAndClose(fileName)
+	outputPath := filepath.Join(outputDir, fileName)
+
+	err = pdf.OutputFileAndClose(outputPath)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to save PDF: %v", err)
 	}
 
-	return fileName, nil
+	fmt.Printf("PDF successfully saved at: %s\n", outputPath)
+	return outputPath, nil
 }
-
-// Something might be wrong here
-
-// NOC was saved in project root
