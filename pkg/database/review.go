@@ -5,8 +5,6 @@ import (
 	"time"
 )
 
-// Reviewer Review Functions
-
 func CreateReviewerReview(submissionID, reviewerID int, status, comments string) (int, error) {
 	query := `
 		INSERT INTO reviewer_reviews (submission_id, reviewer_id, status, comments, created_at, updated_at)

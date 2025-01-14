@@ -27,10 +27,9 @@ func SubmitHandler(c *gin.Context) {
 		return
 	}
 
-	// Log the submission struct before processing
+	// logging for debug
 	fmt.Printf("Struct before DB insert: %+v\n", submission)
 
-	// Convert PackagePPO and StipendAmount to float64 and log errors
 	packagePPO, err := strconv.ParseFloat(submission.PackagePPO, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid package_ppo value"})
@@ -98,6 +97,17 @@ func SubmitHandler(c *gin.Context) {
 		fmt.Printf("Mail copy uploaded successfully. URL: %s\n", mailCopyURL)
 	} else {
 		fmt.Println("No mail copy file received")
+	}
+
+	if submission.OfferLetterPath == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Offer letter file path is missing"})
+		fmt.Println("Offer letter file path is missing")
+		return
+	}
+	if submission.MailCopyPath == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Mail copy file path is missing"})
+		fmt.Println("Mail copy file path is missing")
+		return
 	}
 
 	submission.Status = "Pending"
