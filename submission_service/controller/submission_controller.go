@@ -30,11 +30,15 @@ func SubmitHandler(c *gin.Context) {
 	// logging for debug
 	fmt.Printf("Struct before DB insert: %+v\n", submission)
 
-	packagePPO, err := strconv.ParseFloat(submission.PackagePPO, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid package_ppo value"})
-		fmt.Printf("Error parsing PackagePPO: %v\n", err)
-		return
+	if submission.PackagePPO != "" {
+		packagePPO, err := strconv.ParseFloat(submission.PackagePPO, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid package_ppo value"})
+			fmt.Printf("Error parsing PackagePPO: %v\n", err)
+			return
+		}
+		submission.PackagePPO = fmt.Sprintf("%.2f", packagePPO)
+		fmt.Printf("Formatted PackagePPO: %s\n", submission.PackagePPO)
 	}
 	stipendAmount, err := strconv.ParseFloat(submission.StipendAmount, 64)
 	if err != nil {
@@ -42,10 +46,8 @@ func SubmitHandler(c *gin.Context) {
 		fmt.Printf("Error parsing StipendAmount: %v\n", err)
 		return
 	}
-
-	submission.PackagePPO = fmt.Sprintf("%.2f", packagePPO)
 	submission.StipendAmount = fmt.Sprintf("%.2f", stipendAmount)
-	fmt.Printf("Formatted PackagePPO: %s, Formatted StipendAmount: %s\n", submission.PackagePPO, submission.StipendAmount)
+	fmt.Printf("Formatted StipendAmount: %s\n", submission.StipendAmount)
 
 	offerLetter, _ := c.FormFile("offerLetter")
 	if offerLetter != nil {
