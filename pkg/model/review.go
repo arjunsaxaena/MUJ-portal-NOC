@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type ReviewerReview struct {
+type Review struct {
 	ID           int       `json:"id" db:"id"`
 	SubmissionID int       `json:"submission_id" db:"submission_id"`
 	ReviewerID   int       `json:"reviewer_id" db:"reviewer_id"`
@@ -14,4 +14,9 @@ type ReviewerReview struct {
 	UpdatedAt    time.Time `json:"updated_at" db:"updated_at"`
 }
 
-// sql.NullString  // NullString represents a string that may be null
+type GetReviewFilters struct {
+	ID           string `form:"id"`
+	SubmissionID string `form:"submission_id"`
+	ReviewerID   string `form:"reviewer_id"`
+	Status       string `form:"status"`
+}

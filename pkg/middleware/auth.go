@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"MUJ_automated_mail_generation/pkg/config"
+	"log"
 	"net/http"
 	"strings"
 
@@ -9,8 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-// AuthMiddleware validates the JWT token for protected routes.
-func AuthMiddleware(requiredRole string) gin.HandlerFunc {
+func AuthMiddleware(jwtSecretKey string, requiredRole string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
 		if tokenString == "" {
@@ -19,14 +18,17 @@ func AuthMiddleware(requiredRole string) gin.HandlerFunc {
 			return
 		}
 
+		log.Printf("Authorization Header: %s", tokenString)
+
 		// Remove "Bearer " prefix if present
-		tokenString = strings.TrimPrefix(tokenString, "Bearer ") // removing this causing invalid token error dk why
+		tokenString = strings.TrimPrefix(tokenString, "Bearer ") // code not working after removing dont know why
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			return []byte(config.JwtSecretKey), nil
+			return []byte(jwtSecretKey), nil
 		})
 
 		if err != nil || !token.Valid {
+			log.Printf("Token parsing error: %v", err)
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()
 			return

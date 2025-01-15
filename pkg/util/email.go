@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"log"
 	"net/smtp"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -12,6 +13,7 @@ import (
 )
 
 func SendEmail(from, to, subject, body string) error {
+	// Ensure this is your Gmail app-specific password
 	password := "bjkwwhugjefvcdoa"
 
 	smtpHost := "smtp.gmail.com"
@@ -26,8 +28,23 @@ func SendEmail(from, to, subject, body string) error {
 		"\r\n" +
 		body + "\r\n")
 
+	// Log the email details for debugging
+	log.Printf("Attempting to send email...")
+	log.Printf("From: %s, To: %s", from, to)
+	log.Printf("Subject: %s", subject)
+	log.Printf("Body: %s", body)
+
+	// Sending email via SMTP
 	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, msg)
-	return err
+	if err != nil {
+		// Log the error in case of failure
+		log.Printf("Error sending email: %v", err)
+		return fmt.Errorf("failed to send email: %v", err)
+	}
+
+	// Log successful email sending
+	log.Printf("Email sent successfully to: %s", to)
+	return nil
 }
 
 func downloadFileFromS3(s3URL string, bucket string) ([]byte, error) {

@@ -11,11 +11,11 @@ type StudentSubmission struct {
 	Department          string    `json:"department" form:"department" binding:"required" db:"department"`
 	Section             string    `json:"section" form:"section" binding:"required" db:"section"`
 	OfferType           string    `json:"offer_type" form:"offerType" binding:"required" db:"offer_type"`
-	CompanyName         string    `json:"company_name" form:"companyName" db:"company_name"`
+	CompanyName         string    `json:"company_name" form:"companyName" binding:"required" db:"company_name"`
 	CompanyState        string    `json:"company_state" form:"companyState" binding:"required" db:"company_state"`
 	CompanyCity         string    `json:"company_city" form:"companyCity" binding:"required" db:"company_city"`
 	Pincode             string    `json:"pincode" form:"companyPin" binding:"required" db:"pincode"`
-	OfferTypeDetail     string    `json:"offer_type_detail" form:"internshipType" db:"offer_type_detail"`
+	OfferTypeDetail     string    `json:"offer_type_detail" form:"internshipType" binding:"required" db:"offer_type_detail"`
 	PackagePPO          string    `json:"package_ppo" form:"ppoPackage" db:"package_ppo"`
 	StipendAmount       string    `json:"stipend_amount" form:"stipend" db:"stipend_amount"`
 	InternshipStartDate string    `json:"internship_start_date" form:"startDate" db:"internship_start_date"`
@@ -26,4 +26,10 @@ type StudentSubmission struct {
 	Status              string    `json:"status" db:"status"`
 	CreatedAt           time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt           time.Time `json:"updated_at" db:"updated_at"`
+}
+
+type GetSubmissionFilters struct {
+	ID         string `form:"id"`
+	Department string `form:"department"`
+	Status     string `form:"status"`
 }

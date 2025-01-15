@@ -1,7 +1,7 @@
 package util
 
 import (
-	"MUJ_automated_mail_generation/pkg/model"
+	"MUJ_AMG/pkg/model"
 	"bytes"
 	"fmt"
 

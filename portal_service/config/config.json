@@ -1,0 +1,6 @@
+{
+    "port": "8002",
+    "database": "postgres://postgres:secret@localhost:5432/student_portal?sslmode=disable",
+    "jwt_secret_key": "your_jwt_secret_key",
+    "submission_service_url": "http://localhost:8001"
+}

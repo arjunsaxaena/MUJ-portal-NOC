@@ -10,3 +10,9 @@ type Reviewer struct {
 	Department   string    `json:"department" db:"department"`
 	CreatedAt    time.Time `json:"created_at" db:"created_at"`
 }
+
+type GetReviewerFilters struct {
+	ID         string `form:"id"`
+	Department string `form:"department"`
+	Email      string `form:"Email"`
+}

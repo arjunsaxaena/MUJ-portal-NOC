@@ -1,20 +1,22 @@
-package database
+package repository
 
 import (
-	"MUJ_automated_mail_generation/pkg/model"
+	"MUJ_AMG/pkg/database"
+	"MUJ_AMG/pkg/model"
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 )
 
 func CreateSubmission(submission *model.StudentSubmission) error {
-	_, err := DB.NamedExec(`
+	_, err := database.DB.NamedExec(`
 		INSERT INTO student_submissions (
 			registration_number, name, official_mail_id, mobile_number, department, section, offer_type, 
 			company_name, company_state, company_city, pincode, offer_type_detail, package_ppo, stipend_amount, 
 			internship_start_date, internship_end_date, offer_letter_path, mail_copy_path, terms_accepted, 
 			status, created_at, updated_at
-		) 
+		)
 		VALUES (
 			:registration_number, :name, :official_mail_id, :mobile_number, :department, :section, :offer_type, 
 			:company_name, :company_state, :company_city, :pincode, :offer_type_detail, :package_ppo, :stipend_amount, 
@@ -30,34 +32,31 @@ func CreateSubmission(submission *model.StudentSubmission) error {
 	return nil
 }
 
-func GetAllSubmissions() ([]model.StudentSubmission, error) {
-	var submissions []model.StudentSubmission
-	err := DB.Select(&submissions, "SELECT * FROM student_submissions")
-	return submissions, err
-}
+func GetSubmissions(filters model.GetSubmissionFilters) ([]model.StudentSubmission, error) {
+	query := "SELECT * FROM student_submissions WHERE 1=1"
+	var args []interface{}
+	paramIndex := 1
 
-func GetSubmissionsByDepartment(department string) ([]model.StudentSubmission, error) {
-	var submissions []model.StudentSubmission
-	query := "SELECT * FROM student_submissions WHERE department = $1"
-	err := DB.Select(&submissions, query, department)
-	if err != nil {
-		log.Printf("Error executing query: %v", err)
+	if filters.ID != "" {
+		query += " AND id = $" + strconv.Itoa(paramIndex)
+		args = append(args, filters.ID)
+		paramIndex++
 	}
-	return submissions, err
-}
+	if filters.Department != "" {
+		query += " AND department = $" + strconv.Itoa(paramIndex)
+		args = append(args, filters.Department)
+		paramIndex++
+	}
+	if filters.Status != "" {
+		query += " AND status = $" + strconv.Itoa(paramIndex)
+		args = append(args, filters.Status)
+		paramIndex++
+	}
 
-func GetApprovedSubmissionsByDepartment(department string) ([]model.StudentSubmission, error) {
 	var submissions []model.StudentSubmission
-	query := `
-		SELECT * 
-		FROM student_submissions 
-		WHERE department = $1 
-		AND status = 'Approved'
-	`
-
-	err := DB.Select(&submissions, query, department)
+	err := database.DB.Select(&submissions, query, args...)
 	if err != nil {
-		log.Printf("Error fetching approved submissions for department %s: %v", department, err)
+		log.Printf("Error fetching submissions with filters %v: %v", filters, err)
 		return nil, err
 	}
 
@@ -71,10 +70,24 @@ func UpdateSubmissionStatus(submissionID int, status string) error {
 		WHERE id = $3
 	`
 
-	// Execute the query to update the status
-	_, err := DB.Exec(query, status, time.Now(), submissionID)
+	_, err := database.DB.Exec(query, status, time.Now(), submissionID)
 	if err != nil {
 		fmt.Printf("Error updating submission status: %v\n", err)
+		return err
+	}
+
+	return nil
+}
+
+func DeleteSubmission(submissionID int) error {
+	query := `
+		DELETE FROM student_submissions
+		WHERE id = $1
+	`
+
+	_, err := database.DB.Exec(query, submissionID)
+	if err != nil {
+		fmt.Printf("Error deleting submission: %v\n", err)
 		return err
 	}
 

@@ -1,9 +1,9 @@
-package handler
+package controller
 
 import (
-	"MUJ_automated_mail_generation/pkg/database"
-	"MUJ_automated_mail_generation/pkg/model"
-	"MUJ_automated_mail_generation/pkg/util"
+	"MUJ_AMG/pkg/model"
+	"MUJ_AMG/pkg/util"
+	"MUJ_AMG/submission_service/repository"
 	"fmt"
 	"log"
 	"net/http"
@@ -47,7 +47,7 @@ func SubmitHandler(c *gin.Context) {
 	submission.StipendAmount = fmt.Sprintf("%.2f", stipendAmount)
 	fmt.Printf("Formatted PackagePPO: %s, Formatted StipendAmount: %s\n", submission.PackagePPO, submission.StipendAmount)
 
-	offerLetter, _ := c.FormFile("offer_letter")
+	offerLetter, _ := c.FormFile("offerLetter")
 	if offerLetter != nil {
 		fmt.Printf("Received offer letter file: %s\n", offerLetter.Filename)
 
@@ -59,7 +59,7 @@ func SubmitHandler(c *gin.Context) {
 		}
 		defer file.Close()
 
-		offerLetterKey := fmt.Sprintf("offer_letters/%s_%s", submission.RegistrationNumber, offerLetter.Filename)
+		offerLetterKey := fmt.Sprintf("offerLetters/%s_%s", submission.RegistrationNumber, offerLetter.Filename)
 		err = util.UploadFileToS3("muj-student-data", file, offerLetterKey)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload offer letter to S3"})
@@ -73,7 +73,7 @@ func SubmitHandler(c *gin.Context) {
 		fmt.Println("No offer letter file received")
 	}
 
-	mailCopy, _ := c.FormFile("mail_copy")
+	mailCopy, _ := c.FormFile("mailCopy")
 	if mailCopy != nil {
 		fmt.Printf("Received mail copy file: %s\n", mailCopy.Filename)
 
@@ -85,7 +85,7 @@ func SubmitHandler(c *gin.Context) {
 		}
 		defer file.Close()
 
-		mailCopyKey := fmt.Sprintf("mail_copies/%s_%s", submission.RegistrationNumber, mailCopy.Filename)
+		mailCopyKey := fmt.Sprintf("mailCopies/%s_%s", submission.RegistrationNumber, mailCopy.Filename)
 		err = util.UploadFileToS3("muj-student-data", file, mailCopyKey)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload mail copy to S3"})
@@ -113,7 +113,7 @@ func SubmitHandler(c *gin.Context) {
 	submission.Status = "Pending"
 	fmt.Printf("Submission ready for DB insert: %+v\n", submission)
 
-	err = database.CreateSubmission(&submission)
+	err = repository.CreateSubmission(&submission)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save data"})
 		fmt.Printf("Error saving submission to DB: %v\n", err)
@@ -125,69 +125,53 @@ func SubmitHandler(c *gin.Context) {
 }
 
 func GetSubmissionsHandler(c *gin.Context) {
-	department, exists := c.Get("department")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+	var filters model.GetSubmissionFilters
+	if err := c.ShouldBindQuery(&filters); err != nil {
+		log.Printf("Invalid filters: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid filters"})
 		return
 	}
 
-	departmentStr, ok := department.(string)
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid department format"})
-		return
-	}
+	log.Printf("Filters received: %+v", filters)
 
-	submissions, err := database.GetSubmissionsByDepartment(departmentStr)
+	submissions, err := repository.GetSubmissions(filters)
 	if err != nil {
-		log.Printf("Error fetching submissions for department %s: %v", departmentStr, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submissions"})
+		log.Printf("Error fetching submissions with filters %v: %v", filters, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submissions", "details": err.Error()})
 		return
 	}
 
+	log.Printf("Submissions retrieved: %d records", len(submissions))
 	c.JSON(http.StatusOK, gin.H{"submissions": submissions})
 }
 
-func GetSubmissionsByDepartmentHandler(c *gin.Context) {
-	department, exists := c.Get("department")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		return
+func UpdateSubmissionStatusHandler(c *gin.Context) {
+	var input struct {
+		Status string `json:"status" binding:"required"`
 	}
 
-	departmentStr, ok := department.(string)
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid department format"})
+	submissionIDStr := c.DefaultQuery("id", "")
+	if submissionIDStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Submission ID is required"})
 		return
 	}
-
-	submissions, err := database.GetSubmissionsByDepartment(departmentStr)
+	submissionID, err := strconv.Atoi(submissionIDStr)
 	if err != nil {
-		log.Printf("Error fetching submissions for department %s: %v", departmentStr, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submissions"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid submission ID"})
+		return
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"submissions": submissions})
-}
-
-func GetApprovedSubmissionsByDepartmentHandler(c *gin.Context) {
-	department, exists := c.Get("department")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		return
-	}
-
-	departmentStr, ok := department.(string)
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid department format"})
-		return
-	}
-
-	submissions, err := database.GetApprovedSubmissionsByDepartment(departmentStr)
+	err = repository.UpdateSubmissionStatus(submissionID, input.Status)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch approved submissions"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"submissions": submissions})
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Submission status updated successfully",
+	})
 }
