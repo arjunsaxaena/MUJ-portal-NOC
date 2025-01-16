@@ -133,7 +133,7 @@ func GetSubmissionscontroller(c *gin.Context) {
 		return
 	}
 
-	submissionURL := cfg.SubmissionServiceURL + "/submissions?department=" + department.(string)
+	submissionURL := cfg.SubmissionServiceURL + "/submissions?department=" + department.(string) + "&status=Pending"
 
 	resp, err := http.Get(submissionURL)
 	if err != nil {
@@ -155,7 +155,7 @@ func GetSubmissionscontroller(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read response body"})
 		return
 	}
-	log.Printf("Response from submission service: %s", body)
+	// log.Printf("Response from submission service: %s", body)
 
 	type SubmissionsResponse struct {
 		Data []model.StudentSubmission `json:"submissions"`

@@ -21,10 +21,20 @@ func main() {
 
 	r := gin.Default()
 
-	r.Use(cors.Default())
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},         // Frontend URL
+		AllowMethods:     []string{"GET", "POST", "PUT", "OPTIONS"}, // Allowed methods
+		AllowHeaders:     []string{"Content-Type", "Authorization"}, // Allowed headers
+		AllowCredentials: true,                                      // Allow cookies or credentials
+	}))
 
 	r.POST("/reviewer", controller.CreateReviewerHandler)
 	r.POST("/reviewer/login", controller.LoginReviewerHandler)
+
+	//[GIN] 2025/01/16 - 11:33:19 | 204 |            0s |             ::1 | OPTIONS  "/reviewer/login"      asking cors for persmission
+	//Current working directory:
+	//[GIN] 2025/01/16 - 11:33:19 | 200 |     71.4962ms |             ::1 | POST     "/reviewer/login"		post request
+
 	// (1) Reviewer login credentials will be handled here. Jwt token will be outputted here.
 	//     {
 	//			"email": "arjunsaxena04@gmail.com",
