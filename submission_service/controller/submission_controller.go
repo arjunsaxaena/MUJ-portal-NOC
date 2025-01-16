@@ -39,15 +39,22 @@ func SubmitHandler(c *gin.Context) {
 		}
 		submission.PackagePPO = fmt.Sprintf("%.2f", packagePPO)
 		fmt.Printf("Formatted PackagePPO: %s\n", submission.PackagePPO)
+	} else {
+		submission.PackagePPO = "0.00"
 	}
-	stipendAmount, err := strconv.ParseFloat(submission.StipendAmount, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid stipend_amount value"})
-		fmt.Printf("Error parsing StipendAmount: %v\n", err)
-		return
+
+	if submission.StipendAmount != "" {
+		stipendAmount, err := strconv.ParseFloat(submission.StipendAmount, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid stipend_amount value"})
+			fmt.Printf("Error parsing StipendAmount: %v\n", err)
+			return
+		}
+		submission.StipendAmount = fmt.Sprintf("%.2f", stipendAmount)
+		fmt.Printf("Formatted StipendAmount: %s\n", submission.StipendAmount)
+	} else {
+		submission.StipendAmount = "0.00"
 	}
-	submission.StipendAmount = fmt.Sprintf("%.2f", stipendAmount)
-	fmt.Printf("Formatted StipendAmount: %s\n", submission.StipendAmount)
 
 	offerLetter, _ := c.FormFile("offerLetter")
 	if offerLetter != nil {
@@ -115,7 +122,7 @@ func SubmitHandler(c *gin.Context) {
 	submission.Status = "Pending"
 	fmt.Printf("Submission ready for DB insert: %+v\n", submission)
 
-	err = repository.CreateSubmission(&submission)
+	err := repository.CreateSubmission(&submission)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save data"})
 		fmt.Printf("Error saving submission to DB: %v\n", err)
