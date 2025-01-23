@@ -286,13 +286,11 @@ func UpdateSpcReviewHandler(c *gin.Context) {
 }
 
 func GetSpcReviewsHandler(c *gin.Context) {
-	// Extract query parameters
 	submissionID := c.DefaultQuery("submission_id", "")
 	spcID := c.DefaultQuery("spc_id", "")
 	status := c.DefaultQuery("status", "")
 	reviewID := c.DefaultQuery("review_id", "")
 
-	// Create filters object, handling empty cases for non-string fields
 	filters := model.GetSpcReviewFilters{}
 	if reviewID != "" {
 		filters.ID = reviewID
@@ -307,15 +305,12 @@ func GetSpcReviewsHandler(c *gin.Context) {
 		filters.Status = status
 	}
 
-	// Fetch reviews from the repository
 	reviews, err := repository.GetSpcReviews(filters)
 	if err != nil {
-		// Log and return an internal server error if fetching reviews fails
 		log.Printf("Error fetching reviews: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch reviews"})
 		return
 	}
 
-	// Return the reviews in the response
 	c.JSON(http.StatusOK, gin.H{"reviews": reviews})
 }
