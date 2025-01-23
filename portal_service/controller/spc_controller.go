@@ -15,7 +15,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateReviewerHandler(c *gin.Context) {
+func CreateSpCHandler(c *gin.Context) {
 	var input struct {
 		Name       string `json:"name"`
 		Email      string `json:"email"`
@@ -34,16 +34,16 @@ func CreateReviewerHandler(c *gin.Context) {
 		return
 	}
 
-	id, err := repository.CreateReviewer(input.Name, input.Email, string(hashedPassword), input.Department)
+	id, err := repository.CreateSpC(input.Name, input.Email, string(hashedPassword), input.Department)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create reviewer"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create spc"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"id": id, "message": "Reviewer created successfully"})
+	c.JSON(http.StatusCreated, gin.H{"id": id, "message": "spc created successfully"})
 }
 
-func LoginReviewerHandler(c *gin.Context) {
+func LoginSpcHandler(c *gin.Context) {
 	var input struct {
 		Email    string `json:"email" binding:"required,email"`
 		Password string `json:"password" binding:"required,min=6"`
@@ -54,16 +54,16 @@ func LoginReviewerHandler(c *gin.Context) {
 		return
 	}
 
-	filters := model.GetReviewerFilters{Email: input.Email}
-	reviewers, err := repository.GetReviewers(filters)
-	if err != nil || len(reviewers) == 0 {
+	filters := model.GetSpCFilters{Email: input.Email}
+	spcs, err := repository.GetSpCs(filters)
+	if err != nil || len(spcs) == 0 {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
 
-	reviewer := reviewers[0] // incase multiple, unlikely
+	spc := spcs[0] // incase multiple, unlikely
 
-	if err := bcrypt.CompareHashAndPassword([]byte(reviewer.PasswordHash), []byte(input.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(spc.PasswordHash), []byte(input.Password)); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
@@ -72,10 +72,10 @@ func LoginReviewerHandler(c *gin.Context) {
 
 	// Generate JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":         reviewer.ID, // Include reviewer ID for identification
-		"email":      reviewer.Email,
-		"department": reviewer.Department, // Include department in claims
-		"role":       "reviewer",
+		"id":         spc.ID, // Include spc ID for identification
+		"email":      spc.Email,
+		"department": spc.Department, // Include department in claims
+		"role":       "spc",
 		"exp":        time.Now().Add(time.Hour * 24).Unix(), // Expiration time (24 hours)
 	})
 
@@ -93,30 +93,30 @@ func LoginReviewerHandler(c *gin.Context) {
 	})
 }
 
-func GetReviewersHandler(c *gin.Context) {
+func GetSpcsHandler(c *gin.Context) {
 	department := c.DefaultQuery("department", "")
 
-	var filters model.GetReviewerFilters
+	var filters model.GetSpCFilters
 	if department != "" {
 		filters.Department = department
 	}
 
-	reviewers, err := repository.GetReviewers(filters)
+	spcs, err := repository.GetSpCs(filters)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch reviewers"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch spcs"})
 		return
 	}
 
-	if len(reviewers) == 0 {
+	if len(spcs) == 0 {
 		if department != "" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "No reviewers found for the specified department"})
+			c.JSON(http.StatusNotFound, gin.H{"error": "No spcs found for the specified department"})
 		} else {
-			c.JSON(http.StatusNotFound, gin.H{"error": "No reviewers found"})
+			c.JSON(http.StatusNotFound, gin.H{"error": "No spcs found"})
 		}
 		return
 	}
 
-	c.JSON(http.StatusOK, reviewers)
+	c.JSON(http.StatusOK, spcs)
 }
 
 func GetSubmissionscontroller(c *gin.Context) {

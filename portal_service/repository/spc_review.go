@@ -7,23 +7,23 @@ import (
 	"time"
 )
 
-func CreateReview(submissionID, reviewerID int, status, comments string) (int, error) {
+func CreateSpcReview(submissionID, spcID int, status, comments string) (int, error) {
 	query := `
-		INSERT INTO reviewer_reviews (submission_id, reviewer_id, status, comments, created_at, updated_at)
+		INSERT INTO spc_reviews (submission_id, spc_id, status, comments, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id
 	`
 	var reviewID int
-	err := database.DB.QueryRow(query, submissionID, reviewerID, status, comments, time.Now(), time.Now()).Scan(&reviewID)
+	err := database.DB.QueryRow(query, submissionID, spcID, status, comments, time.Now(), time.Now()).Scan(&reviewID)
 	if err != nil {
 		return 0, err
 	}
 	return reviewID, nil
 }
 
-func UpdateReview(reviewID int, status, comments string) error {
+func UpdateSpcReview(reviewID int, status, comments string) error {
 	query := `
-		UPDATE reviewer_reviews
+		UPDATE spc_reviews
 		SET status = $1, comments = $2, updated_at = $3
 		WHERE id = $4
 	`
@@ -31,10 +31,10 @@ func UpdateReview(reviewID int, status, comments string) error {
 	return err
 }
 
-func GetReviews(filters model.GetReviewFilters) ([]model.Review, error) {
+func GetSpcReviews(filters model.GetSpcReviewFilters) ([]model.SpcReview, error) {
 	query := `
-		SELECT id, submission_id, reviewer_id, status, comments, created_at, updated_at
-		FROM reviewer_reviews
+		SELECT id, submission_id, spc_id, status, comments, created_at, updated_at
+		FROM spc_reviews
 		WHERE 1=1
 	`
 
@@ -51,9 +51,9 @@ func GetReviews(filters model.GetReviewFilters) ([]model.Review, error) {
 		args = append(args, filters.SubmissionID)
 		argIndex++
 	}
-	if filters.ReviewerID != "" {
+	if filters.SpcID != "" {
 		query += fmt.Sprintf(" AND reviewer_id = $%d", argIndex)
-		args = append(args, filters.ReviewerID)
+		args = append(args, filters.SpcID)
 		argIndex++
 	}
 	if filters.Status != "" {
@@ -62,7 +62,7 @@ func GetReviews(filters model.GetReviewFilters) ([]model.Review, error) {
 		argIndex++
 	}
 
-	var reviews []model.Review
+	var reviews []model.SpcReview
 	err := database.DB.Select(&reviews, query, args...)
 	if err != nil {
 		return nil, err

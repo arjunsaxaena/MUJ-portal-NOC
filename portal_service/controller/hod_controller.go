@@ -79,7 +79,7 @@ func LoginHoDHandler(c *gin.Context) {
 		"exp":        time.Now().Add(time.Hour * 24).Unix(), // Expiration time (24 hours)
 	})
 
-	// Sign the token
+	// signing the token
 	tokenString, err := token.SignedString([]byte(cfg.JwtSecretKey))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
@@ -154,7 +154,7 @@ func GetSubmissionsForHoDcontroller(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read response body"})
 		return
 	}
-	log.Printf("Response from submission service: %s", body)
+	// log.Printf("Response from submission service: %s", body)
 
 	type SubmissionsResponse struct {
 		Data []model.StudentSubmission `json:"submissions"`

@@ -6,6 +6,8 @@ type StudentSubmission struct {
 	ID                  int       `json:"id" db:"id"`
 	RegistrationNumber  string    `json:"registration_number" form:"registrationNumber" binding:"required" db:"registration_number"`
 	Name                string    `json:"name" form:"name" binding:"required" db:"name"`
+	Gender              string    `json:"gender" form:"gender" db:"gender"`
+	Semester            string    `json:"semester" form:"semester" db:"semester"`
 	OfficialMailID      string    `json:"official_mail_id" form:"email" binding:"required,email" db:"official_mail_id"`
 	MobileNumber        string    `json:"mobile_number" form:"mobile" binding:"required" db:"mobile_number"`
 	Department          string    `json:"department" form:"department" binding:"required" db:"department"`
@@ -15,6 +17,7 @@ type StudentSubmission struct {
 	CompanyState        string    `json:"company_state" form:"companyState" binding:"required" db:"company_state"`
 	CompanyCity         string    `json:"company_city" form:"companyCity" binding:"required" db:"company_city"`
 	Pincode             string    `json:"pincode" form:"companyPin" binding:"required" db:"pincode"`
+	HRDEmail            string    `json:"hrd_email" form:"hrdEmail" binding:"required,email" db:"hrd_email"`
 	OfferTypeDetail     string    `json:"offer_type_detail" form:"internshipType" binding:"required" db:"offer_type_detail"`
 	PackagePPO          string    `json:"package_ppo" form:"ppoPackage" db:"package_ppo"`
 	StipendAmount       string    `json:"stipend_amount" form:"stipend" db:"stipend_amount"`

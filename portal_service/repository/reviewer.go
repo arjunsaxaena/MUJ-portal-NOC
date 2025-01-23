@@ -10,9 +10,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateReviewer(name, email, passwordHash, department string) (int, error) {
+func CreateSpC(name, email, passwordHash, department string) (int, error) {
 	query := `
-		INSERT INTO reviewers (name, email, password_hash, department)
+		INSERT INTO spc (name, email, password_hash, department)
 		VALUES ($1, $2, $3, $4)
 		RETURNING id
 	`
@@ -24,8 +24,8 @@ func CreateReviewer(name, email, passwordHash, department string) (int, error) {
 	return id, nil
 }
 
-func GetReviewers(filters model.GetReviewerFilters) ([]model.Reviewer, error) {
-	query := "SELECT * FROM reviewers WHERE 1=1"
+func GetSpCs(filters model.GetSpCFilters) ([]model.SpC, error) {
+	query := "SELECT * FROM spc WHERE 1=1"
 	var args []interface{}
 	paramIndex := 1
 
@@ -45,28 +45,28 @@ func GetReviewers(filters model.GetReviewerFilters) ([]model.Reviewer, error) {
 		paramIndex++
 	}
 
-	var reviewers []model.Reviewer
-	err := database.DB.Select(&reviewers, query, args...)
+	var spcs []model.SpC
+	err := database.DB.Select(&spcs, query, args...)
 	if err != nil {
-		log.Printf("Error fetching reviewers with filters %v: %v", filters, err)
+		log.Printf("Error fetching spc with filters %v: %v", filters, err)
 		return nil, err
 	}
 
-	return reviewers, nil
+	return spcs, nil
 }
 
-func ValidateReviewerPassword(email, password string) (bool, error) {
-	filters := model.GetReviewerFilters{Email: email}
-	reviewers, err := GetReviewers(filters)
+func ValidateSpCPassword(email, password string) (bool, error) {
+	filters := model.GetSpCFilters{Email: email}
+	spcs, err := GetSpCs(filters)
 	if err != nil {
 		return false, err
 	}
 
-	if len(reviewers) != 1 {
+	if len(spcs) != 1 {
 		return false, errors.New("invalid credentials")
 	}
 
-	reviewer := reviewers[0]
+	reviewer := spcs[0]
 
 	err = bcrypt.CompareHashAndPassword([]byte(reviewer.PasswordHash), []byte(password))
 	if err != nil {
@@ -75,9 +75,9 @@ func ValidateReviewerPassword(email, password string) (bool, error) {
 	return true, nil
 }
 
-func UpdateReviewer(id int, name, email, passwordHash, department string) error {
+func UpdateSpC(id int, name, email, passwordHash, department string) error {
 	query := `
-		UPDATE reviewers
+		UPDATE spc
 		SET name = COALESCE($1, name),
 		    email = COALESCE($2, email),
 		    password_hash = COALESCE($3, password_hash),
@@ -93,9 +93,9 @@ func UpdateReviewer(id int, name, email, passwordHash, department string) error 
 	return nil
 } // For testing
 
-func DeleteReviewer(id int) error {
+func DeleteSpC(id int) error {
 	query := `
-		DELETE FROM reviewers
+		DELETE FROM spc
 		WHERE id = $1
 	`
 	result, err := database.DB.Exec(query, id)

@@ -28,41 +28,41 @@ func main() {
 		AllowCredentials: true,                                      // Allow cookies or credentials
 	}))
 
-	r.POST("/reviewer", controller.CreateReviewerHandler)
-	r.POST("/reviewer/login", controller.LoginReviewerHandler)
+	r.POST("/spc", controller.CreateSpCHandler)
+	r.POST("/spc/login", controller.LoginSpcHandler)
 
-	//[GIN] 2025/01/16 - 11:33:19 | 204 |            0s |             ::1 | OPTIONS  "/reviewer/login"      asking cors for persmission
+	//[GIN] 2025/01/16 - 11:33:19 | 204 |            0s |             ::1 | OPTIONS  "/spc/login"      asking cors for persmission
 	//Current working directory:
-	//[GIN] 2025/01/16 - 11:33:19 | 200 |     71.4962ms |             ::1 | POST     "/reviewer/login"		post request
+	//[GIN] 2025/01/16 - 11:33:19 | 200 |     71.4962ms |             ::1 | POST     "/spc/login"		post request
 
-	// (1) Reviewer login credentials will be handled here. Jwt token will be outputted here.
+	// (1) spc login credentials will be handled here. Jwt token will be outputted here.
 	//     {
 	//			"email": "arjunsaxena04@gmail.com",
 	//			"password": "secure"
 	//		}
 	// 		This is how it expects the body
 
-	r.GET("/reviewers", controller.GetReviewersHandler)
+	r.GET("/spcs", controller.GetSpcsHandler)
 
-	authReviewer := r.Group("/reviewer")
-	authReviewer.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "reviewer"))
+	authSpc := r.Group("/spc")
+	authSpc.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "spc"))
 	{
-		authReviewer.GET("/submissions", controller.GetSubmissionscontroller)
+		authSpc.GET("/submissions", controller.GetSubmissionscontroller)
 		// (2) On successful login, JWT token should be placed here.
-		//     Reviewer should be redirected to this URL.
+		//     spc should be redirected to this URL.
 
-		authReviewer.POST("/fpc_reviews", controller.CreateReviewHandler)
-		// (3) When a reviewer clicks "Approve", "Reject", or "Rework", send a JSON body like:
+		authSpc.POST("/spc_reviews", controller.CreateSpcReviewHandler)
+		// (3) When a spc clicks "Approve", "Reject", or "Rework", send a JSON body like:
 		//     {
 		//         "submission_id": 5,
-		//         "reviewer_id": 1,
+		//         "spc_id": 1,
 		//         "status": "Approved",   // Status changes based on button clicked.
 		//         "comments": "Documents verified"
 		//     }
-		//     POST this JSON body to "/fpc_reviews". Note: Everything inside authReviewer will require the jwt token at login to be carry forward.
+		//     POST this JSON body to "/spc_reviews". Note: Everything inside authSpc will require the jwt token at login to be carry forward.
 
-		authReviewer.PUT("/fpc_reviews", controller.UpdateReviewHandler) // If fpc wants to reject or rework an approved submission
-		authReviewer.GET("/fpc_reviews", controller.GetReviewsHandler)   // For testing
+		authSpc.PATCH("/spc_reviews", controller.UpdateSpcReviewHandler) // If fpc wants to reject or rework an approved submission
+		authSpc.GET("/spc_reviews", controller.GetSpcReviewsHandler)     // For testing
 	}
 
 	r.POST("/hod/login", controller.LoginHoDHandler)
@@ -91,8 +91,8 @@ func main() {
 		//         "action": "Approved",   // Action changes based on button clicked.
 		//         "remarks": "Everything looks good, approved for NOC." // Remarks based on the status.
 		//     }
-		//     POST this JSON body to "/hod_reviews". Note: Everything inside authReviewer will require the jwt token at login to be carry forward.
-		//     Make sure the status in reviewer or action in hod only posts status as
+		//     POST this JSON body to "/hod_reviews". Note: Everything inside authspc will require the jwt token at login to be carry forward.
+		//     Make sure the status in spc or action in hod only posts status as
 		//     "Approve", "Reject", or "Rework" according to the button clicked. This is case sensitive.
 
 		authHoD.GET("/hod_reviews", controller.GetHodReviewsHandler) // For testing

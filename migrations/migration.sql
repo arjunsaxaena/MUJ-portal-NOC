@@ -6,6 +6,8 @@ CREATE TABLE student_submissions (
     id SERIAL PRIMARY KEY,
     registration_number VARCHAR(20) NOT NULL,
     name VARCHAR(100) NOT NULL,
+    gender VARCHAR(10),
+    semester VARCHAR(10),
     official_mail_id VARCHAR(100) NOT NULL,
     mobile_number VARCHAR(15),
     department VARCHAR(50),
@@ -15,6 +17,7 @@ CREATE TABLE student_submissions (
     company_state VARCHAR(100), 
     company_city VARCHAR(100), 
     pincode VARCHAR(20), 
+    hrd_email VARCHAR(100),
     offer_type_detail VARCHAR(100),
     package_ppo DECIMAL(10, 2),
     stipend_amount DECIMAL(10, 2),
@@ -28,7 +31,7 @@ CREATE TABLE student_submissions (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE reviewers (                       
+CREATE TABLE spc (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL, 
     email VARCHAR(100) NOT NULL UNIQUE,
@@ -37,16 +40,16 @@ CREATE TABLE reviewers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE reviewer_reviews (
+CREATE TABLE spc_reviews (
     id SERIAL PRIMARY KEY,
     submission_id INT NOT NULL,
-    reviewer_id INT NOT NULL,
-    status VARCHAR(20) NOT NULL, -- Accepted, Rejected, Rework
+    spc_id INT NOT NULL,
+    status VARCHAR(20) NOT NULL, 
     comments TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     FOREIGN KEY (submission_id) REFERENCES student_submissions(id),
-    FOREIGN KEY (reviewer_id) REFERENCES reviewers(id)
+    FOREIGN KEY (spc_id) REFERENCES spc(id)
 );
 
 
@@ -63,7 +66,7 @@ CREATE TABLE hod_reviews (
     id SERIAL PRIMARY KEY,
     submission_id INT NOT NULL,
     hod_id INT NOT NULL,
-    action VARCHAR(20) NOT NULL, -- Approved, Rejected, Rework
+    action VARCHAR(20) NOT NULL, 
     remarks TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -71,3 +74,10 @@ CREATE TABLE hod_reviews (
     FOREIGN KEY (hod_id) REFERENCES hod(id)
 );
 
+CREATE TABLE admin (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL, 
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

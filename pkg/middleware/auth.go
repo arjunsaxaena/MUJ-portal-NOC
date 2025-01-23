@@ -41,6 +41,7 @@ func AuthMiddleware(jwtSecretKey string, requiredRole string) gin.HandlerFunc {
 			return
 		}
 
+		c.Set("id", claims["id"])
 		c.Set("email", claims["email"])
 		c.Set("role", claims["role"])
 		c.Set("department", claims["department"])
