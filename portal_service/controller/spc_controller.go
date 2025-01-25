@@ -70,23 +70,20 @@ func LoginSpcHandler(c *gin.Context) {
 
 	cfg, _ := config.LoadConfig()
 
-	// Generate JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":         spc.ID, // Include spc ID for identification
+		"id":         spc.ID,
 		"email":      spc.Email,
-		"department": spc.Department, // Include department in claims
+		"department": spc.Department,
 		"role":       "spc",
-		"exp":        time.Now().Add(time.Hour * 24).Unix(), // Expiration time (24 hours)
+		"exp":        time.Now().Add(time.Hour * 24).Unix(),
 	})
 
-	// Sign the token
 	tokenString, err := token.SignedString([]byte(cfg.JwtSecretKey))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
 	}
 
-	// Respond with the token
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Login successful",
 		"token":   tokenString,

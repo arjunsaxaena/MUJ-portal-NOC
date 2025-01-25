@@ -28,7 +28,19 @@ func main() {
 		AllowCredentials: true,                                      // Allow cookies or credentials
 	}))
 
-	r.POST("/spc", controller.CreateSpCHandler)
+	r.POST("/admin", controller.CreateAdminHandler)
+	r.POST("/admin/login", controller.LoginAdminHandler)
+
+	authAdmin := r.Group("/admin")
+	authAdmin.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "admin"))
+	{
+		authAdmin.POST("/spc", controller.CreateSpCHandler)
+		authAdmin.POST("/hod", controller.CreateHoDHandler)
+
+		authAdmin.GET("/spcs", controller.GetSpcsHandler)
+		authAdmin.GET("/hods", controller.GetHoDsHandler)
+	}
+
 	r.POST("/spc/login", controller.LoginSpcHandler)
 
 	//[GIN] 2025/01/16 - 11:33:19 | 204 |            0s |             ::1 | OPTIONS  "/spc/login"      asking cors for persmission
@@ -41,8 +53,6 @@ func main() {
 	//			"password": "secure"
 	//		}
 	// 		This is how it expects the body
-
-	r.GET("/spcs", controller.GetSpcsHandler)
 
 	authSpc := r.Group("/spc")
 	authSpc.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "spc"))
@@ -72,9 +82,6 @@ func main() {
 	//			"password": "secure"
 	//		}
 	// 		This is how it expects the body
-
-	r.POST("/hod", controller.CreateHoDHandler) // For creating HoD (used during testing)
-	r.GET("/hods", controller.GetHoDsHandler)   // For testing
 
 	authHoD := r.Group("/hod")
 	authHoD.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "hod"))

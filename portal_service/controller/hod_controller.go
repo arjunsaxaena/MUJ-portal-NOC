@@ -70,16 +70,14 @@ func LoginHoDHandler(c *gin.Context) {
 
 	cfg, _ := config.LoadConfig()
 
-	// Generate JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":         hod.ID, // Include HoD ID for identification
+		"id":         hod.ID,
 		"email":      hod.Email,
-		"department": hod.Department, // Include department in claims
+		"department": hod.Department,
 		"role":       "hod",
-		"exp":        time.Now().Add(time.Hour * 24).Unix(), // Expiration time (24 hours)
+		"exp":        time.Now().Add(time.Hour * 24).Unix(),
 	})
 
-	// signing the token
 	tokenString, err := token.SignedString([]byte(cfg.JwtSecretKey))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
