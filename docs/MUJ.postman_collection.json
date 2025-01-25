@@ -19,12 +19,12 @@
 							"formdata": [
 								{
 									"key": "registrationNumber",
-									"value": "229301989",
+									"value": "229301910",
 									"type": "text"
 								},
 								{
 									"key": "name",
-									"value": "Shrishti",
+									"value": "Puneet",
 									"type": "text"
 								},
 								{
@@ -105,12 +105,27 @@
 								{
 									"key": "offerLetter",
 									"type": "file",
-									"src": "/C:/Users/arjun/OneDrive/Documents/Certificates/Coursera/Introduction to Data science IBM.pdf"
+									"src": "/C:/Users/arjun/OneDrive/Documents/Certificates/Cisco/ArjunSaxena_229301555_IPT.pdf"
 								},
 								{
 									"key": "mailCopy",
 									"type": "file",
-									"src": "/C:/Users/arjun/OneDrive/Documents/Certificates/Coursera/Coursera sql in python.pdf"
+									"src": "/C:/Users/arjun/OneDrive/Documents/Certificates/Cisco/ArjunSaxena_229301555_SRWE.pdf"
+								},
+								{
+									"key": "gender",
+									"value": "Male",
+									"type": "text"
+								},
+								{
+									"key": "semester",
+									"value": "7",
+									"type": "text"
+								},
+								{
+									"key": "hrdEmail",
+									"value": "arjunsaxena04@gmail.com",
+									"type": "text"
 								}
 							]
 						},
@@ -137,7 +152,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8001/submissions?id=14&department=CSE&status=Pending",
+							"raw": "http://localhost:8001/submissions?department=CSE&status=Pending",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -147,10 +162,6 @@
 								"submissions"
 							],
 							"query": [
-								{
-									"key": "id",
-									"value": "14"
-								},
 								{
 									"key": "department",
 									"value": "CSE"
@@ -167,51 +178,10 @@
 			]
 		},
 		{
-			"name": "reviewer",
+			"name": "spc",
 			"item": [
 				{
-					"name": "get- reviewer",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZXhwIjoxNzM2NDQzOTc5LCJ1c2VybmFtZSI6InJldmlld2VyMSJ9.9j14wQ41e8tefGDvWu2RdomwdK9iaT0xP_Y4dle1Plg",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "\r\n\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8002/reviewer",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8002",
-							"path": [
-								"reviewer"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "reviewer - login",
+					"name": "spc - login",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -228,14 +198,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8002/reviewer/login",
+							"raw": "http://localhost:8002/spc/login",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8002",
 							"path": [
-								"reviewer",
+								"spc",
 								"login"
 							]
 						}
@@ -243,92 +213,14 @@
 					"response": []
 				},
 				{
-					"name": "get- reviewer - by dept",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
+					"name": "get-submissions-FilterBySpcDept",
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZXhwIjoxNzM2NDQzOTc5LCJ1c2VybmFtZSI6InJldmlld2VyMSJ9.9j14wQ41e8tefGDvWu2RdomwdK9iaT0xP_Y4dle1Plg",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "\r\n\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8002/reviewer?department=CSE",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8002",
-							"path": [
-								"reviewer"
-							],
-							"query": [
-								{
-									"key": "department",
-									"value": "CSE"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "create-reviewer",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"arjunsaxena04@gmail.com\",\r\n  \"password\": \"secure\",\r\n  \"department\": \"CSE\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8002/reviewer",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8002",
-							"path": [
-								"reviewer"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get-submissions-filterbyreviewerdept",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzAwOTkzNiwiaWQiOjEsInJvbGUiOiJyZXZpZXdlciJ9.XA_pjvJygaThgFCLOUVwYsGr4w1KOb5YYcax57t1Ufk",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzg4NjE4OCwiaWQiOjEsInJvbGUiOiJzcGMifQ.P-QEOCjM7kJv0W5cH6z08UMgtdbSa7BOIeBEdXyDnOU",
 									"type": "string"
 								}
 							]
@@ -336,14 +228,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8002/reviewer/submissions",
+							"raw": "http://localhost:8002/spc/submissions",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8002",
 							"path": [
-								"reviewer",
+								"spc",
 								"submissions"
 							]
 						}
@@ -353,38 +245,8 @@
 			]
 		},
 		{
-			"name": "reviews",
+			"name": "spc - reviews",
 			"item": [
-				{
-					"name": "get - reviewer - reviews",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzAyMTQ0NywiaWQiOjEsInJvbGUiOiJyZXZpZXdlciJ9.E1t3kJ8Pw_UH8Jy9ihqNPfm8ialPeVLYY4jvhtntpnE",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8002/reviewer/fpc_reviews",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8002",
-							"path": [
-								"reviewer",
-								"fpc_reviews"
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "post - review",
 					"request": {
@@ -402,7 +264,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"submission_id\": 16,\r\n  \"reviewer_id\": 1,\r\n  \"status\": \"Rejected\",\r\n  \"comments\": \"Everything checked\"\r\n}\r\n",
+							"raw": "{\r\n  \"submission_id\": 14,\r\n  \"reviewer_id\": 1,\r\n  \"status\": \"Rejected\",\r\n  \"comments\": \"Everything checked\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -410,15 +272,15 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8002/reviewer/fpc_reviews",
+							"raw": "http://localhost:8002/spc/spc_reviews",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8002",
 							"path": [
-								"reviewer",
-								"fpc_reviews"
+								"spc",
+								"spc_reviews"
 							]
 						}
 					},
@@ -470,81 +332,30 @@
 					"response": []
 				},
 				{
-					"name": "post - hod - review",
+					"name": "get - spc - reviews",
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzAyOTk0NiwiaWQiOjEsInJvbGUiOiJob2QifQ.Sky8oR7JacTtTLRRZHagfdl-kjv6bdveZBdAqkWnkqQ",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"submission_id\": 5,\r\n  \"hod_id\": 1,\r\n  \"action\": \"Approved\",\r\n  \"remarks\": \"Everything looks good, approved for NOC.\"\r\n}\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8002/hod/hod_reviews",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8002",
-							"path": [
-								"hod",
-								"hod_reviews"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get - hod - review",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzAyOTk0NiwiaWQiOjEsInJvbGUiOiJob2QifQ.Sky8oR7JacTtTLRRZHagfdl-kjv6bdveZBdAqkWnkqQ",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzcxMDcwNSwiaWQiOjEsInJvbGUiOiJzcGMifQ.xDbYjevDKSUrcHjjQOF4X0wGrioBSUYgcQxFxGGwN28",
 									"type": "string"
 								}
 							]
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "http://localhost:8002/hod/hod_reviews",
+							"raw": "http://localhost:8002/spc/spc_reviews",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8002",
 							"path": [
-								"hod",
-								"hod_reviews"
+								"spc",
+								"spc_reviews"
 							]
 						}
 					},
@@ -555,37 +366,6 @@
 		{
 			"name": "hod",
 			"item": [
-				{
-					"name": "create-hod",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"arjunsaxena04@gmail.com\",\r\n  \"password\": \"secure\",\r\n  \"department\": \"CSE\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8002/hod",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8002",
-							"path": [
-								"hod"
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "hod-login",
 					"request": {
@@ -619,70 +399,6 @@
 					"response": []
 				},
 				{
-					"name": "get-all-hods",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZXhwIjoxNzM2NDQzOTc5LCJ1c2VybmFtZSI6InJldmlld2VyMSJ9.9j14wQ41e8tefGDvWu2RdomwdK9iaT0xP_Y4dle1Plg",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8002/hods",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8002",
-							"path": [
-								"hods"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get-all-hods-bydept",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZXhwIjoxNzM2NDQzOTc5LCJ1c2VybmFtZSI6InJldmlld2VyMSJ9.9j14wQ41e8tefGDvWu2RdomwdK9iaT0xP_Y4dle1Plg",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8002/hods?department=CSE",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8002",
-							"path": [
-								"hods"
-							],
-							"query": [
-								{
-									"key": "department",
-									"value": "CSE"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "get-approved-submissions-by-dept",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -693,7 +409,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzAyOTk0NiwiaWQiOjEsInJvbGUiOiJob2QifQ.Sky8oR7JacTtTLRRZHagfdl-kjv6bdveZBdAqkWnkqQ",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzEzOTQyOSwiaWQiOjEsInJvbGUiOiJob2QifQ.uV3PQTldpYux21Yk5XoTzh2d2grRIkRdMRRlnaGGp2k",
 									"type": "string"
 								}
 							]
@@ -719,6 +435,391 @@
 							"path": [
 								"hod",
 								"approved_submissions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "hod - reviews",
+			"item": [
+				{
+					"name": "post - hod - review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzExNjc1MSwiaWQiOjEsInJvbGUiOiJob2QifQ.Gb6EL9kI6Vdz6Mrn6J9pN-sWPaH_v1IX2cap2pdm0gg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"submission_id\": 25,\r\n  \"hod_id\": 1,\r\n  \"action\": \"Approved\",\r\n  \"remarks\": \"Everything looks good, approved for NOC.\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8002/hod/hod_reviews",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"hod",
+								"hod_reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get - hod - review",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzExNjc1MSwiaWQiOjEsInJvbGUiOiJob2QifQ.Gb6EL9kI6Vdz6Mrn6J9pN-sWPaH_v1IX2cap2pdm0gg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8002/hod/hod_reviews",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"hod",
+								"hod_reviews"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "admin",
+			"item": [
+				{
+					"name": "create - admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"anushkasoni004@gmail.com\",\r\n  \"name\": \"Anushka Soni\",\r\n  \"password\": \"admin123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8002/admin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin - login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"anushkasoni004@gmail.com\",\r\n  \"password\": \"admin123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8002/admin/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"admin",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create - spc",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFudXNoa2Fzb25pMDA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzcxNTgwNCwiaWQiOjIsInJvbGUiOiJhZG1pbiJ9.CAYmmfWWoF11rVmql3HS7MivELhOcPQ-7U5b8mEEKQw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"anushkasoni004@gmail.com\",\r\n  \"name\": \"Anushka Soni\",\r\n  \"password\": \"anushkasoni\",\r\n  \"department\": \"CSE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8002/admin/spc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"admin",
+								"spc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create - hod",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFudXNoa2Fzb25pMDA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzcxNTgwNCwiaWQiOjIsInJvbGUiOiJhZG1pbiJ9.CAYmmfWWoF11rVmql3HS7MivELhOcPQ-7U5b8mEEKQw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"arjunsaxena04@gmail.com\",\r\n  \"name\": \"Arjun Saxena\",\r\n  \"password\": \"hodlogin\",\r\n  \"department\": \"CSE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8002/admin/hod",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"admin",
+								"hod"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get - spcs",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFudXNoa2Fzb25pMDA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzg4NjcyOCwiaWQiOjIsInJvbGUiOiJhZG1pbiJ9.fleAhZcaQc1wq6lSfu0IWC7yMeuV8UpO3jRxzaeY_ZI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8002/admin/spcs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"admin",
+								"spcs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get - hods",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFudXNoa2Fzb25pMDA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzcxNTgwNCwiaWQiOjIsInJvbGUiOiJhZG1pbiJ9.CAYmmfWWoF11rVmql3HS7MivELhOcPQ-7U5b8mEEKQw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8002/admin/hods",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"admin",
+								"hods"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-hods-bydept",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFudXNoa2Fzb25pMDA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzcxNTgwNCwiaWQiOjIsInJvbGUiOiJhZG1pbiJ9.CAYmmfWWoF11rVmql3HS7MivELhOcPQ-7U5b8mEEKQw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8002/admin/hods?department=CSE",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"admin",
+								"hods"
+							],
+							"query": [
+								{
+									"key": "department",
+									"value": "CSE"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get - spc - by dept",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFudXNoa2Fzb25pMDA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzcxNTgwNCwiaWQiOjIsInJvbGUiOiJhZG1pbiJ9.CAYmmfWWoF11rVmql3HS7MivELhOcPQ-7U5b8mEEKQw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8002/admin/spcs?department=CSE",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"admin",
+								"spcs"
+							],
+							"query": [
+								{
+									"key": "department",
+									"value": "CSE"
+								}
 							]
 						}
 					},
