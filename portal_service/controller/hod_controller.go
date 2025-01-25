@@ -130,7 +130,7 @@ func GetSubmissionsForHoDcontroller(c *gin.Context) {
 		return
 	}
 
-	submissionURL := cfg.SubmissionServiceURL + "/submissions?department=" + department.(string) + "&status=Approved"
+	submissionURL := cfg.SubmissionServiceURL + "/submissions?department=" + department.(string)
 
 	resp, err := http.Get(submissionURL)
 	if err != nil {
