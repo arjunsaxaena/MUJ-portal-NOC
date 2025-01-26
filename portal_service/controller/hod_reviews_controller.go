@@ -1,15 +1,11 @@
 package controller
 
 import (
-	"MUJ_AMG/pkg/database"
 	"MUJ_AMG/pkg/model"
 	"MUJ_AMG/pkg/util"
-	"MUJ_AMG/portal_service/config"
 	"MUJ_AMG/portal_service/repository"
-	"bytes"
-	"encoding/json"
+	submissionRepository "MUJ_AMG/submission_service/repository"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -29,77 +25,44 @@ func CreateHodReviewHandler(c *gin.Context) {
 		return
 	}
 
-	cfg, err := config.LoadConfig()
-	if err != nil {
-		log.Printf("Error loading config: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load configuration"})
-		return
+	hodFilters := model.GetHoDFilters{
+		ID: strconv.Itoa(input.HodID),
 	}
-
-	submissionURL := fmt.Sprintf("%s/submissions?id=%d", cfg.SubmissionServiceURL, input.SubmissionID)
-	submissionResp, err := http.Get(submissionURL)
-	if err != nil || submissionResp.StatusCode != http.StatusOK {
-		log.Printf("Error fetching submission via API: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submission"})
-		return
-	}
-	defer submissionResp.Body.Close()
-
-	var submissionResponse struct {
-		Submissions []model.StudentSubmission `json:"submissions"`
-	}
-	err = json.NewDecoder(submissionResp.Body).Decode(&submissionResponse)
-	if err != nil {
-		log.Printf("Error decoding submission data: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode submission data"})
-		return
-	}
-
-	if len(submissionResponse.Submissions) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Submission not found"})
-		return
-	}
-
-	submission := submissionResponse.Submissions[0]
-
-	var hod model.HoD
-	err = database.DB.Get(&hod, "SELECT * FROM hod WHERE id = $1", input.HodID)
+	hods, err := repository.GetHoDs(hodFilters)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch HoD details"})
 		return
 	}
 
-	if input.Action == "Rejected" || input.Action == "Rework" {
-		updateSubmissionURL := fmt.Sprintf("%s/submissions", cfg.SubmissionServiceURL)
-		updateSubmissionBody := struct {
-			Status string `json:"status"`
-		}{
-			Status: input.Action,
-		}
-		updateSubmissionJSON, err := json.Marshal(updateSubmissionBody)
+	if len(hods) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "HoD not found"})
+		return
+	}
+
+	hod := hods[0]
+
+	submissionFilters := model.GetSubmissionFilters{
+		ID: strconv.Itoa(input.SubmissionID),
+	}
+	submissions, err := submissionRepository.GetSubmissions(submissionFilters)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submission"})
+		return
+	}
+
+	if len(submissions) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Submission not found"})
+		return
+	}
+
+	submission := submissions[0]
+
+	if input.Action == "Rejected" {
+		err := submissionRepository.UpdateSubmissionStatus(input.SubmissionID, input.Action)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to marshal update submission body"})
-			return
-		}
-
-		updateSubmissionReq, err := http.NewRequest("PUT", updateSubmissionURL, bytes.NewBuffer(updateSubmissionJSON))
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create update submission request"})
-			return
-		}
-		updateSubmissionReq.Header.Set("Content-Type", "application/json")
-
-		q := updateSubmissionReq.URL.Query()
-		q.Add("id", strconv.Itoa(input.SubmissionID))
-		updateSubmissionReq.URL.RawQuery = q.Encode()
-
-		updateSubmissionResp, err := http.DefaultClient.Do(updateSubmissionReq)
-		if err != nil || updateSubmissionResp.StatusCode != http.StatusOK {
-			log.Printf("Error updating submission status via API: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
 			return
 		}
-		defer updateSubmissionResp.Body.Close()
 
 		subject := "Your Placement Application Status - HoD Review"
 		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been %s.\n\nHoD Comments: %s\n\nBest regards",
@@ -127,36 +90,12 @@ func CreateHodReviewHandler(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send NOC email to student"})
 			return
 		}
-		updateSubmissionURL := fmt.Sprintf("%s/submissions", cfg.SubmissionServiceURL)
-		updateSubmissionBody := struct {
-			Status string `json:"status"`
-		}{
-			Status: "NOC sent",
-		}
-		updateSubmissionJSON, err := json.Marshal(updateSubmissionBody)
+
+		err = submissionRepository.UpdateSubmissionStatus(input.SubmissionID, "NOC sent")
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to marshal update submission body"})
-			return
-		}
-
-		updateSubmissionReq, err := http.NewRequest("PUT", updateSubmissionURL, bytes.NewBuffer(updateSubmissionJSON))
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create update submission request"})
-			return
-		}
-		updateSubmissionReq.Header.Set("Content-Type", "application/json")
-
-		q := updateSubmissionReq.URL.Query()
-		q.Add("id", strconv.Itoa(input.SubmissionID))
-		updateSubmissionReq.URL.RawQuery = q.Encode()
-
-		updateSubmissionResp, err := http.DefaultClient.Do(updateSubmissionReq)
-		if err != nil || updateSubmissionResp.StatusCode != http.StatusOK {
-			log.Printf("Error updating submission status via API: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
 			return
 		}
-		defer updateSubmissionResp.Body.Close()
 	}
 
 	reviewID, err := repository.CreateHodReview(input.SubmissionID, input.HodID, input.Action, input.Remarks)

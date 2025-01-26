@@ -5,7 +5,6 @@ import (
 	"MUJ_AMG/pkg/util"
 	"MUJ_AMG/submission_service/repository"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -131,27 +130,6 @@ func SubmitHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Submission received successfully"})
 	fmt.Println("Submission received successfully")
-}
-
-func GetSubmissionsHandler(c *gin.Context) {
-	var filters model.GetSubmissionFilters
-	if err := c.ShouldBindQuery(&filters); err != nil {
-		log.Printf("Invalid filters: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid filters"})
-		return
-	}
-
-	log.Printf("Filters received: %+v", filters)
-
-	submissions, err := repository.GetSubmissions(filters)
-	if err != nil {
-		log.Printf("Error fetching submissions with filters %v: %v", filters, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submissions", "details": err.Error()})
-		return
-	}
-
-	log.Printf("Submissions retrieved: %d records", len(submissions))
-	c.JSON(http.StatusOK, gin.H{"submissions": submissions})
 }
 
 func UpdateSubmissionStatusHandler(c *gin.Context) {

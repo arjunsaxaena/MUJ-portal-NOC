@@ -16,6 +16,8 @@ func LoadConfig() (*Config, error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("json")
 	viper.AddConfigPath("./config")
+	viper.AddConfigPath("./submission_service/config")
+	viper.AddConfigPath(".")
 
 	fmt.Println("Current working directory:", viper.ConfigFileUsed())
 

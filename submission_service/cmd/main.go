@@ -30,8 +30,8 @@ func main() {
 	}))
 
 	r.POST("/submit", controller.SubmitHandler)
-	r.GET("/submissions", controller.GetSubmissionsHandler)
-	r.PUT("/submissions", controller.UpdateSubmissionStatusHandler)
+	//r.GET("/submissions", controller.GetSubmissionsHandler)
+	//r.PUT("/submissions", controller.UpdateSubmissionStatusHandler)
 
 	log.Printf("Starting server on port %s", cfg.Port)
 	r.Run(":" + cfg.Port)

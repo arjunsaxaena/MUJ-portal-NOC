@@ -4,8 +4,7 @@ import (
 	"MUJ_AMG/pkg/model"
 	"MUJ_AMG/portal_service/config"
 	"MUJ_AMG/portal_service/repository"
-	"encoding/json"
-	"io"
+	submissionRepository "MUJ_AMG/submission_service/repository"
 	"log"
 	"net/http"
 	"time"
@@ -123,47 +122,23 @@ func GetSubmissionsForHoDcontroller(c *gin.Context) {
 		return
 	}
 
-	cfg, err := config.LoadConfig()
+	var filters model.GetSubmissionFilters
+	if err := c.ShouldBindQuery(&filters); err != nil {
+		log.Printf("Invalid filters: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid filters"})
+		return
+	}
+
+	filters.Department = department.(string)
+	log.Printf("Filters received: %+v", filters)
+
+	submissions, err := submissionRepository.GetSubmissions(filters)
 	if err != nil {
-		log.Printf("Error loading config: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load configuration"})
+		log.Printf("Error fetching submissions with filters %v: %v", filters, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submissions", "details": err.Error()})
 		return
 	}
 
-	submissionURL := cfg.SubmissionServiceURL + "/submissions?department=" + department.(string)
-
-	resp, err := http.Get(submissionURL)
-	if err != nil {
-		log.Printf("Error calling submission service: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submissions"})
-		return
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		log.Printf("Unexpected status code: %d", resp.StatusCode)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submissions"})
-		return
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Printf("Error reading response body: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read response body"})
-		return
-	}
-	// log.Printf("Response from submission service: %s", body)
-
-	type SubmissionsResponse struct {
-		Data []model.StudentSubmission `json:"submissions"`
-	}
-
-	var result SubmissionsResponse
-	if err := json.Unmarshal(body, &result); err != nil {
-		log.Printf("Error decoding response: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode response"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"submissions": result.Data})
+	log.Printf("Submissions retrieved: %d records", len(submissions))
+	c.JSON(http.StatusOK, gin.H{"submissions": submissions})
 }

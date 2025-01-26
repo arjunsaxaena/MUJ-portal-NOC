@@ -3,10 +3,8 @@ package controller
 import (
 	"MUJ_AMG/pkg/model"
 	"MUJ_AMG/pkg/util"
-	"MUJ_AMG/portal_service/config"
 	"MUJ_AMG/portal_service/repository"
-	"bytes"
-	"encoding/json"
+	submissionRepository "MUJ_AMG/submission_service/repository"
 	"fmt"
 	"log"
 	"net/http"
@@ -28,38 +26,17 @@ func CreateSpcReviewHandler(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("Creating spc review with submission_id: %d, spc_id: %d, status: %s, comments: %s\n",
-		input.SubmissionID, input.SpcID, input.Status, input.Comments)
-
 	reviewID, err := repository.CreateSpcReview(input.SubmissionID, input.SpcID, input.Status, input.Comments)
 	if err != nil {
-		fmt.Printf("Error creating spc review: %v\n", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create spc review"})
 		return
 	}
-
-	cfg, err := config.LoadConfig()
-	if err != nil {
-		log.Printf("Error loading config: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load configuration"})
-		return
-	}
-
-	submissionURL := fmt.Sprintf("%s/submissions?id=%d", cfg.SubmissionServiceURL, input.SubmissionID)
-	submissionResp, err := http.Get(submissionURL)
-	if err != nil || submissionResp.StatusCode != http.StatusOK {
-		log.Printf("Error fetching submission via API: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submission"})
-		return
-	}
-	defer submissionResp.Body.Close()
 
 	spcFilters := model.GetSpCFilters{
 		ID: strconv.Itoa(input.SpcID),
 	}
 	spcs, err := repository.GetSpCs(spcFilters)
 	if err != nil {
-		log.Printf("Error fetching spc: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch spc details"})
 		return
 	}
@@ -72,95 +49,29 @@ func CreateSpcReviewHandler(c *gin.Context) {
 	spc := spcs[0]
 
 	if input.Status == "Approved" {
-		updateSubmissionURL := fmt.Sprintf("%s/submissions", cfg.SubmissionServiceURL)
-		updateSubmissionBody := struct {
-			Status string `json:"status"`
-		}{
-			Status: "Approved",
-		}
-		updateSubmissionJSON, err := json.Marshal(updateSubmissionBody)
+		err := submissionRepository.UpdateSubmissionStatus(input.SubmissionID, "Approved")
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to marshal update submission body"})
-			return
-		}
-
-		updateSubmissionReq, err := http.NewRequest("PUT", updateSubmissionURL, bytes.NewBuffer(updateSubmissionJSON))
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create update submission request"})
-			return
-		}
-		updateSubmissionReq.Header.Set("Content-Type", "application/json")
-
-		q := updateSubmissionReq.URL.Query()
-		q.Add("id", strconv.Itoa(input.SubmissionID))
-		updateSubmissionReq.URL.RawQuery = q.Encode()
-
-		updateSubmissionResp, err := http.DefaultClient.Do(updateSubmissionReq)
-		if err != nil || updateSubmissionResp.StatusCode != http.StatusOK {
-			log.Printf("Error updating submission status via API: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
 			return
 		}
-		defer updateSubmissionResp.Body.Close()
 	}
 
-	if input.Status == "Rejected" || input.Status == "Rework" {
-		updateSubmissionURL := fmt.Sprintf("%s/submissions", cfg.SubmissionServiceURL)
-		updateSubmissionBody := struct {
-			Status string `json:"status"`
-		}{
-			Status: input.Status,
-		}
-		updateSubmissionJSON, err := json.Marshal(updateSubmissionBody)
+	if input.Status == "Rejected" {
+		err := submissionRepository.UpdateSubmissionStatus(input.SubmissionID, input.Status)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to marshal update submission body"})
-			return
-		}
-
-		updateSubmissionReq, err := http.NewRequest("PUT", updateSubmissionURL, bytes.NewBuffer(updateSubmissionJSON))
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create update submission request"})
-			return
-		}
-		updateSubmissionReq.Header.Set("Content-Type", "application/json")
-
-		q := updateSubmissionReq.URL.Query()
-		q.Add("id", strconv.Itoa(input.SubmissionID))
-		updateSubmissionReq.URL.RawQuery = q.Encode()
-
-		updateSubmissionResp, err := http.DefaultClient.Do(updateSubmissionReq)
-		if err != nil || updateSubmissionResp.StatusCode != http.StatusOK {
-			log.Printf("Error updating submission status via API: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
 			return
 		}
-		defer updateSubmissionResp.Body.Close()
 
-		submissionURL := fmt.Sprintf("%s/submissions?id=%d", cfg.SubmissionServiceURL, input.SubmissionID)
-		submissionResp, err := http.Get(submissionURL)
-		if err != nil || submissionResp.StatusCode != http.StatusOK {
-			log.Printf("Error fetching submission via API: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submission"})
-			return
-		}
-		defer submissionResp.Body.Close()
-
-		var submissionResponse struct {
-			Submissions []model.StudentSubmission `json:"submissions"`
-		}
-		err = json.NewDecoder(submissionResp.Body).Decode(&submissionResponse)
-		if err != nil {
-			log.Printf("Error decoding submission data: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode submission data"})
-			return
-		}
-
-		if len(submissionResponse.Submissions) == 0 {
+		submissions, err := submissionRepository.GetSubmissions(model.GetSubmissionFilters{
+			ID: strconv.Itoa(input.SubmissionID),
+		})
+		if err != nil || len(submissions) == 0 {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Submission not found"})
 			return
 		}
 
-		submission := submissionResponse.Submissions[0]
+		submission := submissions[0]
 
 		subject := "Your NOC Application Status"
 		body := fmt.Sprintf("Dear %s,\n\nYour NOC application has been %s.\n\nComments: %s\n\nBest regards",
@@ -218,13 +129,7 @@ func UpdateSpcReviewHandler(c *gin.Context) {
 		return
 	}
 
-	if spcReview.Status == "Approved" && (input.Status == "Rejected" || input.Status == "Rework") {
-		cfg, err := config.LoadConfig()
-		if err != nil {
-			log.Printf("Error loading config: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load configuration"})
-			return
-		}
+	if spcReview.Status == "Approved" && input.Status == "Rejected" {
 
 		spcFilters := model.GetSpCFilters{
 			ID: strconv.Itoa(spcReview.SpcID),
@@ -243,31 +148,22 @@ func UpdateSpcReviewHandler(c *gin.Context) {
 
 		var spc = spcs[0]
 
-		submissionURL := fmt.Sprintf("%s/submissions?id=%d", cfg.SubmissionServiceURL, spcReview.SubmissionID)
-		submissionResp, err := http.Get(submissionURL)
-		if err != nil || submissionResp.StatusCode != http.StatusOK {
-			log.Printf("Error fetching submission via API: %v", err)
+		submissionFilters := model.GetSubmissionFilters{
+			ID: strconv.Itoa(spcReview.SubmissionID),
+		}
+		submissions, err := submissionRepository.GetSubmissions(submissionFilters)
+		if err != nil {
+			log.Printf("Error fetching submission with ID %d: %v", spcReview.SubmissionID, err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submission"})
 			return
 		}
-		defer submissionResp.Body.Close()
 
-		var submissionResponse struct {
-			Submissions []model.StudentSubmission `json:"submissions"`
-		}
-		err = json.NewDecoder(submissionResp.Body).Decode(&submissionResponse)
-		if err != nil {
-			log.Printf("Error decoding submission data: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode submission data"})
-			return
-		}
-
-		if len(submissionResponse.Submissions) == 0 {
+		if len(submissions) == 0 {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Submission not found"})
 			return
 		}
 
-		submission := submissionResponse.Submissions[0]
+		submission := submissions[0]
 
 		subject := "Your NOC Application Status"
 		body := fmt.Sprintf("Dear %s,\n\nYour NOC application has been %s.\n\nComments: %s\n\nBest regards",

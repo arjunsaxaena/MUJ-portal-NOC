@@ -8,16 +8,17 @@ import (
 )
 
 type Config struct {
-	Port                 string `mapstructure:"port"`
-	Database             string `mapstructure:"database"`
-	JwtSecretKey         string `mapstructure:"jwt_secret_key"`
-	SubmissionServiceURL string `mapstructure:"submission_service_url"`
+	Port         string `mapstructure:"port"`
+	Database     string `mapstructure:"database"`
+	JwtSecretKey string `mapstructure:"jwt_secret_key"`
 }
 
 func LoadConfig() (*Config, error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("json")
 	viper.AddConfigPath("./config")
+	viper.AddConfigPath("./portal_service/config")
+	viper.AddConfigPath(".")
 
 	fmt.Println("Current working directory:", viper.ConfigFileUsed())
 
