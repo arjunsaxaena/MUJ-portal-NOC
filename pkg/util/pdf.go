@@ -54,30 +54,38 @@ func CreateNocPdf(submission model.StudentSubmission, bucketName, keyPrefix stri
 	endDateFormatted := endDate.Format("02-Jan-2006")
 
 	pdf.SetFont("Arial", "", 10)
-	body := fmt.Sprintf(`Sub: Recomendation for Mr./Ms. %s carrying out internship cum project in your esteemed Organization
+	title := "Mr."
+	if submission.Gender == "Female" {
+		title = "Ms."
+	}
+	body := fmt.Sprintf(`Sub: Recommendation for %s %s carrying out internship cum project in your esteemed Organization
 
-Dear Sir,
+Dear Sir/Madam,
 
-This is to certify that Mr./Ms. %s (Reg No. %s) is a student of Manipal University Jaipur, India studying in final year of four year B.Tech Degree Program in the Department of the %s Department, Section %s.
+This is to certify that %s %s (Reg No. %s) is a student of Manipal University Jaipur, India, studying in the %s semester of the four-year B.Tech Degree Program in the Department of %s, Section %s.
 
 This recommendation is issued with reference to the application for an internship/project in your esteemed organization for a duration from %s to %s.
 
-This Internship/Project would add value to the academic career of the student. So I Request you to kindly allow our student to undergo Internship/Project at your organization.
+This Internship/Project would add value to the academic career of the student. So I request you to kindly allow our student to undergo Internship/Project at your organization.
 
-Manipal University Jaipur has no objection for Mr./Ms. %s in doing an internship at your organization and has been advised to abide by both MUJ's and the interning organization's ethics/rules/regulations/values and work culture without compromising on integrity and self-discipline.
+Manipal University Jaipur has no objection for %s %s in doing an internship at your organization and has been advised to abide by both MUJ's and the interning organization's ethics/rules/regulations/values and work culture without compromising on integrity and self-discipline.
 
 Thanking you.
 
-Yours sincerely`,
-
+Yours sincerely,`,
+		title,
 		submission.Name,
+		title,
 		submission.Name,
 		submission.RegistrationNumber,
+		submission.Semester,
 		submission.Department,
 		submission.Section,
 		startDateFormatted,
 		endDateFormatted,
-		submission.Name)
+		title,
+		submission.Name,
+	)
 
 	pdf.MultiCell(0, 6, body, "", "L", false)
 

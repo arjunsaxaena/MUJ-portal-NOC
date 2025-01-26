@@ -76,26 +76,30 @@ func CreateHodReviewHandler(c *gin.Context) {
 	}
 
 	if input.Action == "Approved" {
-		nocURL, err := util.CreateNocPdf(submission, "muj-student-data", "generated_pdfs")
+		nocPath, err := util.CreateNocPdf(submission, "muj-student-data", "generated_pdfs")
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate NOC PDF"})
 			return
 		}
 
-		subject := "Your No Objection Certificate (NOC)"
-		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been approved. Please find attached the No Objection Certificate (NOC) for your reference.\n\nBest regards,\nHoD", submission.Name)
+		subject := "Your Placement Application Status - NOC Available"
+		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been approved. Please collect your No Objection Certificate (NOC) from the HoD, %s (%s).\n\nBest regards,\nHoD",
+			submission.Name, hod.Name, hod.Email)
 
-		err = util.SendEmailWithAttachment(hod.Email, submission.OfficialMailID, subject, body, nocURL)
+		err = util.SendEmail(hod.Email, submission.OfficialMailID, subject, body)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send NOC email to student"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send email to student"})
 			return
 		}
 
-		err = submissionRepository.UpdateSubmissionStatus(input.SubmissionID, "NOC sent")
+		err = submissionRepository.UpdateSubmissionStatus(input.SubmissionID, "NOC ready")
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
 			return
 		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "NOC generated successfully", "noc_path": nocPath})
+		return
 	}
 
 	reviewID, err := repository.CreateHodReview(input.SubmissionID, input.HodID, input.Action, input.Remarks)
