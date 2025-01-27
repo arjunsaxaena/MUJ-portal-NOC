@@ -49,7 +49,7 @@ func CreateSpcReviewHandler(c *gin.Context) {
 	spc := spcs[0]
 
 	if input.Status == "Approved" {
-		err := submissionRepository.UpdateSubmissionStatus(input.SubmissionID, "Approved")
+		err := submissionRepository.UpdateSubmission(input.SubmissionID, "Approved", "")
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
 			return
@@ -57,7 +57,7 @@ func CreateSpcReviewHandler(c *gin.Context) {
 	}
 
 	if input.Status == "Rejected" {
-		err := submissionRepository.UpdateSubmissionStatus(input.SubmissionID, input.Status)
+		err := submissionRepository.UpdateSubmission(input.SubmissionID, "Rejected", "")
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
 			return

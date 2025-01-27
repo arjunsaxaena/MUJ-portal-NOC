@@ -58,7 +58,7 @@ func CreateHodReviewHandler(c *gin.Context) {
 	submission := submissions[0]
 
 	if input.Action == "Rejected" {
-		err := submissionRepository.UpdateSubmissionStatus(input.SubmissionID, input.Action)
+		err := submissionRepository.UpdateSubmission(input.SubmissionID, input.Action, "")
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
 			return
@@ -92,7 +92,7 @@ func CreateHodReviewHandler(c *gin.Context) {
 			return
 		}
 
-		err = submissionRepository.UpdateSubmissionStatus(input.SubmissionID, "NOC ready")
+		err = submissionRepository.UpdateSubmission(input.SubmissionID, "NOC ready", nocPath)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
 			return
