@@ -18,15 +18,18 @@ CREATE TABLE student_submissions (
     company_city VARCHAR(100), 
     pincode VARCHAR(20), 
     hrd_email VARCHAR(100),
+    hrd_number VARCHAR(15),
     offer_type_detail VARCHAR(100),
     package_ppo DECIMAL(10, 2),
     stipend_amount DECIMAL(10, 2),
     internship_start_date DATE NOT NULL,
     internship_end_date DATE NOT NULL,
+    has_offer_letter BOOLEAN DEFAULT FALSE,
     offer_letter_path VARCHAR(255),
     mail_copy_path VARCHAR(255),
     terms_accepted BOOLEAN DEFAULT FALSE,
     status VARCHAR(20) DEFAULT 'Pending',
+    noc_path VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
