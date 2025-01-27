@@ -39,7 +39,7 @@ func SubmitHandler(c *gin.Context) {
 		submission.PackagePPO = fmt.Sprintf("%.2f", packagePPO)
 		fmt.Printf("Formatted PackagePPO: %s\n", submission.PackagePPO)
 	} else {
-		submission.PackagePPO = "0.00"
+		submission.PackagePPO = ""
 	}
 
 	if submission.StipendAmount != "" {
@@ -78,6 +78,7 @@ func SubmitHandler(c *gin.Context) {
 		submission.OfferLetterPath = offerLetterURL
 		fmt.Printf("Offer letter uploaded successfully. URL: %s\n", offerLetterURL)
 	} else {
+		submission.HasOfferLetter = false
 		fmt.Println("No offer letter file received")
 	}
 
@@ -107,7 +108,7 @@ func SubmitHandler(c *gin.Context) {
 		fmt.Println("No mail copy file received")
 	}
 
-	if submission.OfferLetterPath == "" {
+	if submission.OfferLetterPath == "" && submission.HasOfferLetter {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Offer letter file path is missing"})
 		fmt.Println("Offer letter file path is missing")
 		return
@@ -130,35 +131,4 @@ func SubmitHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Submission received successfully"})
 	fmt.Println("Submission received successfully")
-}
-
-func UpdateSubmissionStatusHandler(c *gin.Context) {
-	var input struct {
-		Status string `json:"status" binding:"required"`
-	}
-
-	submissionIDStr := c.DefaultQuery("id", "")
-	if submissionIDStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Submission ID is required"})
-		return
-	}
-	submissionID, err := strconv.Atoi(submissionIDStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid submission ID"})
-		return
-	}
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
-		return
-	}
-
-	err = repository.UpdateSubmissionStatus(submissionID, input.Status)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Submission status updated successfully",
-	})
 }

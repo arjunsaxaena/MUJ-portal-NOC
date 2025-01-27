@@ -14,13 +14,13 @@ func CreateSubmission(submission *model.StudentSubmission) error {
 		INSERT INTO student_submissions (
 			registration_number, name, gender, semester, official_mail_id, mobile_number, department, section, 
 			offer_type, company_name, company_state, company_city, pincode, offer_type_detail, package_ppo, stipend_amount, 
-			internship_start_date, internship_end_date, offer_letter_path, mail_copy_path, hrd_email, terms_accepted, 
+			internship_start_date, internship_end_date, has_offer_letter, offer_letter_path, mail_copy_path, hrd_email, terms_accepted, 
 			status, created_at, updated_at
 		)
 		VALUES (
 			:registration_number, :name, :gender, :semester, :official_mail_id, :mobile_number, :department, :section, 
 			:offer_type, :company_name, :company_state, :company_city, :pincode, :offer_type_detail, :package_ppo, :stipend_amount, 
-			:internship_start_date, :internship_end_date, :offer_letter_path, :mail_copy_path, :hrd_email, :terms_accepted, 
+			:internship_start_date, :internship_end_date, :has_offer_letter, :offer_letter_path, :mail_copy_path, :hrd_email, :terms_accepted, 
 			:status, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
 		)
 	`, submission)
@@ -63,16 +63,34 @@ func GetSubmissions(filters model.GetSubmissionFilters) ([]model.StudentSubmissi
 	return submissions, nil
 }
 
-func UpdateSubmissionStatus(submissionID int, status string) error {
-	query := `
-		UPDATE student_submissions
-		SET status = $1, updated_at = $2
-		WHERE id = $3
-	`
+func UpdateSubmission(submissionID int, status string, nocPath string) error {
+	// Construct the query dynamically based on the provided fields
+	query := `UPDATE student_submissions
+	          SET updated_at = $1`
+	args := []interface{}{time.Now()}
 
-	_, err := database.DB.Exec(query, status, time.Now(), submissionID)
+	// If status is provided, include it in the query
+	if status != "" {
+		query += `, status = $2`
+		args = append(args, status)
+	}
+
+	// If noc_path is provided, include it in the query
+	if nocPath != "" {
+		query += `, noc_path = $3`
+		args = append(args, nocPath)
+	}
+
+	// Ensure the WHERE condition is always included
+	query += ` WHERE id = $` + fmt.Sprint(len(args)+1)
+
+	// Append submissionID to the arguments
+	args = append(args, submissionID)
+
+	// Execute the query
+	_, err := database.DB.Exec(query, args...)
 	if err != nil {
-		fmt.Printf("Error updating submission status: %v\n", err)
+		fmt.Printf("Error updating submission: %v\n", err)
 		return err
 	}
 
