@@ -10,9 +10,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateSpC(name, email, passwordHash, department string) (int, error) {
+func CreateFpC(name, email, passwordHash, department string) (int, error) {
 	query := `
-		INSERT INTO spc (name, email, password_hash, department)
+		INSERT INTO fpc (name, email, password_hash, department)
 		VALUES ($1, $2, $3, $4)
 		RETURNING id
 	`
@@ -24,8 +24,8 @@ func CreateSpC(name, email, passwordHash, department string) (int, error) {
 	return id, nil
 }
 
-func GetSpCs(filters model.GetSpCFilters) ([]model.SpC, error) {
-	query := "SELECT * FROM spc WHERE 1=1"
+func GetFpCs(filters model.GetFpCFilters) ([]model.FpC, error) {
+	query := "SELECT * FROM fpc WHERE 1=1"
 	var args []interface{}
 	paramIndex := 1
 
@@ -45,28 +45,28 @@ func GetSpCs(filters model.GetSpCFilters) ([]model.SpC, error) {
 		paramIndex++
 	}
 
-	var spcs []model.SpC
-	err := database.DB.Select(&spcs, query, args...)
+	var fpcs []model.FpC
+	err := database.DB.Select(&fpcs, query, args...)
 	if err != nil {
-		log.Printf("Error fetching spc with filters %v: %v", filters, err)
+		log.Printf("Error fetching fpc with filters %v: %v", filters, err)
 		return nil, err
 	}
 
-	return spcs, nil
+	return fpcs, nil
 }
 
-func ValidateSpCPassword(email, password string) (bool, error) {
-	filters := model.GetSpCFilters{Email: email}
-	spcs, err := GetSpCs(filters)
+func ValidateFpCPassword(email, password string) (bool, error) {
+	filters := model.GetFpCFilters{Email: email}
+	fpcs, err := GetFpCs(filters)
 	if err != nil {
 		return false, err
 	}
 
-	if len(spcs) != 1 {
+	if len(fpcs) != 1 {
 		return false, errors.New("invalid credentials")
 	}
 
-	reviewer := spcs[0]
+	reviewer := fpcs[0]
 
 	err = bcrypt.CompareHashAndPassword([]byte(reviewer.PasswordHash), []byte(password))
 	if err != nil {
@@ -75,9 +75,9 @@ func ValidateSpCPassword(email, password string) (bool, error) {
 	return true, nil
 }
 
-func UpdateSpC(id int, name, email, passwordHash, department string) error {
+func UpdateFpC(id int, name, email, passwordHash, department string) error {
 	query := `
-		UPDATE spc
+		UPDATE fpc
 		SET name = COALESCE($1, name),
 		    email = COALESCE($2, email),
 		    password_hash = COALESCE($3, password_hash),
@@ -93,9 +93,9 @@ func UpdateSpC(id int, name, email, passwordHash, department string) error {
 	return nil
 } // For testing
 
-func DeleteSpC(id int) error {
+func DeleteFpC(id int) error {
 	query := `
-		DELETE FROM spc
+		DELETE FROM fpc
 		WHERE id = $1
 	`
 	result, err := database.DB.Exec(query, id)

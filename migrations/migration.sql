@@ -34,7 +34,7 @@ CREATE TABLE student_submissions (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE spc (
+CREATE TABLE fpc (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL, 
     email VARCHAR(100) NOT NULL UNIQUE,
@@ -43,16 +43,16 @@ CREATE TABLE spc (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE spc_reviews (
+CREATE TABLE fpc_reviews (
     id SERIAL PRIMARY KEY,
     submission_id INT NOT NULL,
-    spc_id INT NOT NULL,
+    fpc_id INT NOT NULL,
     status VARCHAR(20) NOT NULL, 
     comments TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     FOREIGN KEY (submission_id) REFERENCES student_submissions(id),
-    FOREIGN KEY (spc_id) REFERENCES spc(id)
+    FOREIGN KEY (fpc_id) REFERENCES fpc(id)
 );
 
 

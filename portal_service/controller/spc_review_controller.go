@@ -13,10 +13,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateSpcReviewHandler(c *gin.Context) {
+func CreateFpcReviewHandler(c *gin.Context) {
 	var input struct {
 		SubmissionID int    `json:"submission_id" binding:"required"`
-		SpcID        int    `json:"spc_id" binding:"required"`
+		FpcID        int    `json:"fpc_id" binding:"required"`
 		Status       string `json:"status" binding:"required"`
 		Comments     string `json:"comments"`
 	}
@@ -26,27 +26,27 @@ func CreateSpcReviewHandler(c *gin.Context) {
 		return
 	}
 
-	reviewID, err := repository.CreateSpcReview(input.SubmissionID, input.SpcID, input.Status, input.Comments)
+	reviewID, err := repository.CreateFpcReview(input.SubmissionID, input.FpcID, input.Status, input.Comments)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create spc review"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create fpc review"})
 		return
 	}
 
-	spcFilters := model.GetSpCFilters{
-		ID: strconv.Itoa(input.SpcID),
+	fpcFilters := model.GetFpCFilters{
+		ID: strconv.Itoa(input.FpcID),
 	}
-	spcs, err := repository.GetSpCs(spcFilters)
+	fpcs, err := repository.GetFpCs(fpcFilters)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch spc details"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch fpc details"})
 		return
 	}
 
-	if len(spcs) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Spc not found"})
+	if len(fpcs) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "fpc not found"})
 		return
 	}
 
-	spc := spcs[0]
+	fpc := fpcs[0]
 
 	if input.Status == "Approved" {
 		err := submissionRepository.UpdateSubmission(input.SubmissionID, "Approved", "")
@@ -77,7 +77,7 @@ func CreateSpcReviewHandler(c *gin.Context) {
 		body := fmt.Sprintf("Dear %s,\n\nYour NOC application has been %s.\n\nComments: %s\n\nBest regards",
 			submission.Name, input.Status, input.Comments)
 
-		err = util.SendEmail(spc.Email, submission.OfficialMailID, subject, body)
+		err = util.SendEmail(fpc.Email, submission.OfficialMailID, subject, body)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send email to student"})
 			return
@@ -86,11 +86,11 @@ func CreateSpcReviewHandler(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"review_id": reviewID,
-		"message":   "Spc review created successfully",
+		"message":   "fpc review created successfully",
 	})
 }
 
-func UpdateSpcReviewHandler(c *gin.Context) {
+func UpdateFpcReviewHandler(c *gin.Context) {
 	var input struct {
 		Status   string `json:"status" binding:"required"`
 		Comments string `json:"comments"`
@@ -107,53 +107,53 @@ func UpdateSpcReviewHandler(c *gin.Context) {
 		return
 	}
 
-	spcReviewFilters := model.GetSpcReviewFilters{
+	fpcReviewFilters := model.GetFpcReviewFilters{
 		ID: strconv.Itoa(reviewID),
 	}
-	spcReviews, err := repository.GetSpcReviews(spcReviewFilters)
+	fpcReviews, err := repository.GetFpcReviews(fpcReviewFilters)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch spc review"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch fpc review"})
 		return
 	}
 
-	if len(spcReviews) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Spc review not found"})
+	if len(fpcReviews) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "fpc review not found"})
 		return
 	}
 
-	spcReview := spcReviews[0]
+	fpcReview := fpcReviews[0]
 
-	err = repository.UpdateSpcReview(reviewID, input.Status, input.Comments)
+	err = repository.UpdateFpcReview(reviewID, input.Status, input.Comments)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update spc review status/comments"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update fpc review status/comments"})
 		return
 	}
 
-	if spcReview.Status == "Approved" && input.Status == "Rejected" {
+	if fpcReview.Status == "Approved" && input.Status == "Rejected" {
 
-		spcFilters := model.GetSpCFilters{
-			ID: strconv.Itoa(spcReview.SpcID),
+		fpcFilters := model.GetFpCFilters{
+			ID: strconv.Itoa(fpcReview.FpcID),
 		}
-		spcs, err := repository.GetSpCs(spcFilters)
+		fpcs, err := repository.GetFpCs(fpcFilters)
 		if err != nil {
-			log.Printf("Error fetching spc details: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch spc details"})
+			log.Printf("Error fetching fpc details: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch fpc details"})
 			return
 		}
 
-		if len(spcs) == 0 {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Spc not found"})
+		if len(fpcs) == 0 {
+			c.JSON(http.StatusNotFound, gin.H{"error": "fpc not found"})
 			return
 		}
 
-		var spc = spcs[0]
+		var fpc = fpcs[0]
 
 		submissionFilters := model.GetSubmissionFilters{
-			ID: strconv.Itoa(spcReview.SubmissionID),
+			ID: strconv.Itoa(fpcReview.SubmissionID),
 		}
 		submissions, err := submissionRepository.GetSubmissions(submissionFilters)
 		if err != nil {
-			log.Printf("Error fetching submission with ID %d: %v", spcReview.SubmissionID, err)
+			log.Printf("Error fetching submission with ID %d: %v", fpcReview.SubmissionID, err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch submission"})
 			return
 		}
@@ -169,7 +169,7 @@ func UpdateSpcReviewHandler(c *gin.Context) {
 		body := fmt.Sprintf("Dear %s,\n\nYour NOC application has been %s.\n\nComments: %s\n\nBest regards",
 			submission.Name, input.Status, input.Comments)
 
-		err = util.SendEmail(spc.Email, submission.OfficialMailID, subject, body)
+		err = util.SendEmail(fpc.Email, submission.OfficialMailID, subject, body)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send email"})
 			return
@@ -177,31 +177,31 @@ func UpdateSpcReviewHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Spc review updated successfully",
+		"message": "fpc review updated successfully",
 	})
 }
 
-func GetSpcReviewsHandler(c *gin.Context) {
+func GetFpcReviewsHandler(c *gin.Context) {
 	submissionID := c.DefaultQuery("submission_id", "")
-	spcID := c.DefaultQuery("spc_id", "")
+	fpcID := c.DefaultQuery("fpc_id", "")
 	status := c.DefaultQuery("status", "")
 	reviewID := c.DefaultQuery("review_id", "")
 
-	filters := model.GetSpcReviewFilters{}
+	filters := model.GetFpcReviewFilters{}
 	if reviewID != "" {
 		filters.ID = reviewID
 	}
 	if submissionID != "" {
 		filters.SubmissionID = submissionID
 	}
-	if spcID != "" {
-		filters.SpcID = spcID
+	if fpcID != "" {
+		filters.FpcID = fpcID
 	}
 	if status != "" {
 		filters.Status = status
 	}
 
-	reviews, err := repository.GetSpcReviews(filters)
+	reviews, err := repository.GetFpcReviews(filters)
 	if err != nil {
 		log.Printf("Error fetching reviews: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch reviews"})

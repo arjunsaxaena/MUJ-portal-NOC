@@ -34,17 +34,17 @@ func main() {
 	authAdmin := r.Group("/admin")
 	authAdmin.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "admin"))
 	{
-		authAdmin.POST("/spc", controller.CreateSpCHandler)
+		authAdmin.POST("/spc", controller.CreateFpCHandler)
 		authAdmin.POST("/hod", controller.CreateHoDHandler)
 
-		authAdmin.GET("/spcs", controller.GetSpcsHandler)
+		authAdmin.GET("/spcs", controller.GetFpcsHandler)
 		authAdmin.GET("/hods", controller.GetHoDsHandler)
 
-		authAdmin.DELETE("/spc", controller.DeleteSpCHandler)
+		authAdmin.DELETE("/spc", controller.DeleteFpCHandler)
 		authAdmin.DELETE("/hod", controller.DeleteHoDHandler)
 	}
 
-	r.POST("/spc/login", controller.LoginSpcHandler)
+	r.POST("/spc/login", controller.LoginFpcHandler)
 
 	//[GIN] 2025/01/16 - 11:33:19 | 204 |            0s |             ::1 | OPTIONS  "/spc/login"      asking cors for persmission
 	//Current working directory:
@@ -57,14 +57,14 @@ func main() {
 	//		}
 	// 		This is how it expects the body
 
-	authSpc := r.Group("/spc")
-	authSpc.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "spc"))
+	authSpc := r.Group("/fpc")
+	authSpc.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "fpc"))
 	{
 		authSpc.GET("/submissions", controller.GetSubmissionscontroller)
 		// (2) On successful login, JWT token should be placed here.
 		//     spc should be redirected to this URL.
 
-		authSpc.POST("/spc_reviews", controller.CreateSpcReviewHandler)
+		authSpc.POST("/fpc_reviews", controller.CreateFpcReviewHandler)
 		// (3) When a spc clicks "Approve", "Reject", or "Rework", send a JSON body like:
 		//     {
 		//         "submission_id": 5,
@@ -74,8 +74,8 @@ func main() {
 		//     }
 		//     POST this JSON body to "/spc_reviews". Note: Everything inside authSpc will require the jwt token at login to be carry forward.
 
-		authSpc.PATCH("/spc_reviews", controller.UpdateSpcReviewHandler) // If fpc wants to reject or rework an approved submission
-		authSpc.GET("/spc_reviews", controller.GetSpcReviewsHandler)     // For testing
+		authSpc.PATCH("/fpc_reviews", controller.UpdateFpcReviewHandler) // If fpc wants to reject or rework an approved submission
+		authSpc.GET("/fpc_reviews", controller.GetFpcReviewsHandler)     // For testing
 	}
 
 	r.POST("/hod/login", controller.LoginHoDHandler)
