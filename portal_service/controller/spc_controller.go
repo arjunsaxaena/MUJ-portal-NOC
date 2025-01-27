@@ -7,6 +7,7 @@ import (
 	submissionRepository "MUJ_AMG/submission_service/repository"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -141,4 +142,30 @@ func GetSubmissionscontroller(c *gin.Context) {
 
 	log.Printf("Submissions retrieved: %d records", len(submissions))
 	c.JSON(http.StatusOK, gin.H{"submissions": submissions})
+}
+
+func DeleteSpCHandler(c *gin.Context) {
+	idParam := c.Query("id")
+	if idParam == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "SPC ID is required"})
+		return
+	}
+
+	id, err := strconv.Atoi(idParam)
+	if err != nil || id <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid SPC ID"})
+		return
+	}
+
+	err = repository.DeleteSpC(id)
+	if err != nil {
+		if err.Error() == "no reviewer found with the given ID" {
+			c.JSON(http.StatusNotFound, gin.H{"error": "No SPC found with the given ID"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete SPC", "details": err.Error()})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "SPC deleted successfully"})
 }

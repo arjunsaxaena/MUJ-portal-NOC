@@ -39,6 +39,9 @@ func main() {
 
 		authAdmin.GET("/spcs", controller.GetSpcsHandler)
 		authAdmin.GET("/hods", controller.GetHoDsHandler)
+
+		authAdmin.DELETE("/spc", controller.DeleteSpCHandler)
+		authAdmin.DELETE("/hod", controller.DeleteHoDHandler)
 	}
 
 	r.POST("/spc/login", controller.LoginSpcHandler)

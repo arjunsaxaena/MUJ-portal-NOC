@@ -7,6 +7,7 @@ import (
 	submissionRepository "MUJ_AMG/submission_service/repository"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -141,4 +142,31 @@ func GetSubmissionsForHoDcontroller(c *gin.Context) {
 
 	log.Printf("Submissions retrieved: %d records", len(submissions))
 	c.JSON(http.StatusOK, gin.H{"submissions": submissions})
+}
+
+func DeleteHoDHandler(c *gin.Context) {
+	idParam := c.Query("id")
+	if idParam == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "HoD ID is required"})
+		return
+	}
+
+	id, err := strconv.Atoi(idParam)
+	if err != nil || id <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid HoD ID"})
+		return
+	}
+
+	err = repository.DeleteHoD(id)
+	if err != nil {
+		if err.Error() == "no HoD found with the given ID" {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		} else {
+			log.Printf("Error deleting HoD with ID %d: %v", id, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete HoD"})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "HoD deleted successfully"})
 }
