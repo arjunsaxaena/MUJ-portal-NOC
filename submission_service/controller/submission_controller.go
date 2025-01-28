@@ -39,7 +39,7 @@ func SubmitHandler(c *gin.Context) {
 		submission.PackagePPO = fmt.Sprintf("%.2f", packagePPO)
 		fmt.Printf("Formatted PackagePPO: %s\n", submission.PackagePPO)
 	} else {
-		submission.PackagePPO = ""
+		submission.PackagePPO = "0.00"
 	}
 
 	if submission.StipendAmount != "" {
@@ -53,6 +53,11 @@ func SubmitHandler(c *gin.Context) {
 		fmt.Printf("Formatted StipendAmount: %s\n", submission.StipendAmount)
 	} else {
 		submission.StipendAmount = "0.00"
+	}
+
+	if (submission.HRDEmail == nil || *submission.HRDEmail == "") && (submission.HRDNumber == nil || *submission.HRDNumber == "") {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Either HRDEmail or HRDNumber must be provided"})
+		return
 	}
 
 	offerLetter, _ := c.FormFile("offerLetter")

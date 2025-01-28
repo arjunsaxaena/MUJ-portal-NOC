@@ -17,7 +17,7 @@ type StudentSubmission struct {
 	CompanyState        string    `json:"company_state" form:"companyState" binding:"required" db:"company_state"`
 	CompanyCity         string    `json:"company_city" form:"companyCity" binding:"required" db:"company_city"`
 	Pincode             string    `json:"pincode" form:"companyPin" binding:"required" db:"pincode"`
-	HRDEmail            *string   `json:"hrd_email" form:"hrdEmail" binding:"omitempty,email" db:"hrd_email"`
+	HRDEmail            *string   `json:"hrd_email" form:"hrdEmail" binding:"omitempty" db:"hrd_email"`
 	HRDNumber           *string   `json:"hrd_number" form:"hrdNumber" db:"hrd_number"`
 	HasOfferLetter      bool      `json:"has_offer_letter" form:"hasOfferLetter" db:"has_offer_letter"`
 	OfferTypeDetail     string    `json:"offer_type_detail" form:"internshipType" binding:"required" db:"offer_type_detail"`
