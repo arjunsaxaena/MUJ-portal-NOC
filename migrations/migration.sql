@@ -38,6 +38,7 @@ CREATE TABLE fpc (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL, 
     email VARCHAR(100) NOT NULL UNIQUE,
+    app_password TEXT;
     password_hash TEXT NOT NULL,
     department VARCHAR(50) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -60,6 +61,7 @@ CREATE TABLE hod (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL, 
     email VARCHAR(255) UNIQUE NOT NULL,
+    app_password TEXT;
     password_hash TEXT NOT NULL,
     department VARCHAR(50) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -81,6 +83,7 @@ CREATE TABLE admin (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL, 
     email VARCHAR(255) UNIQUE NOT NULL,
+    app_password TEXT;
     password_hash TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -7,6 +7,7 @@ type Admin struct {
 	Name         string    `json:"name" db:"name"`
 	Email        string    `json:"email" db:"email"`
 	PasswordHash string    `json:"password_hash" db:"password_hash"`
+	AppPassword  string    `json:"app_password" db:"app_password"`
 	CreatedAt    time.Time `json:"created_at" db:"created_at"`
 }
 

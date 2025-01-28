@@ -34,48 +34,48 @@ func main() {
 	authAdmin := r.Group("/admin")
 	authAdmin.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "admin"))
 	{
-		authAdmin.POST("/spc", controller.CreateFpCHandler)
+		authAdmin.POST("/fpc", controller.CreateFpCHandler)
 		authAdmin.POST("/hod", controller.CreateHoDHandler)
 
-		authAdmin.GET("/spcs", controller.GetFpcsHandler)
+		authAdmin.GET("/fpcs", controller.GetFpcsHandler)
 		authAdmin.GET("/hods", controller.GetHoDsHandler)
 
-		authAdmin.DELETE("/spc", controller.DeleteFpCHandler)
+		authAdmin.DELETE("/fpc", controller.DeleteFpCHandler)
 		authAdmin.DELETE("/hod", controller.DeleteHoDHandler)
 	}
 
-	r.POST("/spc/login", controller.LoginFpcHandler)
+	r.POST("/fpc/login", controller.LoginFpcHandler)
 
-	//[GIN] 2025/01/16 - 11:33:19 | 204 |            0s |             ::1 | OPTIONS  "/spc/login"      asking cors for persmission
+	//[GIN] 2025/01/16 - 11:33:19 | 204 |            0s |             ::1 | OPTIONS  "/fpc/login"      asking cors for persmission
 	//Current working directory:
-	//[GIN] 2025/01/16 - 11:33:19 | 200 |     71.4962ms |             ::1 | POST     "/spc/login"		post request
+	//[GIN] 2025/01/16 - 11:33:19 | 200 |     71.4962ms |             ::1 | POST     "/fpc/login"		post request
 
-	// (1) spc login credentials will be handled here. Jwt token will be outputted here.
+	// (1) fpc login credentials will be handled here. Jwt token will be outputted here.
 	//     {
 	//			"email": "arjunsaxena04@gmail.com",
 	//			"password": "secure"
 	//		}
 	// 		This is how it expects the body
 
-	authSpc := r.Group("/fpc")
-	authSpc.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "fpc"))
+	authFpc := r.Group("/fpc")
+	authFpc.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "fpc"))
 	{
-		authSpc.GET("/submissions", controller.GetSubmissionscontroller)
+		authFpc.GET("/submissions", controller.GetSubmissionscontroller)
 		// (2) On successful login, JWT token should be placed here.
-		//     spc should be redirected to this URL.
+		//     fpc should be redirected to this URL.
 
-		authSpc.POST("/fpc_reviews", controller.CreateFpcReviewHandler)
-		// (3) When a spc clicks "Approve", "Reject", or "Rework", send a JSON body like:
+		authFpc.POST("/fpc_reviews", controller.CreateFpcReviewHandler)
+		// (3) When a fpc clicks "Approve", "Reject", or "Rework", send a JSON body like:
 		//     {
 		//         "submission_id": 5,
-		//         "spc_id": 1,
+		//         "fpc_id": 1,
 		//         "status": "Approved",   // Status changes based on button clicked.
 		//         "comments": "Documents verified"
 		//     }
-		//     POST this JSON body to "/spc_reviews". Note: Everything inside authSpc will require the jwt token at login to be carry forward.
+		//     POST this JSON body to "/fpc_reviews". Note: Everything inside authFpc will require the jwt token at login to be carry forward.
 
-		authSpc.PATCH("/fpc_reviews", controller.UpdateFpcReviewHandler) // If fpc wants to reject or rework an approved submission
-		authSpc.GET("/fpc_reviews", controller.GetFpcReviewsHandler)     // For testing
+		authFpc.PATCH("/fpc_reviews", controller.UpdateFpcReviewHandler) // If fpc wants to reject or rework an approved submission
+		authFpc.GET("/fpc_reviews", controller.GetFpcReviewsHandler)     // For testing
 	}
 
 	r.POST("/hod/login", controller.LoginHoDHandler)
@@ -101,8 +101,8 @@ func main() {
 		//         "action": "Approved",   // Action changes based on button clicked.
 		//         "remarks": "Everything looks good, approved for NOC." // Remarks based on the status.
 		//     }
-		//     POST this JSON body to "/hod_reviews". Note: Everything inside authspc will require the jwt token at login to be carry forward.
-		//     Make sure the status in spc or action in hod only posts status as
+		//     POST this JSON body to "/hod_reviews". Note: Everything inside authFpc will require the jwt token at login to be carry forward.
+		//     Make sure the status in fpc or action in hod only posts status as
 		//     "Approve", "Reject", or "Rework" according to the button clicked. This is case sensitive.
 
 		authHoD.GET("/hod_reviews", controller.GetHodReviewsHandler) // For testing
