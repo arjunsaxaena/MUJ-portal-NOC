@@ -26,27 +26,28 @@ func CreateFpcReviewHandler(c *gin.Context) {
 		return
 	}
 
-	reviewID, err := repository.CreateFpcReview(input.SubmissionID, input.FpcID, input.Status, input.Comments)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create fpc review"})
-		return
-	}
-
 	fpcFilters := model.GetFpCFilters{
 		ID: strconv.Itoa(input.FpcID),
 	}
+
 	fpcs, err := repository.GetFpCs(fpcFilters)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch fpc details"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch FPC details"})
 		return
 	}
 
 	if len(fpcs) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "fpc not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "FPC not found"})
 		return
 	}
 
 	fpc := fpcs[0]
+
+	reviewID, err := repository.CreateFpcReview(input.SubmissionID, input.FpcID, input.Status, input.Comments)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create FPC review"})
+		return
+	}
 
 	if input.Status == "Approved" {
 		err := submissionRepository.UpdateSubmission(input.SubmissionID, "Approved", "")
@@ -77,7 +78,7 @@ func CreateFpcReviewHandler(c *gin.Context) {
 		body := fmt.Sprintf("Dear %s,\n\nYour NOC application has been %s.\n\nComments: %s\n\nBest regards",
 			submission.Name, input.Status, input.Comments)
 
-		err = util.SendEmail(fpc.Email, submission.OfficialMailID, subject, body)
+		err = util.SendEmail(fpc.Email, submission.OfficialMailID, subject, body, fpc.AppPassword)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send email to student"})
 			return
@@ -86,7 +87,7 @@ func CreateFpcReviewHandler(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"review_id": reviewID,
-		"message":   "fpc review created successfully",
+		"message":   "FPC review created successfully",
 	})
 }
 
@@ -117,7 +118,7 @@ func UpdateFpcReviewHandler(c *gin.Context) {
 	}
 
 	if len(fpcReviews) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "fpc review not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "FPC review not found"})
 		return
 	}
 
@@ -130,7 +131,6 @@ func UpdateFpcReviewHandler(c *gin.Context) {
 	}
 
 	if fpcReview.Status == "Approved" && input.Status == "Rejected" {
-
 		fpcFilters := model.GetFpCFilters{
 			ID: strconv.Itoa(fpcReview.FpcID),
 		}
@@ -142,11 +142,11 @@ func UpdateFpcReviewHandler(c *gin.Context) {
 		}
 
 		if len(fpcs) == 0 {
-			c.JSON(http.StatusNotFound, gin.H{"error": "fpc not found"})
+			c.JSON(http.StatusNotFound, gin.H{"error": "FPC not found"})
 			return
 		}
 
-		var fpc = fpcs[0]
+		fpc := fpcs[0]
 
 		submissionFilters := model.GetSubmissionFilters{
 			ID: strconv.Itoa(fpcReview.SubmissionID),
@@ -169,7 +169,7 @@ func UpdateFpcReviewHandler(c *gin.Context) {
 		body := fmt.Sprintf("Dear %s,\n\nYour NOC application has been %s.\n\nComments: %s\n\nBest regards",
 			submission.Name, input.Status, input.Comments)
 
-		err = util.SendEmail(fpc.Email, submission.OfficialMailID, subject, body)
+		err = util.SendEmail(fpc.Email, submission.OfficialMailID, subject, body, fpc.AppPassword)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send email"})
 			return
@@ -177,7 +177,7 @@ func UpdateFpcReviewHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "fpc review updated successfully",
+		"message": "FPC review updated successfully",
 	})
 }
 

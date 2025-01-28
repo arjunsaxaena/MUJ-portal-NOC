@@ -40,6 +40,9 @@ func main() {
 		authAdmin.GET("/fpcs", controller.GetFpcsHandler)
 		authAdmin.GET("/hods", controller.GetHoDsHandler)
 
+		authAdmin.PATCH("/fpc", controller.UpdateFpCHandler)
+		authAdmin.PATCH("/hod", controller.UpdateHoDHandler)
+
 		authAdmin.DELETE("/fpc", controller.DeleteFpCHandler)
 		authAdmin.DELETE("/hod", controller.DeleteHoDHandler)
 	}
@@ -47,7 +50,6 @@ func main() {
 	r.POST("/fpc/login", controller.LoginFpcHandler)
 
 	//[GIN] 2025/01/16 - 11:33:19 | 204 |            0s |             ::1 | OPTIONS  "/fpc/login"      asking cors for persmission
-	//Current working directory:
 	//[GIN] 2025/01/16 - 11:33:19 | 200 |     71.4962ms |             ::1 | POST     "/fpc/login"		post request
 
 	// (1) fpc login credentials will be handled here. Jwt token will be outputted here.
@@ -89,7 +91,7 @@ func main() {
 	authHoD := r.Group("/hod")
 	authHoD.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "hod"))
 	{
-		authHoD.GET("/approved_submissions", controller.GetSubmissionsForHoDcontroller)
+		authHoD.GET("/submissions", controller.GetSubmissionsForHoDcontroller)
 		// (5) On successful login of Hod, JWT token should be placed here.
 		//     Hod should be redirected to this URL.
 

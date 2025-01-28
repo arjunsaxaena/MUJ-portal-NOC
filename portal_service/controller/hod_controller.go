@@ -17,10 +17,11 @@ import (
 
 func CreateHoDHandler(c *gin.Context) {
 	var input struct {
-		Name       string `json:"name" binding:"required"`
-		Email      string `json:"email" binding:"required,email"`
-		Password   string `json:"password" binding:"required,min=6"`
-		Department string `json:"department" binding:"required"`
+		Name        string `json:"name" binding:"required"`
+		Email       string `json:"email" binding:"required,email"`
+		Password    string `json:"password" binding:"required"`
+		AppPassword string `json:"app_password" binding:"required"`
+		Department  string `json:"department" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -34,7 +35,7 @@ func CreateHoDHandler(c *gin.Context) {
 		return
 	}
 
-	id, err := repository.CreateHoD(input.Name, input.Email, string(hashedPassword), input.Department)
+	id, err := repository.CreateHoD(input.Name, input.Email, string(hashedPassword), input.AppPassword, input.Department)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create HoD"})
 		return
@@ -142,6 +143,52 @@ func GetSubmissionsForHoDcontroller(c *gin.Context) {
 
 	log.Printf("Submissions retrieved: %d records", len(submissions))
 	c.JSON(http.StatusOK, gin.H{"submissions": submissions})
+}
+
+func UpdateHoDHandler(c *gin.Context) {
+	var input struct {
+		Name        string `json:"name"`
+		Email       string `json:"email" binding:"email"`
+		Password    string `json:"password"`
+		AppPassword string `json:"app_password"`
+		Department  string `json:"department"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	idParam := c.DefaultQuery("id", "")
+	if idParam == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "HoD ID is required"})
+		return
+	}
+
+	id, err := strconv.Atoi(idParam)
+	if err != nil || id <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid HoD ID"})
+		return
+	}
+
+	var hashedPassword string
+	if input.Password != "" {
+		hashedPasswordBytes, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+			return
+		}
+		hashedPassword = string(hashedPasswordBytes)
+	}
+
+	err = repository.UpdateHoD(id, input.Name, input.Email, hashedPassword, input.AppPassword, input.Department)
+	if err != nil {
+		log.Printf("Error updating HoD with ID %d: %v", id, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update HoD"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "HoD updated successfully"})
 }
 
 func DeleteHoDHandler(c *gin.Context) {

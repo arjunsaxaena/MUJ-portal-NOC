@@ -10,14 +10,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateHoD(name, email, passwordHash, department string) (int, error) {
+func CreateHoD(name, email, passwordHash, appPassword, department string) (int, error) {
 	query := `
-		INSERT INTO hod (name, email, password_hash, department)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO hod (name, email, password_hash, app_password, department)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id
 	`
 	var id int
-	err := database.DB.QueryRow(query, name, email, passwordHash, department).Scan(&id)
+	err := database.DB.QueryRow(query, name, email, passwordHash, appPassword, department).Scan(&id)
 	if err != nil {
 		log.Printf("Error creating HoD: %v", err)
 		return 0, err
@@ -76,16 +76,17 @@ func ValidateHoDPassword(email, password string) (bool, error) {
 	return true, nil
 }
 
-func UpdateHoD(id int, name, email, passwordHash, department string) error {
+func UpdateHoD(id int, name, email, passwordHash, appPassword, department string) error {
 	query := `
 		UPDATE hod
 		SET name = COALESCE($1, name),
 		    email = COALESCE($2, email),
 		    password_hash = COALESCE($3, password_hash),
-		    department = COALESCE($4, department)
-		WHERE id = $5
+		    app_password = COALESCE($4, app_password),
+		    department = COALESCE($5, department)
+		WHERE id = $6
 	`
-	_, err := database.DB.Exec(query, name, email, passwordHash, department, id)
+	_, err := database.DB.Exec(query, name, email, passwordHash, appPassword, department, id)
 	if err != nil {
 		log.Printf("Error updating HoD with ID %d: %v", id, err)
 		return err

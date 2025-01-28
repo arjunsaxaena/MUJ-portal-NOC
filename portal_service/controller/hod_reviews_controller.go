@@ -68,7 +68,7 @@ func CreateHodReviewHandler(c *gin.Context) {
 		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been %s.\n\nHoD Comments: %s\n\nBest regards",
 			submission.Name, input.Action, input.Remarks)
 
-		err = util.SendEmail(hod.Email, submission.OfficialMailID, subject, body)
+		err = util.SendEmail(hod.Email, submission.OfficialMailID, subject, body, hod.AppPassword)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send email to student"})
 			return
@@ -86,7 +86,7 @@ func CreateHodReviewHandler(c *gin.Context) {
 		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been approved. Please collect your No Objection Certificate (NOC) from the HoD, %s (%s).\n\nBest regards,\nHoD",
 			submission.Name, hod.Name, hod.Email)
 
-		err = util.SendEmail(hod.Email, submission.OfficialMailID, subject, body)
+		err = util.SendEmail(hod.Email, submission.OfficialMailID, subject, body, hod.AppPassword)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send email to student"})
 			return

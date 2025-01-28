@@ -14,9 +14,10 @@ import (
 
 func CreateAdminHandler(c *gin.Context) {
 	var input struct {
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
+		Name        string `json:"name"`
+		Email       string `json:"email"`
+		Password    string `json:"password"`
+		AppPassword string `json:"app_password" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -30,7 +31,7 @@ func CreateAdminHandler(c *gin.Context) {
 		return
 	}
 
-	id, err := repository.CreateAdmin(input.Name, input.Email, string(hashedPassword))
+	id, err := repository.CreateAdmin(input.Name, input.Email, string(hashedPassword), input.AppPassword)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create admin"})
 		return

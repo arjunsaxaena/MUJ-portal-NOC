@@ -10,14 +10,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateAdmin(name, email, passwordHash string) (int, error) {
+func CreateAdmin(name, email, passwordHash, appPassword string) (int, error) {
 	query := `
-		INSERT INTO admin (name, email, password_hash)
-		VALUES ($1, $2, $3)
+		INSERT INTO admin (name, email, password_hash, app_password)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id
 	`
 	var id int
-	err := database.DB.QueryRow(query, name, email, passwordHash).Scan(&id)
+	err := database.DB.QueryRow(query, name, email, passwordHash, appPassword).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
@@ -70,15 +70,16 @@ func ValidateAdminPassword(email, password string) (bool, error) {
 	return true, nil
 }
 
-func UpdateAdmin(id int, name, email, passwordHash string) error {
+func UpdateAdmin(id int, name, email, passwordHash, appPassword string) error {
 	query := `
 		UPDATE admin
 		SET name = COALESCE($1, name),
 		    email = COALESCE($2, email),
-		    password_hash = COALESCE($3, password_hash)
-		WHERE id = $4
+		    password_hash = COALESCE($3, password_hash),
+		    app_password = COALESCE($4, app_password)
+		WHERE id = $5
 	`
-	_, err := database.DB.Exec(query, name, email, passwordHash, id)
+	_, err := database.DB.Exec(query, name, email, passwordHash, appPassword, id)
 	if err != nil {
 		log.Printf("Error updating admin with ID %d: %v", id, err)
 		return err
