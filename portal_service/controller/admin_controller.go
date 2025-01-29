@@ -4,6 +4,7 @@ import (
 	"MUJ_AMG/pkg/model"
 	"MUJ_AMG/portal_service/config"
 	"MUJ_AMG/portal_service/repository"
+	"log"
 	"net/http"
 	"time"
 
@@ -20,22 +21,33 @@ func CreateAdminHandler(c *gin.Context) {
 		AppPassword string `json:"app_password" binding:"required"`
 	}
 
+	log.Printf("Received request to create admin with email: %s", input.Email)
+
 	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Printf("Error binding input: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
 		return
 	}
 
+	log.Printf("Input validated: Name: %s, Email: %s", input.Name, input.Email)
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {
+		log.Printf("Error hashing password: %v", err) // Log the password hashing error
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return
 	}
 
+	log.Println("Password hashed successfully")
+
 	id, err := repository.CreateAdmin(input.Name, input.Email, string(hashedPassword), input.AppPassword)
 	if err != nil {
+		log.Printf("Error creating admin: %v", err) // Log error while creating admin
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create admin"})
 		return
 	}
+
+	log.Printf("Admin created successfully with ID: %d", id)
 
 	c.JSON(http.StatusCreated, gin.H{"id": id, "message": "Admin created successfully"})
 }
