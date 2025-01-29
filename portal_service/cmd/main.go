@@ -22,7 +22,7 @@ func main() {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},         // Frontend URL
+		AllowOrigins:     []string{"*"},                             // Frontend URL
 		AllowMethods:     []string{"GET", "POST", "PUT", "OPTIONS"}, // Allowed methods
 		AllowHeaders:     []string{"Content-Type", "Authorization"}, // Allowed headers
 		AllowCredentials: true,                                      // Allow cookies or credentials
