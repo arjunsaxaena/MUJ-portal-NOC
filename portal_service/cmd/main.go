@@ -28,6 +28,8 @@ func main() {
 		AllowCredentials: true,                                      // Allow cookies or credentials
 	}))
 
+	r.Static("/files", "../uploads")
+
 	r.POST("/admin", controller.CreateAdminHandler)
 	r.POST("/admin/login", controller.LoginAdminHandler)
 

@@ -14,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const uploadPath = "./uploads"
+const uploadPath = "../../uploads"
 
 func SubmitHandler(c *gin.Context) {
 	var submission model.StudentSubmission

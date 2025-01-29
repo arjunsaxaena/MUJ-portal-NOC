@@ -10,12 +10,14 @@ import (
 	"github.com/jung-kurt/gofpdf"
 )
 
-func CreateNocPdf(submission model.StudentSubmission, bucketName, keyPrefix string) (string, error) {
+func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf := gofpdf.New("P", "mm", "A4", "")
 	pdf.SetMargins(10, 10, 10)
 	pdf.AddPage()
 
-	letterheadPath := "C:/Users/arjun/VScode folders/College/MUJ_AMG/pkg/images/muj_header.png"
+	uploadsDir := filepath.Join("../uploads", "noc")
+
+	letterheadPath := filepath.Join("pkg", "images", "muj_header.png")
 	resolvedLetterheadPath, err := filepath.Abs(letterheadPath)
 	if err != nil {
 		fmt.Printf("Error resolving path for letterhead: %v\n", err)
@@ -118,17 +120,15 @@ Phone: +91 141 3999100 (Extn:768) | Mobile: +91 9785500056`
 	}
 
 	fileName := fmt.Sprintf("NOC_%s.pdf", submission.RegistrationNumber)
-	s3Key := fmt.Sprintf("%s/%s", keyPrefix, fileName)
-	fmt.Printf("Generated S3 key: %s\n", s3Key)
+	localFilePath := filepath.Join(uploadsDir, fileName)
 
-	err = UploadFileToS3(bucketName, &pdfBuffer, s3Key)
+	// Save the PDF locally
+	err = pdf.OutputFileAndClose(localFilePath)
 	if err != nil {
-		fmt.Printf("Error uploading PDF to S3: %v\n", err)
-		return "", fmt.Errorf("failed to upload NOC PDF to S3: %v", err)
+		fmt.Printf("Error saving PDF: %v\n", err)
+		return "", fmt.Errorf("failed to save NOC PDF: %v", err)
 	}
 
-	s3URL := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", bucketName, s3Key)
-	fmt.Printf("PDF successfully uploaded to S3. URL: %s\n", s3URL)
-
-	return s3URL, nil
+	fmt.Printf("PDF successfully saved at: %s\n", localFilePath)
+	return localFilePath, nil
 }

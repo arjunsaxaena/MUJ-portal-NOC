@@ -29,7 +29,6 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	r.Static("/files", "./uploads")
 	r.POST("/submit", controller.SubmitHandler)
 	//r.GET("/submissions", controller.GetSubmissionsHandler)
 	//r.PUT("/submissions", controller.UpdateSubmissionStatusHandler)
