@@ -2,13 +2,9 @@ package main
 
 import (
 	"MUJ_AMG/pkg/database"
-	"MUJ_AMG/pkg/util"
 	"MUJ_AMG/submission_service/config"
 	"MUJ_AMG/submission_service/controller"
-	"fmt"
 	"log"
-	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -21,20 +17,20 @@ func main() {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	cwd, err := os.Getwd()
-	if err != nil {
-		fmt.Println("Error getting current directory:", err)
-		return
-	}
+	// cwd, err := os.Getwd()
+	// if err != nil {
+	// 	fmt.Println("Error getting current directory:", err)
+	// 	return
+	// }
 
 	database.Connect(cfg)
 
-	csvFile := filepath.Join(cwd, "Students_VII.csv")
-	err = util.ImportCSVToPostgres(csvFile, database.DB)
-	if err != nil {
-		log.Fatalf("Failed to import CSV to PostgreSQL: %v", err)
-	}
-	log.Println("CSV data imported successfully!")
+	// csvFile := filepath.Join(cwd, "Students_VII.csv")
+	// err = util.ImportCSVToPostgres(csvFile, database.DB)
+	// if err != nil {
+	// 	log.Fatalf("Failed to import CSV to PostgreSQL: %v", err)
+	// }
+	// log.Println("CSV data imported successfully!")
 
 	r := gin.Default()
 

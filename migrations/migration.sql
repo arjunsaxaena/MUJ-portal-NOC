@@ -38,13 +38,7 @@ CREATE TABLE student_submissions (
     status VARCHAR(20) DEFAULT 'Pending',
     noc_path VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_student_registration FOREIGN KEY (registration_number) 
-        REFERENCES students(registration_number) ON DELETE CASCADE,
-        
-    CONSTRAINT fk_student_email FOREIGN KEY (official_mail_id) 
-        REFERENCES students(official_mail_id) ON DELETE CASCADE
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE fpc (

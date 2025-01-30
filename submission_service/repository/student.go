@@ -19,7 +19,7 @@ func GetStudents(filters model.GetStudentFilters) ([]model.Student, error) {
 	}
 
 	if filters.EmailID != "" {
-		query += " AND email_id = $" + strconv.Itoa(paramIndex)
+		query += " AND official_mail_id = $" + strconv.Itoa(paramIndex)
 		args = append(args, filters.EmailID)
 		paramIndex++
 	}
