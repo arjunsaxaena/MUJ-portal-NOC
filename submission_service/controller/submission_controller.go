@@ -29,6 +29,18 @@ func SubmitHandler(c *gin.Context) {
 		return
 	}
 
+	studentFilters := model.GetStudentFilters{
+		RegistrationNumber: submission.RegistrationNumber,
+		EmailID:            submission.OfficialMailID,
+	}
+
+	students, err := repository.GetStudents(studentFilters)
+	if err != nil || len(students) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Student not found with given Registration Number and Email ID"})
+		fmt.Printf("Student validation failed: %v\n", err)
+		return
+	}
+
 	submission.PackagePPO = formatFloat(submission.PackagePPO)
 	submission.StipendAmount = formatFloat(submission.StipendAmount)
 

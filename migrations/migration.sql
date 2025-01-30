@@ -2,6 +2,13 @@ CREATE DATABASE student_portal;
 
 \c student_portal;
 
+CREATE TABLE students (
+    id SERIAL PRIMARY KEY,
+    registration_number VARCHAR(20) UNIQUE NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    official_mail_id VARCHAR(100) UNIQUE NOT NULL
+);
+
 CREATE TABLE student_submissions (
     id SERIAL PRIMARY KEY,
     registration_number VARCHAR(20) NOT NULL,
@@ -31,7 +38,13 @@ CREATE TABLE student_submissions (
     status VARCHAR(20) DEFAULT 'Pending',
     noc_path VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_student_registration FOREIGN KEY (registration_number) 
+        REFERENCES students(registration_number) ON DELETE CASCADE,
+        
+    CONSTRAINT fk_student_email FOREIGN KEY (official_mail_id) 
+        REFERENCES students(official_mail_id) ON DELETE CASCADE
 );
 
 CREATE TABLE fpc (
