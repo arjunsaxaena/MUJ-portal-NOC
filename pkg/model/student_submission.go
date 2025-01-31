@@ -19,7 +19,6 @@ type StudentSubmission struct {
 	Pincode             string    `json:"pincode" form:"companyPin" binding:"required" db:"pincode"`
 	HRDEmail            *string   `json:"hrd_email" form:"hrdEmail" binding:"omitempty" db:"hrd_email"`
 	HRDNumber           *string   `json:"hrd_number" form:"hrdNumber" db:"hrd_number"`
-	HasOfferLetter      bool      `json:"has_offer_letter" form:"hasOfferLetter" db:"has_offer_letter"`
 	OfferTypeDetail     string    `json:"offer_type_detail" form:"internshipType" binding:"required" db:"offer_type_detail"`
 	PackagePPO          string    `json:"package_ppo" form:"ppoPackage" binding:"omitempty" db:"package_ppo"`
 	StipendAmount       string    `json:"stipend_amount" form:"stipend" binding:"required" db:"stipend_amount"`
@@ -29,6 +28,7 @@ type StudentSubmission struct {
 	MailCopyPath        string    `json:"mail_copy_path" form:"mailCopyPath" binding:"omitempty" db:"mail_copy_path"`
 	TermsAccepted       bool      `json:"terms_accepted" form:"termsAccepted" binding:"required" db:"terms_accepted"`
 	Status              string    `json:"status" db:"status"`
+	NocType             string    `json:"noc_type" form:"nocType" binding:"required" db:"noc_type"`
 	NocPath             *string   `json:"noc_path" db:"noc_path"`
 	CreatedAt           time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt           time.Time `json:"updated_at" db:"updated_at"`
@@ -38,4 +38,5 @@ type GetSubmissionFilters struct {
 	ID         string `form:"id"`
 	Department string `form:"department"`
 	Status     string `form:"status"`
+	NocType    string `form:"noc_type"`
 }

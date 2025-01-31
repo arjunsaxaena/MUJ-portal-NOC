@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 )
 
-const uploadPath = "../../uploads"
+const uploadPath = "../uploads"
 
 func SaveFile(fileHeader *multipart.FileHeader, folder, regNumber string) string {
 	dstDir := filepath.Join(uploadPath, folder)

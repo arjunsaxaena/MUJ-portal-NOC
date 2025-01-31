@@ -43,10 +43,12 @@ func SubmitHandler(c *gin.Context) {
 		return
 	}
 
+	offerLetterUploaded := false
 	if offerLetter, err := c.FormFile("offerLetter"); err == nil {
 		offerPath := util.SaveFile(offerLetter, "offerLetters", submission.RegistrationNumber)
 		if offerPath != "" {
 			submission.OfferLetterPath = offerPath
+			offerLetterUploaded = true
 			fmt.Printf("Offer letter saved at: %s\n", offerPath)
 		}
 	} else {
@@ -63,10 +65,18 @@ func SubmitHandler(c *gin.Context) {
 		fmt.Println("No mail copy file received")
 	}
 
-	if submission.OfferLetterPath == "" && submission.HasOfferLetter {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Offer letter file path is missing"})
+	if submission.NocType == "Specific" && !offerLetterUploaded {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Offer letter is required for 'specific' NOC type"})
 		return
 	}
+
+	if submission.NocType == "Generic" {
+		fmt.Println("NOC type is 'generic', offer letter is not required")
+	} else if submission.NocType != "specific" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid NOC type. Must be 'generic' or 'specific'"})
+		return
+	}
+
 	if submission.MailCopyPath == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Mail copy file path is missing"})
 		return

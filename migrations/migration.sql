@@ -31,11 +31,11 @@ CREATE TABLE student_submissions (
     stipend_amount DECIMAL(10, 2),
     internship_start_date DATE NOT NULL,
     internship_end_date DATE NOT NULL,
-    has_offer_letter BOOLEAN DEFAULT FALSE,
     offer_letter_path VARCHAR(255),
     mail_copy_path VARCHAR(255),
     terms_accepted BOOLEAN DEFAULT FALSE,
     status VARCHAR(20) DEFAULT 'Pending',
+    noc_type VARCHAR(20) NOT NULL,
     noc_path VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
