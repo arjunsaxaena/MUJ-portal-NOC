@@ -22,10 +22,10 @@ func main() {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},                             // Frontend URL
-		AllowMethods:     []string{"GET", "POST", "PUT", "OPTIONS"}, // Allowed methods
-		AllowHeaders:     []string{"Content-Type", "Authorization"}, // Allowed headers
-		AllowCredentials: true,                                      // Allow cookies or credentials
+		AllowOrigins:     []string{"*"}, // frontend url add here
+		AllowMethods:     []string{"GET", "POST", "PUT", "OPTIONS"},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
 	}))
 
 	r.Static("/files", "../uploads")

@@ -37,5 +37,5 @@ func SaveFile(fileHeader *multipart.FileHeader, folder, regNumber string) string
 		return ""
 	}
 
-	return "/files/" + folder + "/" + filepath.Base(dstPath)
+	return folder + "/" + filepath.Base(dstPath)
 }
