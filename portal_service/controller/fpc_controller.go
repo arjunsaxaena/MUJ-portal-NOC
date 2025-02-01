@@ -132,6 +132,7 @@ func GetSubmissionscontroller(c *gin.Context) {
 	}
 
 	filters.Department = department.(string)
+	filters.NocType = "Specific"
 	log.Printf("Filters received: %+v", filters)
 
 	submissions, err := submissionRepository.GetSubmissions(filters)

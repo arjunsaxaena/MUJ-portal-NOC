@@ -124,6 +124,18 @@ func GetSubmissionsForHoDcontroller(c *gin.Context) {
 		return
 	}
 
+	email, exists := c.Get("email")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Email not found in context"})
+		return
+	}
+
+	emailStr, ok := email.(string)
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email format"})
+		return
+	}
+
 	var filters model.GetSubmissionFilters
 	if err := c.ShouldBindQuery(&filters); err != nil {
 		log.Printf("Invalid filters: %v", err)
@@ -132,6 +144,12 @@ func GetSubmissionsForHoDcontroller(c *gin.Context) {
 	}
 
 	filters.Department = department.(string)
+	if emailStr == "shushila@gmail.com" {
+		filters.NocType = "Generic"
+	} else {
+		filters.NocType = "Specific"
+	}
+
 	log.Printf("Filters received: %+v", filters)
 
 	submissions, err := submissionRepository.GetSubmissions(filters)
