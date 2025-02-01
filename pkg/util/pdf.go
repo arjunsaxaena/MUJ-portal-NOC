@@ -132,3 +132,70 @@ Phone: +91 141 3999100 (Extn:768) | Mobile: +91 9785500056`
 	fmt.Printf("PDF successfully saved at: %s\n", localFilePath)
 	return localFilePath, nil
 }
+
+func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
+	pdf := gofpdf.New("P", "mm", "A4", "")
+	pdf.SetMargins(10, 10, 10)
+	pdf.AddPage()
+
+	pdf.SetFont("Arial", "", 10)
+	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2024/8H/%s", submission.RegistrationNumber)
+	pdf.CellFormat(0, 10, nocText, "", 1, "L", false, 0, "")
+
+	pdf.Ln(10)
+
+	pdf.SetFont("Arial", "BU", 14)
+	pdf.CellFormat(0, 10, "To Whomsoever It May Concern", "", 1, "C", false, 0, "")
+
+	pdf.Ln(10)
+
+	pdf.SetFont("Arial", "", 10)
+	title := "Mr."
+	if submission.Gender == "Female" {
+		title = "Ms."
+	}
+
+	body := fmt.Sprintf(`This is to certify that %s %s (Reg No. %s) is a student of Manipal University Jaipur, India, studying in the %s semester of the four-year B.Tech Degree Program in the Department of %s, Section %s.
+
+Manipal University Jaipur has no objection to %s %s undertaking professional engagements and has been advised to abide by ethical standards and work culture.
+
+This document is issued upon request and holds no liability for further obligations.
+
+Yours sincerely,`,
+		title,
+		submission.Name,
+		submission.RegistrationNumber,
+		submission.Semester,
+		submission.Department,
+		submission.Section,
+		title,
+		submission.Name,
+	)
+
+	pdf.MultiCell(0, 6, body, "", "L", false)
+
+	pdf.Ln(6)
+
+	pdf.SetFont("Arial", "I", 8)
+	pdf.CellFormat(0, 6, "This is a system-generated PDF.", "", 1, "C", false, 0, "")
+
+	var pdfBuffer bytes.Buffer
+	err := pdf.Output(&pdfBuffer)
+	if err != nil {
+		fmt.Printf("Error generating PDF: %v\n", err)
+		return "", fmt.Errorf("failed to generate PDF: %v", err)
+	}
+
+	uploadsDir := filepath.Join("../uploads", "noc")
+	fileName := fmt.Sprintf("NOC_%s.pdf", submission.RegistrationNumber)
+	localFilePath := filepath.Join(uploadsDir, fileName)
+
+	err = pdf.OutputFileAndClose(localFilePath)
+	if err != nil {
+		fmt.Printf("Error saving PDF: %v\n", err)
+		return "", fmt.Errorf("failed to save NOC PDF: %v", err)
+	}
+
+	fmt.Printf("PDF successfully saved at: %s\n", localFilePath)
+	return localFilePath, nil
+}
