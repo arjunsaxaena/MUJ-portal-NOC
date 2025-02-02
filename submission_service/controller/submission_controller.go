@@ -71,9 +71,12 @@ func SubmitHandler(c *gin.Context) {
 	}
 
 	if submission.NocType == "Generic" {
-		fmt.Println("NOC type is 'generic', offer letter is not required")
-	} else if submission.NocType != "specific" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid NOC type. Must be 'generic' or 'specific'"})
+		fmt.Println("NOC type is 'Generic', offer letter is not required")
+	} else if submission.NocType == "Specific" && !offerLetterUploaded {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Offer letter is required for 'Specific' NOC type"})
+		return
+	} else if submission.NocType != "Generic" && submission.NocType != "Specific" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid NOC type. Must be 'Generic' or 'Specific'"})
 		return
 	}
 

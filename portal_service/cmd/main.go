@@ -23,7 +23,7 @@ func main() {
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"}, // frontend url add here
-		AllowMethods:     []string{"GET", "POST", "PUT", "OPTIONS"},
+		AllowMethods:     []string{"GET", "POST", "PATCH", "OPTIONS"},
 		AllowHeaders:     []string{"Content-Type", "Authorization"},
 		AllowCredentials: true,
 	}))
@@ -78,8 +78,8 @@ func main() {
 		//     }
 		//     POST this JSON body to "/fpc_reviews". Note: Everything inside authFpc will require the jwt token at login to be carry forward.
 
-		authFpc.PATCH("/fpc_reviews", controller.UpdateFpcReviewHandler) // If fpc wants to reject or rework an approved submission
-		authFpc.GET("/fpc_reviews", controller.GetFpcReviewsHandler)     // For testing
+		// authFpc.PATCH("/fpc_reviews", controller.UpdateFpcReviewHandler) // If fpc wants to reject or rework an approved submission
+		// authFpc.GET("/fpc_reviews", controller.GetFpcReviewsHandler)     // For testing
 	}
 
 	r.POST("/hod/login", controller.LoginHoDHandler)
@@ -109,7 +109,7 @@ func main() {
 		//     Make sure the status in fpc or action in hod only posts status as
 		//     "Approve", "Reject", or "Rework" according to the button clicked. This is case sensitive.
 
-		authHoD.GET("/hod_reviews", controller.GetHodReviewsHandler) // For testing
+		// authHoD.GET("/hod_reviews", controller.GetHodReviewsHandler) // For testing
 	}
 
 	log.Printf("Server starting on port %s...", cfg.Port)
