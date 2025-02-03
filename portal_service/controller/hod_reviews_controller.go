@@ -7,6 +7,7 @@ import (
 	submissionRepository "MUJ_AMG/submission_service/repository"
 	"fmt"
 	"net/http"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -77,6 +78,7 @@ func CreateHodReviewHandler(c *gin.Context) {
 
 	if input.Action == "Approved" {
 		var nocPath string
+		var err error
 		if submission.NocType == "Generic" {
 			nocPath, err = util.CreateGenericNocPdf(submission)
 		} else {
@@ -86,6 +88,8 @@ func CreateHodReviewHandler(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate NOC PDF"})
 			return
 		}
+
+		nocPath = filepath.Join("noc", filepath.Base(nocPath))
 
 		subject := "Your Placement Application Status - NOC Available"
 		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been approved. Please collect your No Objection Certificate (NOC) from the HoD, %s (%s).\n\nBest regards,\nHoD",

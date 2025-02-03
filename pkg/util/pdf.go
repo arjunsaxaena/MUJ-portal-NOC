@@ -17,7 +17,7 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 
 	uploadsDir := filepath.Join("../uploads", "noc")
 
-	letterheadPath := filepath.Join("pkg", "images", "muj_header.png")
+	letterheadPath := "../pkg/images/muj_header.png"
 	resolvedLetterheadPath, err := filepath.Abs(letterheadPath)
 	if err != nil {
 		fmt.Printf("Error resolving path for letterhead: %v\n", err)
@@ -112,17 +112,9 @@ Phone: +91 141 3999100 (Extn:768) | Mobile: +91 9785500056`
 	pdf.SetFont("Arial", "I", 8)
 	pdf.CellFormat(0, 6, "This is a system-generated PDF.", "", 1, "C", false, 0, "")
 
-	var pdfBuffer bytes.Buffer
-	err = pdf.Output(&pdfBuffer)
-	if err != nil {
-		fmt.Printf("Error generating PDF: %v\n", err)
-		return "", fmt.Errorf("failed to generate PDF: %v", err)
-	}
-
 	fileName := fmt.Sprintf("NOC_%s.pdf", submission.RegistrationNumber)
 	localFilePath := filepath.Join(uploadsDir, fileName)
 
-	// Save the PDF locally
 	err = pdf.OutputFileAndClose(localFilePath)
 	if err != nil {
 		fmt.Printf("Error saving PDF: %v\n", err)
