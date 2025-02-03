@@ -29,7 +29,7 @@ func main() {
 
 	database.Connect(cfg)
 
-	csvFile := filepath.Join(cwd, "Students_VIIi.csv")
+	csvFile := filepath.Join(cwd, "Students_VIII.csv")
 	err = util.ImportCSVToPostgres(csvFile, database.DB)
 	if err != nil {
 		log.Fatalf("Failed to import CSV to PostgreSQL: %v", err)
