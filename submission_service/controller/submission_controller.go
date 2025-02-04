@@ -97,3 +97,64 @@ func SubmitHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Submission received successfully"})
 	fmt.Println("Submission received successfully")
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+type OTPRequest struct {
+	Email string `json:"email"`
+}
+
+func GenerateOTPHandler(c *gin.Context) {
+	var request OTPRequest
+	if err := c.BindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
+		return
+	}
+
+	email := request.Email
+	if email == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Email is required"})
+		return
+	}
+
+	generatedOTP := util.GenerateOTP(email)
+	emailBody := fmt.Sprintf("Your OTP for email verification is: %s. It is valid for 5 minutes.", generatedOTP)
+
+	err := util.SendEmail("arjunsaxena04@gmail.com", email, "Email Verification OTP", emailBody, "bjkwwhugjefvcdoa")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send OTP email"})
+		fmt.Printf("Error sending OTP email: %v\n", err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "OTP sent successfully"})
+}
+
+func ValidateOTPHandler(c *gin.Context) {
+	var request struct {
+		Email string `json:"email"`
+		OTP   string `json:"otp"`
+	}
+
+	if err := c.BindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
+		return
+	}
+
+	email := request.Email
+	otp := request.OTP
+
+	if email == "" || otp == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Email and OTP are required"})
+		return
+	}
+
+	if !util.ValidateOTP(email, otp) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired OTP"})
+		return
+	}
+
+	util.MarkEmailValidated(email)
+
+	c.JSON(http.StatusOK, gin.H{"message": "OTP validated successfully"})
+}

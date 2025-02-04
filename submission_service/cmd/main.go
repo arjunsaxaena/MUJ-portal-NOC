@@ -43,10 +43,12 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
+	r.POST("/generate-otp", controller.GenerateOTPHandler)
+	r.POST("/validate-otp", controller.ValidateOTPHandler)
 	r.POST("/submit", controller.SubmitHandler)
 	//r.GET("/submissions", controller.GetSubmissionsHandler)
 	//r.PUT("/submissions", controller.UpdateSubmissionStatusHandler)
 
 	log.Printf("Starting server on port %s", cfg.Port)
-	r.Run("0.0.0.0:" + cfg.Port)
+	r.Run(":" + cfg.Port)
 }
