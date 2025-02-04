@@ -17,17 +17,19 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 
 	uploadsDir := filepath.Join("../uploads", "noc")
 
-	letterheadPath := "../pkg/images/muj_header.png"
-	resolvedLetterheadPath, err := filepath.Abs(letterheadPath)
-	if err != nil {
-		fmt.Printf("Error resolving path for letterhead: %v\n", err)
-		return "", fmt.Errorf("failed to resolve path for letterhead: %v", err)
-	}
+	// letterheadPath := "../pkg/images/muj_header.png"
+	// resolvedLetterheadPath, err := filepath.Abs(letterheadPath)
+	// if err != nil {
+	// 	fmt.Printf("Error resolving path for letterhead: %v\n", err)
+	// 	return "", fmt.Errorf("failed to resolve path for letterhead: %v", err)
+	// }
 
-	imageWidth := 100.0
-	imageHeight := 50.0
-	pdf.ImageOptions(resolvedLetterheadPath, 0, 10, imageWidth, imageHeight, false, gofpdf.ImageOptions{}, 0, "")
-	pdf.Ln(imageHeight + 3)
+	// imageWidth := 100.0
+	// imageHeight := 50.0
+	// pdf.ImageOptions(resolvedLetterheadPath, 0, 10, imageWidth, imageHeight, false, gofpdf.ImageOptions{}, 0, "")
+	// pdf.Ln(imageHeight + 3)
+
+	pdf.Ln(50)
 
 	pdf.SetFont("Arial", "", 10)
 	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2024/8H/%s", submission.RegistrationNumber)
