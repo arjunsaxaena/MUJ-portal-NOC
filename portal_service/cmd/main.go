@@ -113,5 +113,5 @@ func main() {
 	}
 
 	log.Printf("Server starting on port %s...", cfg.Port)
-	r.Run(":" + cfg.Port)
+	r.Run("0.0.0.0:" + cfg.Port)
 }

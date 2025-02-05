@@ -50,5 +50,5 @@ func main() {
 	//r.PUT("/submissions", controller.UpdateSubmissionStatusHandler)
 
 	log.Printf("Starting server on port %s", cfg.Port)
-	r.Run(":" + cfg.Port)
+	r.Run("0.0.0.0:" + cfg.Port)
 }
