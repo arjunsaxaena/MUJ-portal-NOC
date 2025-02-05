@@ -89,15 +89,24 @@ func CreateHodReviewHandler(c *gin.Context) {
 			return
 		}
 
-		nocPath = filepath.Join("noc", filepath.Base(nocPath))
+		nocPath = filepath.Join("NOC", filepath.Base(nocPath))
 
 		subject := "Your Placement Application Status - NOC Available"
-		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been approved. Please collect your No Objection Certificate (NOC) from the HoD, %s (%s).\n\nBest regards,\nHoD",
-			submission.Name, hod.Name, hod.Email)
+		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been approved. Please collect your No Objection Certificate (NOC) from the admin office office.cse@jaipur.manipal.edu.\n\nBest regards,\nHOD",
+			submission.Name)
 
 		err = util.SendEmail(hod.Email, submission.OfficialMailID, subject, body, hod.AppPassword)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send email to student"})
+			return
+		}
+
+		officeSubject := "NOC Generated"
+		officeBody := fmt.Sprintf("NOC for %s", submission.Name)
+
+		err = util.SendEmailWithAttachment(hod.Email, "arjunsaxena04@gmail.com", officeSubject, officeBody, hod.AppPassword, nocPath) // change arjunsaxena04@gmail.com to office.cse@jaipur.manipal.edu
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send NOC to Office"})
 			return
 		}
 
