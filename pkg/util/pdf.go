@@ -37,7 +37,7 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	// pdf.ImageOptions(resolvedLetterheadPath, 0, 10, imageWidth, imageHeight, false, gofpdf.ImageOptions{}, 0, "")
 	// pdf.Ln(imageHeight + 3)
 
-	pdf.Ln(40)
+	pdf.Ln(40) // remove this if letterhead
 
 	pdf.SetFont("Arial", "", 10)
 	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2024/8H/%s", submission.RegistrationNumber)
@@ -70,36 +70,40 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	if submission.Gender == "Female" {
 		title = "Ms."
 	}
-	body := fmt.Sprintf(`Sub: Recommendation for %s %s carrying out internship cum project in your esteemed Organization
 
-Dear Sir/Madam,
+	pdf.SetFont("Arial", "", 10)
+	pdf.Write(6, "Sub: Recommendation for ")
+	pdf.SetFont("Arial", "B", 10)
+	pdf.Write(6, fmt.Sprintf("%s %s", title, submission.Name))
+	pdf.SetFont("Arial", "", 10)
+	pdf.Write(6, " carrying out internship cum project in your esteemed Organization\n\n")
 
-This is to certify that %s %s (Reg No. %s) is a student of Manipal University Jaipur, India, studying in the %s semester of the four-year B.Tech Degree Program in the Department of %s, Section %s.
+	pdf.Write(6, "Dear Sir/Madam,\n\n")
 
-This recommendation is issued with reference to the application for an internship/project in your esteemed organization for a duration from %s to %s.
-
-This Internship/Project would add value to the academic career of the student. So I request you to kindly allow our student to undergo Internship/Project at your organization.
-
-Manipal University Jaipur has no objection for %s %s in doing an internship at your organization and has been advised to abide by both MUJ's and the interning organization's ethics/rules/regulations/values and work culture without compromising on integrity and self-discipline.
-
-Thanking you.
-
-Yours sincerely,`,
-		title,
-		submission.Name,
-		title,
-		submission.Name,
+	pdf.Write(6, "This is to certify that ")
+	pdf.SetFont("Arial", "B", 10)
+	pdf.Write(6, fmt.Sprintf("%s %s", title, submission.Name))
+	pdf.SetFont("Arial", "", 10)
+	pdf.Write(6, fmt.Sprintf(" (Reg No. %s) is a student of Manipal University Jaipur, India, studying in the %s semester of the four-year B.Tech Degree Program in the Department of %s, Section %s.\n\n",
 		submission.RegistrationNumber,
 		submission.Semester,
 		submission.Department,
-		submission.Section,
-		startDateFormatted,
-		endDateFormatted,
-		title,
-		submission.Name,
-	)
+		submission.Section))
 
-	pdf.MultiCell(0, 6, body, "", "L", false)
+	pdf.Write(6, fmt.Sprintf("This recommendation is issued with reference to the application for an internship/project in your esteemed organization for a duration from %s to %s.\n\n",
+		startDateFormatted,
+		endDateFormatted))
+
+	pdf.Write(6, "This Internship/Project would add value to the academic career of the student. So I request you to kindly allow our student to undergo Internship/Project at your organization.\n\n")
+
+	pdf.Write(6, "Manipal University Jaipur has no objection for ")
+	pdf.SetFont("Arial", "B", 10)
+	pdf.Write(6, fmt.Sprintf("%s %s", title, submission.Name))
+	pdf.SetFont("Arial", "", 10)
+	pdf.Write(6, " in doing an internship at your organization and has been advised to abide by both MUJ's and the interning organization's ethics/rules/regulations/values and work culture without compromising on integrity and self-discipline.\n\n")
+
+	pdf.Write(6, "Thanking you.\n\n")
+	pdf.Write(6, "Yours sincerely,")
 
 	pdf.Ln(4)
 
