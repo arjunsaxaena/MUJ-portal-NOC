@@ -5,6 +5,7 @@ import (
 	"MUJ_AMG/pkg/middleware"
 	"MUJ_AMG/portal_service/config"
 	"MUJ_AMG/portal_service/controller"
+	submission_sontroller "MUJ_AMG/submission_service/controller"
 	"log"
 
 	"github.com/gin-contrib/cors"
@@ -28,6 +29,12 @@ func main() {
 		AllowCredentials: true,
 	}))
 
+	// Submission service
+	r.POST("/generate-otp", submission_sontroller.GenerateOTPHandler)
+	r.POST("/validate-otp", submission_sontroller.ValidateOTPHandler)
+	r.POST("/submit", submission_sontroller.SubmitHandler)
+
+	// Files serving
 	r.Static("/files", "../uploads")
 
 	r.POST("/admin", controller.CreateAdminHandler)
