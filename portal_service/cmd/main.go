@@ -5,7 +5,7 @@ import (
 	"MUJ_AMG/pkg/middleware"
 	"MUJ_AMG/portal_service/config"
 	"MUJ_AMG/portal_service/controller"
-	submission_sontroller "MUJ_AMG/submission_service/controller"
+	submission_controller "MUJ_AMG/submission_service/controller"
 	"log"
 
 	"github.com/gin-contrib/cors"
@@ -23,16 +23,16 @@ func main() {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"}, // frontend url add here
+		AllowOrigins:     []string{"https://arjunsaxaena.github.io"}, // frontend url add here
 		AllowMethods:     []string{"GET", "POST", "PATCH", "OPTIONS"},
 		AllowHeaders:     []string{"Content-Type", "Authorization"},
 		AllowCredentials: true,
 	}))
 
 	// Submission service
-	r.POST("/generate-otp", submission_sontroller.GenerateOTPHandler)
-	r.POST("/validate-otp", submission_sontroller.ValidateOTPHandler)
-	r.POST("/submit", submission_sontroller.SubmitHandler)
+	r.POST("/generate-otp", submission_controller.GenerateOTPHandler)
+	r.POST("/validate-otp", submission_controller.ValidateOTPHandler)
+	r.POST("/submit", submission_controller.SubmitHandler)
 
 	// Files serving
 	r.Static("/files", "../uploads")
@@ -120,5 +120,5 @@ func main() {
 	}
 
 	log.Printf("Server starting on port %s...", cfg.Port)
-	r.Run("0.0.0.0:" + cfg.Port)
+	r.Run(":" + cfg.Port)
 }
