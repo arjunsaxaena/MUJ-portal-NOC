@@ -3,6 +3,7 @@ package main
 import (
 	"MUJ_AMG/pkg/database"
 	"MUJ_AMG/pkg/middleware"
+	"MUJ_AMG/pkg/util"
 	"MUJ_AMG/portal_service/config"
 	"MUJ_AMG/portal_service/controller"
 	submission_controller "MUJ_AMG/submission_service/controller"
@@ -28,6 +29,20 @@ func main() {
 		AllowHeaders:     []string{"Content-Type", "Authorization"},
 		AllowCredentials: true,
 	}))
+
+	csvFile := "/home/ubuntu/MUJ_automated_mail_generation/Students_VIII.csv"
+	err = util.ImportCSVToPostgres(csvFile, database.DB)
+	if err != nil {
+		log.Fatalf("Failed to import CSV to PostgreSQL: %v", err)
+	}
+	log.Println("CSV data imported successfully!")
+
+	csvFile2 := "/home/ubuntu/MUJ_automated_mail_generation/Students_VI.csv"
+	err = util.ImportCSVToPostgres(csvFile2, database.DB)
+	if err != nil {
+		log.Fatalf("Failed to import second CSV to PostgreSQL: %v", err)
+	}
+	log.Println("Second CSV data imported successfully!")
 
 	// Submission service
 	r.POST("/generate-otp", submission_controller.GenerateOTPHandler)

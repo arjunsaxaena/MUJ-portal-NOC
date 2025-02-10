@@ -105,7 +105,7 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.Write(6, "Thanking you.\n\n")
 	pdf.Write(6, "Yours sincerely,")
 
-	pdf.Ln(4)
+	pdf.Ln(6)
 
 	pdf.SetFont("Arial", "", 10)
 	footer := `Head of the Department & Professor (CSE)
