@@ -48,8 +48,11 @@ func main() {
 	r.POST("/validate-otp", submission_controller.ValidateOTPHandler)
 	r.POST("/submit", submission_controller.SubmitHandler)
 
-	// Files serving
-	r.Static("/files", "../uploads")
+	authFiles := r.Group("/files")
+	authFiles.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "fpc", "hod"))
+	{
+		authFiles.Static("/", "../uploads")
+	}
 
 	r.POST("/admin", controller.CreateAdminHandler)
 	r.POST("/admin/login", controller.LoginAdminHandler)

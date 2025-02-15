@@ -9,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func AuthMiddleware(jwtSecretKey string, requiredRole string) gin.HandlerFunc {
+func AuthMiddleware(jwtSecretKey string, allowedRoles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
 		if tokenString == "" {
@@ -20,8 +20,7 @@ func AuthMiddleware(jwtSecretKey string, requiredRole string) gin.HandlerFunc {
 
 		log.Printf("Authorization Header: %s", tokenString)
 
-		// Remove "Bearer " prefix if present
-		tokenString = strings.TrimPrefix(tokenString, "Bearer ") // code not working after removing dont know why
+		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			return []byte(jwtSecretKey), nil
@@ -35,7 +34,23 @@ func AuthMiddleware(jwtSecretKey string, requiredRole string) gin.HandlerFunc {
 		}
 
 		claims, ok := token.Claims.(jwt.MapClaims)
-		if !ok || claims["role"] != requiredRole {
+		if !ok {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+			c.Abort()
+			return
+		}
+
+		userRole := claims["role"].(string)
+
+		allowed := false
+		for _, role := range allowedRoles {
+			if userRole == role {
+				allowed = true
+				break
+			}
+		}
+
+		if !allowed {
 			c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
 			c.Abort()
 			return
@@ -43,7 +58,7 @@ func AuthMiddleware(jwtSecretKey string, requiredRole string) gin.HandlerFunc {
 
 		c.Set("id", claims["id"])
 		c.Set("email", claims["email"])
-		c.Set("role", claims["role"])
+		c.Set("role", userRole)
 		c.Set("department", claims["department"])
 		c.Next()
 	}
