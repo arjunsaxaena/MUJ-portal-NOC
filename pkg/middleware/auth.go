@@ -1,13 +1,36 @@
 package middleware
 
 import (
-	"log"
 	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
+
+var (
+	blacklistedTokens = make(map[string]bool)
+	blacklistMutex    sync.RWMutex
+)
+
+func BlacklistToken(token string) {
+	token = strings.TrimPrefix(token, "Bearer ")
+
+	blacklistMutex.Lock()
+	blacklistedTokens[token] = true
+	blacklistMutex.Unlock()
+}
+
+func IsTokenBlacklisted(token string) bool {
+	token = strings.TrimPrefix(token, "Bearer ")
+
+	blacklistMutex.RLock()
+	isBlacklisted := blacklistedTokens[token]
+	blacklistMutex.RUnlock()
+
+	return isBlacklisted
+}
 
 func AuthMiddleware(jwtSecretKey string, allowedRoles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -18,16 +41,19 @@ func AuthMiddleware(jwtSecretKey string, allowedRoles ...string) gin.HandlerFunc
 			return
 		}
 
-		log.Printf("Authorization Header: %s", tokenString)
-
 		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+
+		if IsTokenBlacklisted(tokenString) {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token has been invalidated"})
+			c.Abort()
+			return
+		}
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			return []byte(jwtSecretKey), nil
 		})
 
 		if err != nil || !token.Valid {
-			log.Printf("Token parsing error: %v", err)
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()
 			return

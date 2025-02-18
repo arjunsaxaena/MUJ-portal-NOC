@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"MUJ_AMG/pkg/middleware"
 	"MUJ_AMG/pkg/model"
 	"MUJ_AMG/portal_service/config"
 	"MUJ_AMG/portal_service/repository"
@@ -118,4 +119,16 @@ func GetAdminsHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, admins)
+}
+
+func LogoutAdminHandler(c *gin.Context) {
+	tokenString := c.GetHeader("Authorization")
+	if tokenString == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No token provided"})
+		return
+	}
+
+	middleware.BlacklistToken(tokenString)
+
+	c.JSON(http.StatusOK, gin.H{"message": "Admin logged out successfully"})
 }

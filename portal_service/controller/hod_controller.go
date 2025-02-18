@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"MUJ_AMG/pkg/middleware"
 	"MUJ_AMG/pkg/model"
 	"MUJ_AMG/portal_service/config"
 	"MUJ_AMG/portal_service/repository"
@@ -234,4 +235,16 @@ func DeleteHoDHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "HoD deleted successfully"})
+}
+
+func LogoutHodHandler(c *gin.Context) {
+	tokenString := c.GetHeader("Authorization")
+	if tokenString == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No token provided"})
+		return
+	}
+
+	middleware.BlacklistToken(tokenString)
+
+	c.JSON(http.StatusOK, gin.H{"message": "HOD logged out successfully"})
 }

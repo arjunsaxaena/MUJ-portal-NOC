@@ -65,6 +65,8 @@ func main() {
 	authAdmin := r.Group("/admin")
 	authAdmin.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "admin"))
 	{
+		authAdmin.POST("/logout", controller.LogoutAdminHandler)
+
 		authAdmin.POST("/fpc", controller.CreateFpCHandler)
 		authAdmin.POST("/hod", controller.CreateHoDHandler)
 
@@ -93,6 +95,8 @@ func main() {
 	authFpc := r.Group("/fpc")
 	authFpc.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "fpc"))
 	{
+		authFpc.POST("/logout", controller.LogoutFpcHandler)
+
 		authFpc.GET("/submissions", controller.GetSubmissionscontroller)
 		// (2) On successful login, JWT token should be placed here.
 		//     fpc should be redirected to this URL.
@@ -122,6 +126,8 @@ func main() {
 	authHoD := r.Group("/hod")
 	authHoD.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "hod"))
 	{
+		authHoD.POST("/logout", controller.LogoutHodHandler)
+
 		authHoD.GET("/submissions", controller.GetSubmissionsForHoDcontroller)
 		// (5) On successful login of Hod, JWT token should be placed here.
 		//     Hod should be redirected to this URL.
