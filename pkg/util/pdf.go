@@ -40,7 +40,7 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.Ln(40) // remove this if letterhead
 
 	pdf.SetFont("Arial", "", 10)
-	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2024/8H/%s", submission.RegistrationNumber)
+	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2025/8H/%s", submission.RegistrationNumber)
 	pdf.CellFormat(95, 10, nocText, "", 0, "L", false, 0, "") // on left side
 
 	currentDate := time.Now().Format("02-Jan-2006")
@@ -102,10 +102,10 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.SetFont("Arial", "", 10)
 	pdf.Write(6, " in doing an internship at your organization and has been advised to abide by both MUJ's and the interning organization's ethics/rules/regulations/values and work culture without compromising on integrity and self-discipline.\n\n")
 
-	pdf.Write(6, "Thanking you.\n\n")
+	pdf.Write(6, "Thanking you.\n\n\n")
 	pdf.Write(6, "Yours sincerely,")
 
-	pdf.Ln(10)
+	pdf.Ln(12)
 
 	pdf.SetFont("Arial", "", 10)
 	footer := `Head of the Department & Professor (CSE)

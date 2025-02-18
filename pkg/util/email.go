@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	"io"
 	"log"
 	"mime/multipart"
 	"mime/quotedprintable"
-	"net/http"
 	"net/smtp"
 	"os"
 	"path/filepath"
@@ -40,47 +38,39 @@ func SendEmail(from, to, subject, body, appPassword string) error {
 	return nil
 }
 
-func downloadFile(url, savePath string) error {
-	resp, err := http.Get(url)
-	if err != nil {
-		return fmt.Errorf("failed to fetch file: %v", err)
-	}
-	defer resp.Body.Close()
+// func downloadFile(url, savePath string) error {
+// 	resp, err := http.Get(url)
+// 	if err != nil {
+// 		return fmt.Errorf("failed to fetch file: %v", err)
+// 	}
+// 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to fetch file: received status %d", resp.StatusCode)
-	}
+// 	if resp.StatusCode != http.StatusOK {
+// 		return fmt.Errorf("failed to fetch file: received status %d", resp.StatusCode)
+// 	}
 
-	outFile, err := os.Create(savePath)
-	if err != nil {
-		return fmt.Errorf("failed to create file: %v", err)
-	}
-	defer outFile.Close()
+// 	outFile, err := os.Create(savePath)
+// 	if err != nil {
+// 		return fmt.Errorf("failed to create file: %v", err)
+// 	}
+// 	defer outFile.Close()
 
-	_, err = io.Copy(outFile, resp.Body)
-	if err != nil {
-		return fmt.Errorf("failed to save file: %v", err)
-	}
+// 	_, err = io.Copy(outFile, resp.Body)
+// 	if err != nil {
+// 		return fmt.Errorf("failed to save file: %v", err)
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
-func SendEmailWithAttachment(from, to, subject, body, appPassword, nocPath string) error {
+func SendEmailWithAttachment(from, to, subject, body, appPassword, nocFileName string) error {
 	smtpHost := "smtp.gmail.com"
 	smtpPort := "587"
 	auth := smtp.PlainAuth("", from, appPassword, smtpHost)
 
-	nocURL := fmt.Sprintf("http://localhost:8002/files/NOC/%s", filepath.Base(nocPath))
-	tempFilePath := fmt.Sprintf("./temp_%s", filepath.Base(nocPath))
+	nocPath := filepath.Join("..", "uploads", nocFileName)
 
-	err := downloadFile(nocURL, tempFilePath)
-	if err != nil {
-		log.Printf("Error downloading NOC: %v", err)
-		return fmt.Errorf("failed to download NOC: %v", err)
-	}
-	defer os.Remove(tempFilePath)
-
-	attachment, err := os.ReadFile(tempFilePath)
+	attachment, err := os.ReadFile(nocPath)
 	if err != nil {
 		log.Printf("Error reading attachment: %v", err)
 		return fmt.Errorf("failed to read attachment: %v", err)
@@ -103,9 +93,11 @@ func SendEmailWithAttachment(from, to, subject, body, appPassword, nocPath strin
 	bodyWriter.Write([]byte(body))
 	bodyWriter.Close()
 
+	filename := filepath.Base(nocFileName)
+
 	attachmentPart, _ := writer.CreatePart(map[string][]string{
-		"Content-Disposition":       {"attachment; filename=\"" + filepath.Base(nocPath) + "\""},
-		"Content-Type":              {"application/pdf; name=\"" + filepath.Base(nocPath) + "\""},
+		"Content-Disposition":       {"attachment; filename=\"" + filename + "\""},
+		"Content-Type":              {"application/pdf; name=\"" + filename + "\""},
 		"Content-Transfer-Encoding": {"base64"},
 	})
 
