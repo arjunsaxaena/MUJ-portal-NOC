@@ -105,7 +105,7 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.Write(6, "Thanking you.\n\n")
 	pdf.Write(6, "Yours sincerely,")
 
-	pdf.Ln(6)
+	pdf.Ln(10)
 
 	pdf.SetFont("Arial", "", 10)
 	footer := `Head of the Department & Professor (CSE)
@@ -123,8 +123,8 @@ Phone: +91 141 3999100 (Extn:768) | Mobile: +91 9785500056`
 
 	pdf.Ln(6)
 
-	pdf.SetFont("Arial", "I", 8)
-	pdf.CellFormat(0, 6, "This is a system-generated PDF.", "", 1, "C", false, 0, "")
+	// pdf.SetFont("Arial", "I", 8)
+	// pdf.CellFormat(0, 6, "This is a system-generated PDF.", "", 1, "C", false, 0, "")
 
 	fileName := fmt.Sprintf("NOC_%s.pdf", submission.RegistrationNumber)
 	localFilePath := filepath.Join(uploadsDir, fileName)
