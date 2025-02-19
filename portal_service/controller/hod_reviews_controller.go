@@ -92,8 +92,8 @@ func CreateHodReviewHandler(c *gin.Context) {
 		nocPath = filepath.Join("NOC", filepath.Base(nocPath))
 
 		subject := "Your Placement Application Status - NOC Available"
-		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been approved. Please collect your No Objection Certificate (NOC) from the admin office office.cse@jaipur.manipal.edu.\n\nBest regards,\nHOD",
-			submission.Name)
+		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been approved. Please collect your No Objection Certificate (NOC) from the %s office \n\nBest regards,\nHOD",
+			submission.Name, submission.Department)
 
 		err = util.SendEmail(hod.Email, submission.OfficialMailID, subject, body, hod.AppPassword)
 		if err != nil {
