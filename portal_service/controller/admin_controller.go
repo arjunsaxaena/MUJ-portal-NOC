@@ -7,6 +7,7 @@ import (
 	"MUJ_AMG/portal_service/repository"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -131,4 +132,52 @@ func LogoutAdminHandler(c *gin.Context) {
 	middleware.BlacklistToken(tokenString)
 
 	c.JSON(http.StatusOK, gin.H{"message": "Admin logged out successfully"})
+}
+
+func UpdateAdminHandler(c *gin.Context) {
+	var input struct {
+		Name     *string `json:"name"`
+		Password *string `json:"password"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	idStr := c.Query("id")
+	if idStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID is required in the query parameter"})
+		return
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	if input.Name == nil && input.Password == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "At least one field (name or password) must be provided"})
+		return
+	}
+
+	var hashedPassword *string
+	if input.Password != nil {
+		hashed, err := bcrypt.GenerateFromPassword([]byte(*input.Password), bcrypt.DefaultCost)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+			return
+		}
+		hashedStr := string(hashed)
+		hashedPassword = &hashedStr
+	}
+
+	err = repository.UpdateAdmin(id, input.Name, hashedPassword)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update admin"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Admin updated successfully"})
 }

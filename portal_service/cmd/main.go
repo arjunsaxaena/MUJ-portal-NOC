@@ -77,6 +77,8 @@ func main() {
 
 		authAdmin.DELETE("/fpc", controller.DeleteFpCHandler)
 		authAdmin.DELETE("/hod", controller.DeleteHoDHandler)
+
+		authAdmin.PATCH("/update", controller.UpdateAdminHandler)
 	}
 
 	r.POST("/fpc/login", controller.LoginFpcHandler)

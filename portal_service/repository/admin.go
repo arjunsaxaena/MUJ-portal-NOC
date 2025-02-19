@@ -4,8 +4,10 @@ import (
 	"MUJ_AMG/pkg/database"
 	"MUJ_AMG/pkg/model"
 	"errors"
+	"fmt"
 	"log"
 	"strconv"
+	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -70,16 +72,28 @@ func ValidateAdminPassword(email, password string) (bool, error) {
 	return true, nil
 }
 
-func UpdateAdmin(id int, name, email, passwordHash, appPassword string) error {
-	query := `
-		UPDATE admin
-		SET name = COALESCE($1, name),
-		    email = COALESCE($2, email),
-		    password_hash = COALESCE($3, password_hash),
-		    app_password = COALESCE($4, app_password)
-		WHERE id = $5
-	`
-	_, err := database.DB.Exec(query, name, email, passwordHash, appPassword, id)
+func UpdateAdmin(id int, name *string, passwordHash *string) error {
+	query := "UPDATE admin SET "
+	args := []interface{}{}
+	argCount := 1
+
+	if name != nil {
+		query += "name = $" + fmt.Sprint(argCount) + ", "
+		args = append(args, *name)
+		argCount++
+	}
+
+	if passwordHash != nil {
+		query += "password_hash = $" + fmt.Sprint(argCount) + ", "
+		args = append(args, *passwordHash)
+		argCount++
+	}
+
+	query = strings.TrimSuffix(query, ", ")
+	query += " WHERE id = $" + fmt.Sprint(argCount)
+	args = append(args, id)
+
+	_, err := database.DB.Exec(query, args...)
 	if err != nil {
 		log.Printf("Error updating admin with ID %d: %v", id, err)
 		return err
