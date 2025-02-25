@@ -78,7 +78,7 @@ func CreateFpcReviewHandler(c *gin.Context) {
 		body := fmt.Sprintf("Dear %s,\n\nYour NOC application has been %s.\n\nComments: %s\n\nBest regards",
 			submission.Name, input.Status, input.Comments)
 
-		err = util.SendEmail(fpc.Email, submission.OfficialMailID, subject, body, fpc.AppPassword)
+		err = util.SendEmail(fpc.Email, submission.OfficialMailID, subject, body)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send email to student"})
 			return
@@ -169,7 +169,7 @@ func UpdateFpcReviewHandler(c *gin.Context) {
 		body := fmt.Sprintf("Dear %s,\n\nYour NOC application has been %s.\n\nComments: %s\n\nBest regards",
 			submission.Name, input.Status, input.Comments)
 
-		err = util.SendEmail(fpc.Email, submission.OfficialMailID, subject, body, fpc.AppPassword)
+		err = util.SendEmail(fpc.Email, submission.OfficialMailID, subject, body)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send email"})
 			return

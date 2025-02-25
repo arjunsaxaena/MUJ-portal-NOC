@@ -120,7 +120,7 @@ func GenerateOTPHandler(c *gin.Context) {
 	generatedOTP := util.GenerateOTP(email)
 	emailBody := fmt.Sprintf("Your OTP for email verification is: %s. It is valid for 5 minutes.", generatedOTP)
 
-	err := util.SendEmail("mujmanipalofficial@gmail.com", email, "Email Verification OTP", emailBody, "gaqwtlzyxvrynowz")
+	err := util.SendEmail("mujmanipalofficial@gmail.com", email, "Email Verification OTP", emailBody)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send OTP email"})
 		fmt.Printf("Error sending OTP email: %v\n", err)
