@@ -145,7 +145,7 @@ func GetSubmissionsForHoDcontroller(c *gin.Context) {
 	}
 
 	filters.Department = department.(string)
-	if emailStr == "shusheelavishnoi@gmail.com" {
+	if emailStr == "shusheelavishnoi@gmail.com" { // All generic noc visible to shushila ma'am
 		filters.NocType = "Generic"
 	} else {
 		filters.NocType = "Specific"

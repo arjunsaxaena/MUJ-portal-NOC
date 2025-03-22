@@ -69,7 +69,7 @@ func CreateHodReviewHandler(c *gin.Context) {
 		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been %s.\n\nHoD Comments: %s\n\nBest regards",
 			submission.Name, input.Action, input.Remarks)
 
-		err = util.SendEmail(hod.Email, submission.OfficialMailID, subject, body)
+		err = util.SendEmail(hod.Email, submission.OfficialMailID, subject, body, hod.AppPassword)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send email to student"})
 			return
@@ -95,7 +95,7 @@ func CreateHodReviewHandler(c *gin.Context) {
 		body := fmt.Sprintf("Dear %s,\n\nYour placement application has been approved. Please collect your No Objection Certificate (NOC) from the %s office \n\nBest regards,\nHOD",
 			submission.Name, submission.Department)
 
-		err = util.SendEmail(hod.Email, submission.OfficialMailID, subject, body)
+		err = util.SendEmail(hod.Email, submission.OfficialMailID, subject, body, hod.AppPassword)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send email to student"})
 			return
@@ -104,7 +104,7 @@ func CreateHodReviewHandler(c *gin.Context) {
 		officeSubject := "NOC Generated"
 		officeBody := fmt.Sprintf("NOC for %s", submission.Name)
 
-		err = util.SendEmailWithAttachment(hod.Email, "arjunsaxena04@gmail.com", officeSubject, officeBody, nocPath) // change arjunsaxena04@gmail.com to office.cse@jaipur.manipal.edu
+		err = util.SendEmailWithAttachment(hod.Email, "arjunsaxena04@gmail.com", officeSubject, officeBody, hod.AppPassword, nocPath) // change arjunsaxena04@gmail.com to office.cse@jaipur.manipal.edu
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send NOC to Office"})
 			return

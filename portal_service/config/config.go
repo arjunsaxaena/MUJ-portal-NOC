@@ -3,43 +3,35 @@ package config
 import (
 	"fmt"
 	"log"
+	"os"
 
-	"github.com/spf13/viper"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Port         string `mapstructure:"port"`
-	Database     string `mapstructure:"database"`
-	JwtSecretKey string `mapstructure:"jwt_secret_key"`
+	Port         string
+	Database     string
+	JwtSecretKey string
 }
 
 func LoadConfig() (*Config, error) {
-	viper.SetConfigName("config")
-	viper.SetConfigType("json")
-	viper.AddConfigPath("./config")
-	viper.AddConfigPath("./portal_service/config")
-	viper.AddConfigPath(".")
-
-	fmt.Println("Current working directory:", viper.ConfigFileUsed())
-
-	err := viper.ReadInConfig()
+	err := godotenv.Load("../.env")
 	if err != nil {
-		log.Fatalf("Error reading config file: %s", err)
+		log.Fatalf("Error loading .env file: %v", err)
 		return nil, err
 	}
 
-	var config Config
-	err = viper.Unmarshal(&config)
-	if err != nil {
-		log.Fatalf("Unable to decode into struct: %v", err)
-		return nil, err
+	config := &Config{
+		Port:         os.Getenv("PORTAL_SERVICE_PORT"),
+		Database:     os.Getenv("DB_URL"),
+		JwtSecretKey: os.Getenv("JWT_SECRET_KEY"),
 	}
 
 	if config.JwtSecretKey == "" {
 		return nil, fmt.Errorf("JWT secret key is required")
 	}
 
-	return &config, nil
+	return config, nil
 }
 
 func (c *Config) GetDatabaseURL() string {

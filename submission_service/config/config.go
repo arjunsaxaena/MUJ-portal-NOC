@@ -3,38 +3,33 @@ package config
 import (
 	"fmt"
 	"log"
+	"os"
 
-	"github.com/spf13/viper"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Port     string `mapstructure:"port"`
-	Database string `mapstructure:"database"`
+	Port     string
+	Database string
 }
 
 func LoadConfig() (*Config, error) {
-	viper.SetConfigName("config")
-	viper.SetConfigType("json")
-	viper.AddConfigPath("./config")
-	viper.AddConfigPath("./submission_service/config")
-	viper.AddConfigPath(".")
-
-	fmt.Println("Current working directory:", viper.ConfigFileUsed())
-
-	err := viper.ReadInConfig()
+	err := godotenv.Load("../.env")
 	if err != nil {
-		log.Fatalf("Error reading config file: %s", err)
+		log.Fatalf("Error loading .env file: %v", err)
 		return nil, err
 	}
 
-	var config Config
-	err = viper.Unmarshal(&config)
-	if err != nil {
-		log.Fatalf("Unable to decode into struct: %v", err)
-		return nil, err
+	config := &Config{
+		Port:     os.Getenv("SUBMISSION_SERVICE_PORT"),
+		Database: os.Getenv("DB_URL"),
 	}
 
-	return &config, nil
+	if config.Port == "" {
+		return nil, fmt.Errorf("submission service port is required")
+	}
+
+	return config, nil
 }
 
 func (c *Config) GetDatabaseURL() string {

@@ -5,7 +5,6 @@ import (
 	"MUJ_AMG/pkg/middleware"
 	"MUJ_AMG/portal_service/config"
 	"MUJ_AMG/portal_service/controller"
-	submission_controller "MUJ_AMG/submission_service/controller"
 	"log"
 
 	"github.com/gin-contrib/cors"
@@ -29,6 +28,12 @@ func main() {
 		AllowCredentials: true,
 	}))
 
+	// Submission Service main.go code here so that I dont need to make two seperate ngrok tunnels for two seperate ports during testing
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// Importing student data in postgres table for extra validation
+
 	// csvFile := "/home/ubuntu/MUJ_automated_mail_generation/Students_VIII.csv"
 	// err = util.ImportCSVToPostgres(csvFile, database.DB)
 	// if err != nil {
@@ -43,9 +48,11 @@ func main() {
 	// }
 	// log.Println("Second CSV data imported successfully!")
 
-	r.POST("/generate-otp", submission_controller.GenerateOTPHandler)
-	r.POST("/validate-otp", submission_controller.ValidateOTPHandler)
-	r.POST("/submit", submission_controller.SubmitHandler)
+	// r.POST("/generate-otp", submission_controller.GenerateOTPHandler)
+	// r.POST("/validate-otp", submission_controller.ValidateOTPHandler)
+	// r.POST("/submit", submission_controller.SubmitHandle
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	authFiles := r.Group("/files")
 	authFiles.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "fpc", "hod"))

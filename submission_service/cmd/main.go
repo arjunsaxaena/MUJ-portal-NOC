@@ -5,7 +5,6 @@ import (
 	"MUJ_AMG/submission_service/config"
 	"MUJ_AMG/submission_service/controller"
 	"log"
-	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -36,11 +35,10 @@ func main() {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"}, // frontend url
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PATCH", "OPTIONS", "DELETE"},
+		AllowHeaders:     []string{"Content-Type", "Authorization", "ngrok-skip-browser-warning"},
 		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
 	}))
 
 	r.POST("/generate-otp", controller.GenerateOTPHandler)
