@@ -1,4 +1,0 @@
-{
-    "port": "8001",
-    "database": "postgres://postgres:secret@localhost:5432/student_portal?sslmode=disable"
-}
