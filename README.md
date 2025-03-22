@@ -1,4 +1,4 @@
-# MUJ_AMG
+# CampusNOC
 
 A student portal project built using PostgreSQL and Go. This portal facilitates the submission and review of internship offers, allowing students, FPCs (Faculty Placement Coordinators), and HODs (Heads of Departments) to interact seamlessly.
 
