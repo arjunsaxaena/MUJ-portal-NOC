@@ -144,10 +144,10 @@ func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.SetMargins(10, 10, 10)
 	pdf.AddPage()
 
-	pdf.Ln(30)
+	pdf.Ln(40)
 
 	pdf.SetFont("Arial", "", 10)
-	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2024/8H/%s", submission.RegistrationNumber)
+	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2025/8H/%s", submission.RegistrationNumber)
 	pdf.CellFormat(0, 10, nocText, "", 1, "L", false, 0, "")
 
 	currentDate := time.Now().Format("02-Jan-2006")
@@ -249,9 +249,6 @@ func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.Ln(6)
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
-
-	pdf.SetFont("Arial", "I", 8)
-	pdf.CellFormat(0, 6, "This is a system-generated PDF.", "", 1, "C", false, 0, "")
 
 	uploadsDir := filepath.Join("../uploads", "NOC")
 	fileName := fmt.Sprintf("NOC_%s.pdf", submission.RegistrationNumber)

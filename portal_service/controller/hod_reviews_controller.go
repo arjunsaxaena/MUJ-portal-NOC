@@ -110,6 +110,8 @@ func CreateHodReviewHandler(c *gin.Context) {
 			return
 		}
 
+		nocPath = filepath.Join("NOC", filepath.Base(nocPath))
+
 		err = submissionRepository.UpdateSubmission(input.SubmissionID, "NOC ready", nocPath)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})

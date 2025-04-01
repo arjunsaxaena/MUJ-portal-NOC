@@ -18,14 +18,14 @@ func main() {
 
 	database.Connect(cfg)
 
-	// csvFile := "/home/ubuntu/MUJ_automated_mail_generation/Students_VIII.csv"
+	// csvFile := "../Students_VIII.csv"
 	// err = util.ImportCSVToPostgres(csvFile, database.DB)
 	// if err != nil {
 	// 	log.Fatalf("Failed to import CSV to PostgreSQL: %v", err)
 	// }
 	// log.Println("CSV data imported successfully!")
 
-	// csvFile2 := "/home/ubuntu/MUJ_automated_mail_generation/Students_VI.csv"
+	// csvFile2 := "../Students_VI.csv"
 	// err = util.ImportCSVToPostgres(csvFile2, database.DB)
 	// if err != nil {
 	// 	log.Fatalf("Failed to import second CSV to PostgreSQL: %v", err)
