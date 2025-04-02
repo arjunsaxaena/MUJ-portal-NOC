@@ -102,10 +102,10 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.SetFont("Arial", "", 10)
 	pdf.Write(6, " in doing an internship at your organization and has been advised to abide by both MUJ's and the interning organization's ethics/rules/regulations/values and work culture without compromising on integrity and self-discipline.\n\n")
 
-	pdf.Write(6, "Thanking you.\n\n\n")
+	pdf.Write(6, "Thanking you.\n")
 	pdf.Write(6, "Yours sincerely,")
 
-	pdf.Ln(12)
+	pdf.Ln(18)
 
 	pdf.SetFont("Arial", "", 10)
 	footer := `Head of the Department & Professor (CSE)
