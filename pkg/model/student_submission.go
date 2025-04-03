@@ -13,11 +13,11 @@ type StudentSubmission struct {
 	Department          string    `json:"department" form:"department" binding:"required" db:"department"`
 	Section             string    `json:"section" form:"section" binding:"required" db:"section"`
 	OfferType           string    `json:"offer_type" form:"offerType" binding:"required" db:"offer_type"`
-	CompanyName         string    `json:"company_name" form:"companyName" binding:"required" db:"company_name"`
-	CompanyState        string    `json:"company_state" form:"companyState" binding:"required" db:"company_state"`
-	CompanyCity         string    `json:"company_city" form:"companyCity" binding:"required" db:"company_city"`
-	Pincode             string    `json:"pincode" form:"companyPin" binding:"required" db:"pincode"`
-	HRDEmail            *string   `json:"hrd_email" form:"hrdEmail" binding:"omitempty" db:"hrd_email"`
+	CompanyName         *string   `json:"company_name" form:"companyName" binding:"omitempty" db:"company_name"`
+	CompanyState        *string   `json:"company_state" form:"companyState" binding:"omitempty" db:"company_state"`
+	CompanyCity         *string   `json:"company_city" form:"companyCity" binding:"omitempty" db:"company_city"`
+	Pincode             *string   `json:"pincode" form:"companyPin" binding:"omitempty" db:"pincode"`
+	HRDEmail            *string   `json:"hrd_email" form:"hrdEmail" db:"hrd_email"`
 	HRDNumber           *string   `json:"hrd_number" form:"hrdNumber" db:"hrd_number"`
 	OfferTypeDetail     string    `json:"offer_type_detail" form:"internshipType" binding:"required" db:"offer_type_detail"`
 	PackagePPO          string    `json:"package_ppo" form:"ppoPackage" binding:"omitempty" db:"package_ppo"`
