@@ -41,19 +41,17 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 
 	pdf.SetFont("Arial", "", 12)
 	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2025/8H/%s", submission.RegistrationNumber)
-	pdf.CellFormat(95, 10, nocText, "", 0, "L", false, 0, "") // on left side
+	pdf.CellFormat(95, 10, nocText, "", 0, "L", false, 0, "") // left-aligned text
 
 	currentDate := time.Now().Format("02-Jan-2006")
-
-	pdf.CellFormat(0, 10, currentDate, "", 1, "R", false, 0, "") // date on right side
-
-	pdf.Ln(10)
+	pdf.CellFormat(0, 10, currentDate, "", 0, "R", false, 0, "") // right-aligned date on the same line
+	pdf.Ln(20)
 
 	pdf.SetFont("Arial", "BU", 16) // underlined and bold
 	pdf.CellFormat(0, 10, "To Whomsoever It May Concern", "", 1, "C", false, 0, "")
 	pdf.SetFont("Arial", "", 12)
 
-	pdf.Ln(10)
+	pdf.Ln(15)
 
 	startDate, err := time.Parse(time.RFC3339, submission.InternshipStartDate)
 	if err != nil {
@@ -91,9 +89,15 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 		submission.Department,
 		submission.Section))
 
-	pdf.Write(6, fmt.Sprintf("This recommendation is issued with reference to the application for an internship/project in your esteemed organization for a duration from %s to %s.\n\n",
-		startDateFormatted,
-		endDateFormatted))
+	pdf.Write(6, "This recommendation is issued with reference to the application for an internship/project in your esteemed organization for a duration from ")
+	pdf.SetFont("Arial", "B", 12) // bold font for start date
+	pdf.Write(6, startDateFormatted)
+	pdf.SetFont("Arial", "", 12) // reset to normal font
+	pdf.Write(6, " to ")
+	pdf.SetFont("Arial", "B", 12) // bold font for end date
+	pdf.Write(6, endDateFormatted)
+	pdf.SetFont("Arial", "", 12) // reset to normal font
+	pdf.Write(6, ".\n\n")
 
 	pdf.Write(6, "This Internship/Project would add value to the academic career of the student. So I request you to kindly allow our student to undergo Internship/Project at your organization.\n\n")
 
@@ -106,7 +110,7 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.Write(6, "Thanking you.\n\n")
 	pdf.Write(6, "Yours sincerely,\n\n\n")
 
-	pdf.Ln(18)
+	pdf.Ln(12)
 
 	pdf.SetFont("Arial", "", 12)
 	footer := `Head of the Department & Professor (CSE)
@@ -149,12 +153,11 @@ func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
 
 	pdf.SetFont("Arial", "", 12)
 	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2025/8H/%s", submission.RegistrationNumber)
-	pdf.CellFormat(0, 10, nocText, "", 1, "L", false, 0, "")
+	pdf.CellFormat(95, 10, nocText, "", 0, "L", false, 0, "") // left-aligned text
 
 	currentDate := time.Now().Format("02-Jan-2006")
-	pdf.CellFormat(0, 10, currentDate, "", 1, "R", false, 0, "")
-
-	pdf.Ln(10)
+	pdf.CellFormat(0, 10, currentDate, "", 0, "R", false, 0, "") // right-aligned date on the same line
+	pdf.Ln(15)
 
 	pdf.SetFont("Arial", "BU", 16)
 	pdf.CellFormat(0, 10, "To Whomsoever It May Concern", "", 1, "C", false, 0, "")
@@ -172,7 +175,7 @@ func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
 	startDateStr := startDate.Format("02 Jan 2006")
 	endDateStr := endDate.Format("02 Jan 2006")
 
-	pdf.Ln(10)
+	pdf.Ln(20)
 
 	semesterInt, err := strconv.Atoi(submission.Semester)
 	if err != nil {
@@ -218,11 +221,12 @@ func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.SetFont("Arial", "", 12)
 	pdf.Write(6, ", Manipal University Jaipur.")
 
-	pdf.Write(6, "He wishes to apply for an Internship/ Industrial Training in your esteemed organization, ")
-
-	pdf.SetFont("Arial", "B", 12)
-	pdf.Write(6, submission.CompanyName)
-
+	pdf.Write(6, "He wishes to apply for an Internship/ Industrial Training in your esteemed organization")
+	if submission.CompanyName != nil && *submission.CompanyName != "" {
+		pdf.Write(6, ", ")
+		pdf.SetFont("Arial", "B", 12)
+		pdf.Write(6, *submission.CompanyName)
+	}
 	pdf.SetFont("Arial", "", 12)
 	pdf.Write(6, ". The university has no objection to his undergoing an ")
 
