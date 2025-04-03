@@ -40,7 +40,7 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.Ln(20) // remove this if letterhead
 
 	pdf.SetFont("Arial", "", 12)
-	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2025/8H/%s", submission.RegistrationNumber)
+	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2025/%s%s/%s", submission.Semester, submission.Section, submission.RegistrationNumber[len(submission.RegistrationNumber)-4:])
 	pdf.CellFormat(95, 10, nocText, "", 0, "L", false, 0, "") // left-aligned text
 
 	currentDate := time.Now().Format("02-Jan-2006")
@@ -152,7 +152,7 @@ func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.Ln(20)
 
 	pdf.SetFont("Arial", "", 12)
-	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2025/8H/%s", submission.RegistrationNumber)
+	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2025/%s%s/%s", submission.Semester, submission.Section, submission.RegistrationNumber[len(submission.RegistrationNumber)-4:])
 	pdf.CellFormat(95, 10, nocText, "", 0, "L", false, 0, "") // left-aligned text
 
 	currentDate := time.Now().Format("02-Jan-2006")
