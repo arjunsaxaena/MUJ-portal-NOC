@@ -157,11 +157,13 @@ func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
 
 	currentDate := time.Now().Format("02-Jan-2006")
 	pdf.CellFormat(0, 10, currentDate, "", 0, "R", false, 0, "") // right-aligned date on the same line
-	pdf.Ln(15)
+	pdf.Ln(20)
 
-	pdf.SetFont("Arial", "BU", 16)
+	pdf.SetFont("Arial", "BU", 16) // underlined and bold
 	pdf.CellFormat(0, 10, "To Whomsoever It May Concern", "", 1, "C", false, 0, "")
 	pdf.SetFont("Arial", "", 12)
+
+	pdf.Ln(15)
 
 	startDate, err := time.Parse(time.RFC3339, submission.InternshipStartDate)
 	if err != nil {
@@ -175,7 +177,7 @@ func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
 	startDateStr := startDate.Format("02 Jan 2006")
 	endDateStr := endDate.Format("02 Jan 2006")
 
-	pdf.Ln(20)
+	// pdf.Ln(20)
 
 	semesterInt, err := strconv.Atoi(submission.Semester)
 	if err != nil {
@@ -237,9 +239,9 @@ func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.Write(6, fmt.Sprintf(" from %s to %s.", startDateStr, endDateStr))
 
 	pdf.SetFont("Arial", "", 12)
-	pdf.Write(6, "\n\nWith Best Regards,")
+	pdf.Write(6, "\n\nWith Best Regards,\n\n\n")
 
-	pdf.Ln(40)
+	pdf.Ln(12)
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
