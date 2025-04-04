@@ -47,7 +47,7 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.CellFormat(0, 10, currentDate, "", 0, "R", false, 0, "") // right-aligned date on the same line
 	pdf.Ln(20)
 
-	pdf.SetFont("Arial", "BU", 16) // underlined and bold
+	pdf.SetFont("Arial", "BU", 16)
 	pdf.CellFormat(0, 10, "To Whomsoever It May Concern", "", 1, "C", false, 0, "")
 	pdf.SetFont("Arial", "", 12)
 
@@ -64,52 +64,44 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	startDateFormatted := startDate.Format("02-Jan-2006")
 	endDateFormatted := endDate.Format("02-Jan-2006")
 
-	pdf.SetFont("Arial", "", 12)
 	title := "Mr."
 	if submission.Gender == "Female" {
 		title = "Ms."
 	}
 
 	pdf.SetFont("Arial", "", 12)
-	pdf.Write(6, "Sub: Recommendation for ")
-	pdf.SetFont("Arial", "B", 12)
-	pdf.Write(6, fmt.Sprintf("%s %s", title, submission.Name))
+	pdf.MultiCell(0, 6, "Sub: Recommendation for "+title+" "+submission.Name+" carrying out internship cum project in your esteemed Organization", "", "J", false)
+	pdf.Ln(5)
+
+	pdf.MultiCell(0, 6, "Dear Sir/Madam,", "", "J", false)
+	pdf.Ln(5)
+
 	pdf.SetFont("Arial", "", 12)
-	pdf.Write(6, " carrying out internship cum project in your esteemed Organization\n\n")
-
-	pdf.Write(6, "Dear Sir/Madam,\n\n")
-
-	pdf.Write(6, "This is to certify that ")
+	pdf.MultiCell(0, 6, "This is to certify that "+title+" ", "", "J", false)
 	pdf.SetFont("Arial", "B", 12)
-	pdf.Write(6, fmt.Sprintf("%s %s", title, submission.Name))
+	pdf.MultiCell(0, 6, submission.Name+" ", "", "J", false)
 	pdf.SetFont("Arial", "", 12)
-	pdf.Write(6, fmt.Sprintf(" (Reg No. %s) is a student of Manipal University Jaipur, India, studying in the %s semester of the four-year B.Tech Degree Program in the Department of %s, Section %s.\n\n",
-		submission.RegistrationNumber,
-		submission.Semester,
-		submission.Department,
-		submission.Section))
+	pdf.MultiCell(0, 6, "(Reg No. "+submission.RegistrationNumber+") is a student of Manipal University Jaipur, India, studying in the "+submission.Semester+" semester of the four-year B.Tech Degree Program in the Department of "+submission.Department+", Section "+submission.Section+".", "", "J", false)
+	pdf.Ln(5)
 
-	pdf.Write(6, "This recommendation is issued with reference to the application for an internship/project in your esteemed organization for a duration from ")
-	pdf.SetFont("Arial", "B", 12) // bold font for start date
-	pdf.Write(6, startDateFormatted)
-	pdf.SetFont("Arial", "", 12) // reset to normal font
-	pdf.Write(6, " to ")
-	pdf.SetFont("Arial", "B", 12) // bold font for end date
-	pdf.Write(6, endDateFormatted)
-	pdf.SetFont("Arial", "", 12) // reset to normal font
-	pdf.Write(6, ".\n\n")
-
-	pdf.Write(6, "This Internship/Project would add value to the academic career of the student. So I request you to kindly allow our student to undergo Internship/Project at your organization.\n\n")
-
-	pdf.Write(6, "Manipal University Jaipur has no objection for ")
+	pdf.MultiCell(0, 6, "This recommendation is issued with reference to the application for an internship/project in your esteemed organization for a duration from ", "", "J", false)
 	pdf.SetFont("Arial", "B", 12)
-	pdf.Write(6, fmt.Sprintf("%s %s", title, submission.Name))
+	pdf.MultiCell(0, 6, startDateFormatted+" ", "", "J", false)
 	pdf.SetFont("Arial", "", 12)
-	pdf.Write(6, " in doing an internship at your organization and has been advised to abide by both MUJ's and the interning organization's ethics/rules/regulations/values and work culture without compromising on integrity and self-discipline.\n\n")
+	pdf.MultiCell(0, 6, "to ", "", "J", false)
+	pdf.SetFont("Arial", "B", 12)
+	pdf.MultiCell(0, 6, endDateFormatted+".", "", "J", false)
+	pdf.Ln(5)
 
-	pdf.Write(6, "Thanking you.\n\n")
-	pdf.Write(6, "Yours sincerely,\n\n\n")
+	pdf.SetFont("Arial", "", 12)
+	pdf.MultiCell(0, 6, "This Internship/Project would add value to the academic career of the student. So I request you to kindly allow our student to undergo Internship/Project at your organization.", "", "J", false)
+	pdf.Ln(5)
 
+	pdf.MultiCell(0, 6, "Manipal University Jaipur has no objection for "+title+" "+submission.Name+" in doing an internship at your organization and has been advised to abide by both MUJ's and the interning organization's ethics/rules/regulations/values and work culture without compromising on integrity and self-discipline.", "", "J", false)
+	pdf.Ln(5)
+
+	pdf.MultiCell(0, 6, "Thanking you.", "", "J", false)
+	pdf.MultiCell(0, 6, "Yours sincerely,", "", "J", false)
 	pdf.Ln(12)
 
 	pdf.SetFont("Arial", "", 12)
@@ -153,13 +145,13 @@ func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
 
 	pdf.SetFont("Arial", "", 12)
 	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2025/%s%s/%s", submission.Semester, submission.Section, submission.RegistrationNumber[len(submission.RegistrationNumber)-4:])
-	pdf.CellFormat(95, 10, nocText, "", 0, "L", false, 0, "") // left-aligned text
+	pdf.CellFormat(95, 10, nocText, "", 0, "L", false, 0, "")
 
 	currentDate := time.Now().Format("02-Jan-2006")
-	pdf.CellFormat(0, 10, currentDate, "", 0, "R", false, 0, "") // right-aligned date on the same line
+	pdf.CellFormat(0, 10, currentDate, "", 0, "R", false, 0, "")
 	pdf.Ln(20)
 
-	pdf.SetFont("Arial", "BU", 16) // underlined and bold
+	pdf.SetFont("Arial", "BU", 16)
 	pdf.CellFormat(0, 10, "To Whomsoever It May Concern", "", 1, "C", false, 0, "")
 	pdf.SetFont("Arial", "", 12)
 
@@ -177,8 +169,6 @@ func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
 	startDateStr := startDate.Format("02 Jan 2006")
 	endDateStr := endDate.Format("02 Jan 2006")
 
-	// pdf.Ln(20)
-
 	semesterInt, err := strconv.Atoi(submission.Semester)
 	if err != nil {
 		return "", fmt.Errorf("invalid semester format: %v", err)
@@ -194,67 +184,36 @@ func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
 		year = 4
 	}
 
-	pdf.SetFont("Arial", "", 12)
 	title := "Mr."
 	if submission.Gender == "Female" {
 		title = "Ms."
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////////////
+	content := title + " " + submission.Name + ", Reg No.- " + submission.RegistrationNumber +
+		" is an undergraduate B.Tech " + strconv.Itoa(year) + "th year student in the Department of " +
+		submission.Department + ", Manipal University Jaipur. He wishes to apply for an Internship/ Industrial Training in your esteemed organization"
 
-	pdf.SetFont("Arial", "B", 12)
-	pdf.Write(6, fmt.Sprintf(" %s ", title))
-
-	pdf.SetFont("Arial", "B", 12)
-	pdf.Write(6, submission.Name)
-
-	pdf.SetFont("Arial", "B", 12)
-	pdf.Write(6, ", Reg No.- ")
-
-	pdf.SetFont("Arial", "B", 12)
-	pdf.Write(6, submission.RegistrationNumber)
-
-	pdf.SetFont("Arial", "", 12)
-	pdf.Write(6, fmt.Sprintf(" is an undergraduate B.Tech %dth year student in the Department of ", year))
-
-	pdf.SetFont("Arial", "B", 12)
-	pdf.Write(6, submission.Department)
-
-	pdf.SetFont("Arial", "", 12)
-	pdf.Write(6, ", Manipal University Jaipur.")
-
-	pdf.Write(6, "He wishes to apply for an Internship/ Industrial Training in your esteemed organization")
 	if submission.CompanyName != nil && *submission.CompanyName != "" {
-		pdf.Write(6, ", ")
-		pdf.SetFont("Arial", "B", 12)
-		pdf.Write(6, *submission.CompanyName)
+		content += ", " + *submission.CompanyName
 	}
-	pdf.SetFont("Arial", "", 12)
-	pdf.Write(6, ". The university has no objection to his undergoing an ")
 
-	pdf.SetFont("Arial", "B", 12)
-	pdf.Write(6, "Internship Training Program")
+	content += ". The university has no objection to his undergoing an Internship Training Program from " +
+		startDateStr + " to " + endDateStr + "."
 
-	pdf.SetFont("Arial", "", 12)
-	pdf.Write(6, fmt.Sprintf(" from %s to %s.", startDateStr, endDateStr))
+	pdf.MultiCell(0, 6, content, "", "J", false)
+	pdf.Ln(10)
 
-	pdf.SetFont("Arial", "", 12)
-	pdf.Write(6, "\n\nWith Best Regards,\n\n\n")
-
+	pdf.MultiCell(0, 6, "With Best Regards,", "", "J", false)
 	pdf.Ln(12)
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	pdf.SetFont("Arial", "B", 12)
-	pdf.CellFormat(0, 6, "Prof (Dr) Neha Chaudhary", "", 1, "L", false, 0, "")
+	pdf.MultiCell(0, 6, "Prof (Dr) Neha Chaudhary", "", "L", false)
 	pdf.SetFont("Arial", "", 12)
-	pdf.CellFormat(0, 6, "HoD, Department of Computer Science & Engineering", "", 1, "L", false, 0, "")
-	pdf.CellFormat(0, 6, "School of Computer Science & Engineering (SCSE)", "", 1, "L", false, 0, "")
-	pdf.CellFormat(0, 6, "Manipal University Jaipur, Rajasthan (INDIA)", "", 1, "L", false, 0, "")
-	pdf.CellFormat(0, 6, "Ph.: 0141-3999100 (Ext No 768)", "", 1, "L", false, 0, "")
-	pdf.CellFormat(0, 6, "Email: chaudhary.neha@jaipur.manipal.edu", "", 1, "L", false, 0, "")
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////
+	pdf.MultiCell(0, 6, "HoD, Department of Computer Science & Engineering", "", "L", false)
+	pdf.MultiCell(0, 6, "School of Computer Science & Engineering (SCSE)", "", "L", false)
+	pdf.MultiCell(0, 6, "Manipal University Jaipur, Rajasthan (INDIA)", "", "L", false)
+	pdf.MultiCell(0, 6, "Ph.: 0141-3999100 (Ext No 768)", "", "L", false)
+	pdf.MultiCell(0, 6, "Email: chaudhary.neha@jaipur.manipal.edu", "", "L", false)
 
 	uploadsDir := filepath.Join("../uploads", "NOC")
 	fileName := fmt.Sprintf("NOC_%s.pdf", submission.RegistrationNumber)
