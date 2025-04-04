@@ -110,12 +110,12 @@
 								{
 									"key": "offerLetter",
 									"type": "file",
-									"src": "/C:/Users/arjun/OneDrive/Documents/Certificates/Coursera/Coursera_Golang.pdf"
+									"src": "/C:/Users/arjun/Documents/Certificates/Coursera/Coursera_prog_in_c.pdf"
 								},
 								{
 									"key": "mailCopy",
 									"type": "file",
-									"src": "/C:/Users/arjun/OneDrive/Documents/Certificates/Coursera/Coursera_sql_in_python.pdf"
+									"src": "/C:/Users/arjun/Documents/Certificates/Coursera/Coursera_sql_in_python.pdf"
 								},
 								{
 									"key": "gender",
@@ -218,6 +218,36 @@
 					"response": []
 				},
 				{
+					"name": "logout - fpc",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTczOTk5MTI1NywiaWQiOjEsInJvbGUiOiJmcGMifQ.fq_ycy1s5DrDzOrHXFhgM0Pvtj-qZWf8J930wJ4M5DU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8002/fpc/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"fpc",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "get-submissions-FilterByFpcDept",
 					"request": {
 						"auth": {
@@ -225,7 +255,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTczOTczMDkzOCwiaWQiOjMsInJvbGUiOiJob2QifQ.yQnfZQB832k4dk6ytYkUdHMdunVcr2bipXZUq-Jy_w8",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTc0MzY2MzA1NSwiaWQiOjEsInJvbGUiOiJmcGMifQ.XM56yXkUWUYoF20TObCIcMmxCMCseBGSeDgsm-ATDnE",
 									"type": "string"
 								}
 							]
@@ -336,7 +366,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"arjunsaxena04@gmail.com\",\r\n    \"password\": \"hod123\"\r\n}",
+							"raw": "{\r\n    \"email\": \"shusheelavishnoi@gmail.com\",\r\n    \"password\": \"hod123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -369,7 +399,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJob2QuY3NlbXVqQGdtYWlsLmNvbSIsImV4cCI6MTczODc0MjI2MCwiaWQiOjIsInJvbGUiOiJob2QifQ.xdsb5Qw1jTWZF9za_OMRoPAlHhgvkLy4KtlGHsJBjWg",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJzaHVzaGVlbGF2aXNobm9pQGdtYWlsLmNvbSIsImV4cCI6MTc0Mzc5Mzc0NSwiaWQiOjMsInJvbGUiOiJob2QifQ.QaMv4Jnd0Bnob5U4xQmcqVwaQjyg8mdRnksyy8oDz-M",
 									"type": "string"
 								}
 							]
@@ -399,6 +429,36 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "logout - hod",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTc0MDAyNzUzMiwiaWQiOjMsInJvbGUiOiJob2QifQ.mpFXLmamjZyshoA6HFBS9-bwL61jr3YOwGttl2sSpII",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8002/hod/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"hod",
+								"logout"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -413,7 +473,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTczODg1NTQ2NiwiaWQiOjEsInJvbGUiOiJob2QifQ.sd7B-pIlHVp9OCNy18a6qr5kP5ayueY5HRDaxjkphlI",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJzaHVzaGVlbGF2aXNobm9pQGdtYWlsLmNvbSIsImV4cCI6MTc0Mzc5Mzc0NSwiaWQiOjMsInJvbGUiOiJob2QifQ.QaMv4Jnd0Bnob5U4xQmcqVwaQjyg8mdRnksyy8oDz-M",
 									"type": "string"
 								}
 							]
@@ -422,7 +482,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"submission_id\": 1,\r\n  \"hod_id\": 1,\r\n  \"action\": \"Approved\"\r\n}\r\n",
+							"raw": "{\r\n  \"submission_id\": 4,\r\n  \"hod_id\": 3,\r\n  \"action\": \"Approved\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -498,7 +558,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"arjunsaxena04@gmail.com\",\r\n  \"name\": \"Arjun Saxena\",\r\n  \"password\": \"admin123\",\r\n  \"app_password\": \"bjkwwhugjefvcdoa\"\r\n}",
+							"raw": "{\r\n  \"email\": \"mujmanipalofficial@gmail.com\",\r\n  \"name\": \"Admin MUJ\",\r\n  \"password\": \"Admin123@\",\r\n  \"app_password\": \"gaqwtlzyxvrynowz\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -552,6 +612,36 @@
 					"response": []
 				},
 				{
+					"name": "logout - admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFyanVuc2F4ZW5hMDRAZ21haWwuY29tIiwiZXhwIjoxNzQwMDI3NjQxLCJpZCI6MSwicm9sZSI6ImFkbWluIn0.j3MuDFD1YU_HZwZsYuvoV5l2aouPH0Amxi1uObPPlzQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8002/admin/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"admin",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "create - fpc",
 					"request": {
 						"auth": {
@@ -559,7 +649,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFyanVuc2F4ZW5hMDRAZ21haWwuY29tIiwiZXhwIjoxNzM4ODU1MjgyLCJpZCI6MSwicm9sZSI6ImFkbWluIn0.RRBbqotYU4WjhEVBIIJHjWT9BkwZnaCrDpgRrXD1ksc",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im11am1hbmlwYWxvZmZpY2lhbEBnbWFpbC5jb20iLCJleHAiOjE3NDM2Nzk5ODMsImlkIjoxLCJyb2xlIjoiYWRtaW4ifQ.J_n8J1M39VOvGDXIvOVY3NySqNcl5MgLR2R7XLclhX4",
 									"type": "string"
 								}
 							]
@@ -568,7 +658,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"arjunsaxena04@gmail.com\",\r\n  \"name\": \"Arjun Saxena\",\r\n  \"password\": \"fpc123\",\r\n  \"department\": \"CSE\",\r\n  \"app_password\": \"bjkwwhugjefvcdoa\"\r\n}",
+							"raw": "{\r\n  \"email\": \"fpc.cse@gmail.com\",\r\n  \"name\": \"FPC MUJ\",\r\n  \"password\": \"fpccseMUJ123\",\r\n  \"department\": \"CSE\",\r\n  \"app_password\": \"henmqxrdszgcusnp\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -576,10 +666,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8002/admin/fpc",
+							"raw": "http://192.168.97.65:8002/admin/fpc",
 							"protocol": "http",
 							"host": [
-								"localhost"
+								"192",
+								"168",
+								"97",
+								"65"
 							],
 							"port": "8002",
 							"path": [
@@ -598,7 +691,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFyanVuc2F4ZW5hMDRAZ21haWwuY29tIiwiZXhwIjoxNzM5NTEwODEwLCJpZCI6MSwicm9sZSI6ImFkbWluIn0.hB-qxbrzToGNO1VOtiDgptacuRVcH8HbDaqR_RXSE7c",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFyanVuc2F4ZW5hMDRAZ21haWwuY29tIiwiZXhwIjoxNzQzNzA2NjQ4LCJpZCI6MSwicm9sZSI6ImFkbWluIn0.YBlQxLlrAoZPk48zDuWeTYRk09NrmRgD-dhRTZsDVgI",
 									"type": "string"
 								}
 							]
@@ -607,7 +700,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"hod.csemuj@gmail.com\",\r\n  \"name\": \"Shushila\",\r\n  \"password\": \"hod123\",\r\n  \"department\": \"CSE\",\r\n  \"app_password\": \"bjkwwhugjefvcdoa\"\r\n}",
+							"raw": "{\r\n  \"email\": \"shusheelavishnoi@gmail.com\",\r\n  \"name\": \"Shusheela Vishnoi\",\r\n  \"password\": \"hod123\",\r\n  \"department\": \"CSE\",\r\n  \"app_password\": \"hjzvpvfkqzsssgfo\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -637,7 +730,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFyanVuc2F4ZW5hMDRAZ21haWwuY29tIiwiZXhwIjoxNzM5NTEwODEwLCJpZCI6MSwicm9sZSI6ImFkbWluIn0.hB-qxbrzToGNO1VOtiDgptacuRVcH8HbDaqR_RXSE7c",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFyanVuc2F4ZW5hMDRAZ21haWwuY29tIiwiZXhwIjoxNzQzNjIyNTg5LCJpZCI6MSwicm9sZSI6ImFkbWluIn0.cKBVzpuCg_geHosZpB0pc0Bi90fF0DWCXzk2q5eOTZs",
 									"type": "string"
 								}
 							]
@@ -646,7 +739,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"arjunsaxena04@gmail.com\",\r\n  \"name\": \"Arjun Saxena\",\r\n  \"password\": \"hod123\",\r\n  \"department\": \"CSE\",\r\n  \"app_password\": \"bjkwwhugjefvcdoa\"\r\n}",
+							"raw": "{\r\n  \"email\": \"arjunsaxena04@gmail.com\",\r\n  \"name\": \"Arjun Saxena\",\r\n  \"password\": \"hod123\",\r\n  \"department\": \"CSE\",\r\n  \"app_password\": \"cfhyfuldiomhqmws\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -679,7 +772,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFudXNoa2Fzb25pMDA0QGdtYWlsLmNvbSIsImV4cCI6MTczODEzNjU1MSwiaWQiOjIsInJvbGUiOiJhZG1pbiJ9.k8utVKCB8uQiTTLC7YPlKME7m1xbnu-khzI5sz1laBU",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im11am1hbmlwYWxvZmZpY2lhbEBnbWFpbC5jb20iLCJleHAiOjE3NDM2Nzk5ODMsImlkIjoxLCJyb2xlIjoiYWRtaW4ifQ.J_n8J1M39VOvGDXIvOVY3NySqNcl5MgLR2R7XLclhX4",
 									"type": "string"
 								}
 							]
@@ -718,7 +811,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFudXNoa2Fzb25pMDA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzcxNTgwNCwiaWQiOjIsInJvbGUiOiJhZG1pbiJ9.CAYmmfWWoF11rVmql3HS7MivELhOcPQ-7U5b8mEEKQw",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im11am1hbmlwYWxvZmZpY2lhbEBnbWFpbC5jb20iLCJleHAiOjE3NDM2Nzk5ODMsImlkIjoxLCJyb2xlIjoiYWRtaW4ifQ.J_n8J1M39VOvGDXIvOVY3NySqNcl5MgLR2R7XLclhX4",
 									"type": "string"
 								}
 							]
@@ -825,6 +918,51 @@
 					"response": []
 				},
 				{
+					"name": "update - admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFyanVuc2F4ZW5hMDRAZ21haWwuY29tIiwiZXhwIjoxNzQwMDMzOTc4LCJpZCI6MSwicm9sZSI6ImFkbWluIn0.ohrQNvjIfI7B6hwXeVJr9Q-NjNVHKVgrHKf23a0e4-c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"password\": \"secure\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8002/admin/update?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"admin",
+								"update"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "delete - fpc",
 					"request": {
 						"auth": {
@@ -882,7 +1020,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTczOTgxNjMyMiwiaWQiOjEsInJvbGUiOiJmcGMifQ.FmV6G6GBh-z76IxBGdGCZTku46nJDFb56PVfGMipmUQ",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTc0MzYyMjY1MywiaWQiOjEsInJvbGUiOiJmcGMifQ.HShPJ-HEowgINUMTo40F_I7j7YYz8fiskzZVmOpIwmc",
 									"type": "string"
 								}
 							]
@@ -890,7 +1028,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8002/files/NOC/NOC_229301555.pdf",
+							"raw": "http://localhost:8002/files/offerLetters/229301555_class=XII-marksheet.pdf",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -898,8 +1036,8 @@
 							"port": "8002",
 							"path": [
 								"files",
-								"NOC",
-								"NOC_229301555.pdf"
+								"offerLetters",
+								"229301555_class=XII-marksheet.pdf"
 							]
 						}
 					},
