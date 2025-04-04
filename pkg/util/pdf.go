@@ -100,26 +100,12 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.MultiCell(0, 6, "Dear Sir/Madam,", "", "J", false)
 	pdf.Ln(5)
 
-	fullDept := getFullDepartmentName(submission.Department)
-
-	pdf.SetFont("Arial", "", 12)
-	pdf.MultiCell(0, 6, "This is to certify that "+title+" ", "", "J", false)
-	pdf.SetFont("Arial", "B", 12)
-	pdf.MultiCell(0, 6, submission.Name+" ", "", "J", false)
-	pdf.SetFont("Arial", "", 12)
-	pdf.MultiCell(0, 6, "(Reg No. "+submission.RegistrationNumber+") is a student of Manipal University Jaipur, India, studying in the "+submission.Semester+" semester of the four-year B.Tech Degree Program in the Department of "+fullDept+", Section "+submission.Section+".", "", "J", false)
+	pdf.MultiCell(0, 6, "This is to certify that "+title+" "+submission.Name+" (Reg No. "+submission.RegistrationNumber+") is a student of Manipal University Jaipur, India, studying in the "+submission.Semester+" semester of the four-year B.Tech Degree Program in the Department of "+submission.Department+", Section "+submission.Section+".", "", "J", false)
 	pdf.Ln(5)
 
-	pdf.MultiCell(0, 6, "This recommendation is issued with reference to the application for an internship/project in your esteemed organization for a duration from ", "", "J", false)
-	pdf.SetFont("Arial", "B", 12)
-	pdf.MultiCell(0, 6, startDateFormatted+" ", "", "J", false)
-	pdf.SetFont("Arial", "", 12)
-	pdf.MultiCell(0, 6, "to ", "", "J", false)
-	pdf.SetFont("Arial", "B", 12)
-	pdf.MultiCell(0, 6, endDateFormatted+".", "", "J", false)
+	pdf.MultiCell(0, 6, "This recommendation is issued with reference to the application for an internship/project in your esteemed organization for a duration from "+startDateFormatted+" to "+endDateFormatted+".", "", "J", false)
 	pdf.Ln(5)
 
-	pdf.SetFont("Arial", "", 12)
 	pdf.MultiCell(0, 6, "This Internship/Project would add value to the academic career of the student. So I request you to kindly allow our student to undergo Internship/Project at your organization.", "", "J", false)
 	pdf.Ln(5)
 
@@ -128,7 +114,7 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 
 	pdf.MultiCell(0, 6, "Thanking you.", "", "J", false)
 	pdf.MultiCell(0, 6, "Yours sincerely,", "", "J", false)
-	pdf.Ln(12)
+	pdf.Ln(22)
 
 	pdf.SetFont("Arial", "", 12)
 	footer := `Head of the Department & Professor (CSE)
@@ -232,7 +218,7 @@ func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.Ln(10)
 
 	pdf.MultiCell(0, 6, "With Best Regards,", "", "J", false)
-	pdf.Ln(12)
+	pdf.Ln(22)
 
 	pdf.SetFont("Arial", "B", 12)
 	pdf.MultiCell(0, 6, "Prof (Dr) Neha Chaudhary", "", "L", false)
