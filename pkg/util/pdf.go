@@ -11,6 +11,17 @@ import (
 	"github.com/jung-kurt/gofpdf"
 )
 
+func getFullDepartmentName(dept string) string {
+	switch dept {
+	case "CSE":
+		return "Computer Science and Engineering"
+	case "IT":
+		return "Information Technology"
+	default:
+		return dept
+	}
+}
+
 func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf := gofpdf.New("P", "mm", "A4", "")
 	pdf.SetMargins(10, 10, 10)
@@ -76,12 +87,14 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.MultiCell(0, 6, "Dear Sir/Madam,", "", "J", false)
 	pdf.Ln(5)
 
+	fullDept := getFullDepartmentName(submission.Department)
+
 	pdf.SetFont("Arial", "", 12)
 	pdf.MultiCell(0, 6, "This is to certify that "+title+" ", "", "J", false)
 	pdf.SetFont("Arial", "B", 12)
 	pdf.MultiCell(0, 6, submission.Name+" ", "", "J", false)
 	pdf.SetFont("Arial", "", 12)
-	pdf.MultiCell(0, 6, "(Reg No. "+submission.RegistrationNumber+") is a student of Manipal University Jaipur, India, studying in the "+submission.Semester+" semester of the four-year B.Tech Degree Program in the Department of "+submission.Department+", Section "+submission.Section+".", "", "J", false)
+	pdf.MultiCell(0, 6, "(Reg No. "+submission.RegistrationNumber+") is a student of Manipal University Jaipur, India, studying in the "+submission.Semester+" semester of the four-year B.Tech Degree Program in the Department of "+fullDept+", Section "+submission.Section+".", "", "J", false)
 	pdf.Ln(5)
 
 	pdf.MultiCell(0, 6, "This recommendation is issued with reference to the application for an internship/project in your esteemed organization for a duration from ", "", "J", false)
@@ -189,9 +202,11 @@ func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
 		title = "Ms."
 	}
 
+	fullDept := getFullDepartmentName(submission.Department)
+
 	content := title + " " + submission.Name + ", Reg No.- " + submission.RegistrationNumber +
 		" is an undergraduate B.Tech " + strconv.Itoa(year) + "th year student in the Department of " +
-		submission.Department + ", Manipal University Jaipur. He wishes to apply for an Internship/ Industrial Training in your esteemed organization"
+		fullDept + ", Manipal University Jaipur. He wishes to apply for an Internship/ Industrial Training in your esteemed organization"
 
 	if submission.CompanyName != nil && *submission.CompanyName != "" {
 		content += ", " + *submission.CompanyName
