@@ -22,6 +22,19 @@ func getFullDepartmentName(dept string) string {
 	}
 }
 
+func getOrdinal(year int) string {
+	switch year {
+	case 1:
+		return "1st"
+	case 2:
+		return "2nd"
+	case 3:
+		return "3rd"
+	default:
+		return strconv.Itoa(year) + "th"
+	}
+}
+
 func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf := gofpdf.New("P", "mm", "A4", "")
 	pdf.SetMargins(10, 10, 10)
@@ -203,10 +216,10 @@ func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
 	}
 
 	fullDept := getFullDepartmentName(submission.Department)
+	ordinalYear := getOrdinal(year)
 
-	content := title + " " + submission.Name + ", Reg No.- " + submission.RegistrationNumber +
-		" is an undergraduate B.Tech " + strconv.Itoa(year) + "th year student in the Department of " +
-		fullDept + ", Manipal University Jaipur. He wishes to apply for an Internship/ Industrial Training in your esteemed organization"
+	content := fmt.Sprintf("%s %s, Reg No.- %s is an undergraduate B.Tech %s year student in the Department of %s, Manipal University Jaipur. He wishes to apply for an Internship/ Industrial Training in your esteemed organization",
+		title, submission.Name, submission.RegistrationNumber, ordinalYear, fullDept)
 
 	if submission.CompanyName != nil && *submission.CompanyName != "" {
 		content += ", " + *submission.CompanyName
