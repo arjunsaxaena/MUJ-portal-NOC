@@ -2,6 +2,7 @@ package main
 
 import (
 	"MUJ_AMG/pkg/database"
+	"MUJ_AMG/pkg/util"
 	"MUJ_AMG/submission_service/config"
 	"MUJ_AMG/submission_service/controller"
 	"log"
@@ -18,19 +19,26 @@ func main() {
 
 	database.Connect(cfg)
 
-	// csvFile := "../Students_VIII.csv"
-	// err = util.ImportCSVToPostgres(csvFile, database.DB)
-	// if err != nil {
-	// 	log.Fatalf("Failed to import CSV to PostgreSQL: %v", err)
-	// }
-	// log.Println("CSV data imported successfully!")
+	csvFile := "../Students_VIII.csv"
+	err = util.ImportCSVToPostgres(csvFile, database.DB)
+	if err != nil {
+		log.Fatalf("Failed to import CSV to PostgreSQL: %v", err)
+	}
+	log.Println("CSV data imported successfully!")
 
-	// csvFile2 := "../Students_VI.csv"
-	// err = util.ImportCSVToPostgres(csvFile2, database.DB)
-	// if err != nil {
-	// 	log.Fatalf("Failed to import second CSV to PostgreSQL: %v", err)
-	// }
-	// log.Println("Second CSV data imported successfully!")
+	csvFile2 := "../Students_VI.csv"
+	err = util.ImportCSVToPostgres(csvFile2, database.DB)
+	if err != nil {
+		log.Fatalf("Failed to import second CSV to PostgreSQL: %v", err)
+	}
+	log.Println("Second CSV data imported successfully!")
+
+	csvFile3 := "../Student_IV.csv"
+	err = util.ImportCSVToPostgres(csvFile3, database.DB)
+	if err != nil {
+		log.Fatalf("Failed to import third CSV to PostgreSQL: %v", err)
+	}
+	log.Println("Third CSV data imported successfully!")
 
 	r := gin.Default()
 
