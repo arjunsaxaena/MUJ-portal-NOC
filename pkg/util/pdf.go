@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strconv"
 	"time"
 
 	"github.com/jung-kurt/gofpdf"
@@ -22,16 +21,14 @@ func getFullDepartmentName(dept string) string {
 	}
 }
 
-func getOrdinal(year int) string {
-	switch year {
-	case 1:
-		return "1st"
-	case 2:
+func getOrdinal(semester string) string {
+	switch semester {
+	case "2":
 		return "2nd"
-	case 3:
+	case "3":
 		return "3rd"
 	default:
-		return strconv.Itoa(year) + "th"
+		return semester + "th"
 	}
 }
 
@@ -93,17 +90,38 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 		title = "Ms."
 	}
 
+	fullDept := getFullDepartmentName(submission.Department)
+	ordinalSemester := getOrdinal(submission.Semester)
+
+	var subjectText string
+	if submission.NocType != "generic" && submission.CompanyName != nil {
+		subjectText = fmt.Sprintf("Sub: Recommendation for %s %s carrying out internship cum project in your esteemed Organization, %s",
+			title, submission.Name, *submission.CompanyName)
+	} else {
+		subjectText = fmt.Sprintf("Sub: Recommendation for %s %s carrying out internship cum project in your esteemed Organization",
+			title, submission.Name)
+	}
+
 	pdf.SetFont("Arial", "", 12)
-	pdf.MultiCell(0, 6, "Sub: Recommendation for "+title+" "+submission.Name+" carrying out internship cum project in your esteemed Organization", "", "J", false)
+	pdf.MultiCell(0, 6, subjectText, "", "J", false)
 	pdf.Ln(5)
 
 	pdf.MultiCell(0, 6, "Dear Sir/Madam,", "", "J", false)
 	pdf.Ln(5)
 
-	pdf.MultiCell(0, 6, "This is to certify that "+title+" "+submission.Name+" (Reg No. "+submission.RegistrationNumber+") is a student of Manipal University Jaipur, India, studying in the "+submission.Semester+" semester of the four-year B.Tech Degree Program in the Department of "+submission.Department+", Section "+submission.Section+".", "", "J", false)
+	bodyText := fmt.Sprintf("This is to certify that %s %s (Reg No. %s) is a student of Manipal University Jaipur, India, studying in the %s semester of the four-year B.Tech Degree Program in the Department of %s.", title, submission.Name, submission.RegistrationNumber, ordinalSemester, fullDept)
+
+	pdf.MultiCell(0, 6, bodyText, "", "J", false)
 	pdf.Ln(5)
 
-	pdf.MultiCell(0, 6, "This recommendation is issued with reference to the application for an internship/project in your esteemed organization for a duration from "+startDateFormatted+" to "+endDateFormatted+".", "", "J", false)
+	var internshipText string
+	if submission.NocType != "generic" && submission.CompanyName != nil {
+		internshipText = fmt.Sprintf("This recommendation is issued with reference to the application for an internship/project in your esteemed organization, %s for a duration from %s to %s.", *submission.CompanyName, startDateFormatted, endDateFormatted)
+	} else {
+		internshipText = fmt.Sprintf("This recommendation is issued with reference to the application for an internship/project in your esteemed organization for a duration from %s to %s.", startDateFormatted, endDateFormatted)
+	}
+
+	pdf.MultiCell(0, 6, internshipText, "", "J", false)
 	pdf.Ln(5)
 
 	pdf.MultiCell(0, 6, "This Internship/Project would add value to the academic career of the student. So I request you to kindly allow our student to undergo Internship/Project at your organization.", "", "J", false)
@@ -135,101 +153,6 @@ Phone: +91 141 3999100 (Extn:768) | Mobile: +91 9785500056`
 	// pdf.SetFont("Arial", "I", 8)
 	// pdf.CellFormat(0, 6, "This is a system-generated PDF.", "", 1, "C", false, 0, "")
 
-	fileName := fmt.Sprintf("NOC_%s.pdf", submission.RegistrationNumber)
-	localFilePath := filepath.Join(uploadsDir, fileName)
-
-	err = pdf.OutputFileAndClose(localFilePath)
-	if err != nil {
-		fmt.Printf("Error saving PDF: %v\n", err)
-		return "", fmt.Errorf("failed to save NOC PDF: %v", err)
-	}
-
-	fmt.Printf("PDF successfully saved at: %s\n", localFilePath)
-	return localFilePath, nil
-}
-
-func CreateGenericNocPdf(submission model.StudentSubmission) (string, error) {
-	pdf := gofpdf.New("P", "mm", "A4", "")
-	pdf.SetMargins(10, 10, 10)
-	pdf.AddPage()
-
-	pdf.Ln(20)
-
-	pdf.SetFont("Arial", "", 12)
-	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2025/%s%s/%s", submission.Semester, submission.Section, submission.RegistrationNumber[len(submission.RegistrationNumber)-4:])
-	pdf.CellFormat(95, 10, nocText, "", 0, "L", false, 0, "")
-
-	currentDate := time.Now().Format("02-Jan-2006")
-	pdf.CellFormat(0, 10, currentDate, "", 0, "R", false, 0, "")
-	pdf.Ln(20)
-
-	pdf.SetFont("Arial", "BU", 16)
-	pdf.CellFormat(0, 10, "To Whomsoever It May Concern", "", 1, "C", false, 0, "")
-	pdf.SetFont("Arial", "", 12)
-
-	pdf.Ln(15)
-
-	startDate, err := time.Parse(time.RFC3339, submission.InternshipStartDate)
-	if err != nil {
-		return "", fmt.Errorf("invalid internship start date format: %v", err)
-	}
-	endDate, err := time.Parse(time.RFC3339, submission.InternshipEndDate)
-	if err != nil {
-		return "", fmt.Errorf("invalid internship end date format: %v", err)
-	}
-
-	startDateStr := startDate.Format("02 Jan 2006")
-	endDateStr := endDate.Format("02 Jan 2006")
-
-	semesterInt, err := strconv.Atoi(submission.Semester)
-	if err != nil {
-		return "", fmt.Errorf("invalid semester format: %v", err)
-	}
-
-	year := 1
-	switch semesterInt {
-	case 3, 4:
-		year = 2
-	case 5, 6:
-		year = 3
-	case 7, 8:
-		year = 4
-	}
-
-	title := "Mr."
-	if submission.Gender == "Female" {
-		title = "Ms."
-	}
-
-	fullDept := getFullDepartmentName(submission.Department)
-	ordinalYear := getOrdinal(year)
-
-	content := fmt.Sprintf("%s %s, Reg No.- %s is an undergraduate B.Tech %s year student in the Department of %s, Manipal University Jaipur. He wishes to apply for an Internship/ Industrial Training in your esteemed organization",
-		title, submission.Name, submission.RegistrationNumber, ordinalYear, fullDept)
-
-	if submission.CompanyName != nil && *submission.CompanyName != "" {
-		content += ", " + *submission.CompanyName
-	}
-
-	content += ". The university has no objection to his undergoing an Internship Training Program from " +
-		startDateStr + " to " + endDateStr + "."
-
-	pdf.MultiCell(0, 6, content, "", "J", false)
-	pdf.Ln(10)
-
-	pdf.MultiCell(0, 6, "With Best Regards,", "", "J", false)
-	pdf.Ln(22)
-
-	pdf.SetFont("Arial", "B", 12)
-	pdf.MultiCell(0, 6, "Prof (Dr) Neha Chaudhary", "", "L", false)
-	pdf.SetFont("Arial", "", 12)
-	pdf.MultiCell(0, 6, "HoD, Department of Computer Science & Engineering", "", "L", false)
-	pdf.MultiCell(0, 6, "School of Computer Science & Engineering (SCSE)", "", "L", false)
-	pdf.MultiCell(0, 6, "Manipal University Jaipur, Rajasthan (INDIA)", "", "L", false)
-	pdf.MultiCell(0, 6, "Ph.: 0141-3999100 (Ext No 768)", "", "L", false)
-	pdf.MultiCell(0, 6, "Email: chaudhary.neha@jaipur.manipal.edu", "", "L", false)
-
-	uploadsDir := filepath.Join("../uploads", "NOC")
 	fileName := fmt.Sprintf("NOC_%s.pdf", submission.RegistrationNumber)
 	localFilePath := filepath.Join(uploadsDir, fileName)
 

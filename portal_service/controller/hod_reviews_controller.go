@@ -79,11 +79,7 @@ func CreateHodReviewHandler(c *gin.Context) {
 	if input.Action == "Approved" {
 		var nocPath string
 		var err error
-		if submission.NocType == "Generic" {
-			nocPath, err = util.CreateGenericNocPdf(submission)
-		} else {
-			nocPath, err = util.CreateNocPdf(submission)
-		}
+		nocPath, err = util.CreateNocPdf(submission)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate NOC PDF"})
 			return
