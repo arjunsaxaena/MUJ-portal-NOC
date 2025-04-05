@@ -109,7 +109,7 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.MultiCell(0, 6, "Dear Sir/Madam,", "", "J", false)
 	pdf.Ln(5)
 
-	bodyText := fmt.Sprintf("This is to certify that %s %s (Reg No. %s) is a student of Manipal University Jaipur, India, studying in the %s semester of the four-year B.Tech Degree Program in the Department of %s.", title, submission.Name, submission.RegistrationNumber, ordinalSemester, fullDept)
+	bodyText := fmt.Sprintf("This is to certify that %s %s (Reg No. %s) is a student of Manipal University Jaipur, India, studying in the %s semester of the four-year B.Tech Degree Programme in the Department of %s.", title, submission.Name, submission.RegistrationNumber, ordinalSemester, fullDept)
 
 	pdf.MultiCell(0, 6, bodyText, "", "J", false)
 	pdf.Ln(5)

@@ -18,8 +18,8 @@ var validatedEmails = struct {
 }{data: make(map[string]bool)}
 
 func GenerateOTP(email string) string {
-	rand.Seed(time.Now().UnixNano())
-	otp := rand.Intn(900000) + 100000
+	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
+	otp := rng.Intn(900000) + 100000
 
 	OTPStore.Lock()
 	OTPStore.data[email] = fmt.Sprintf("%d", otp)
