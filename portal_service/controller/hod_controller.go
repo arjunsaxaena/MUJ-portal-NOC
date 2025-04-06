@@ -3,7 +3,6 @@ package controller
 import (
 	"MUJ_AMG/pkg/middleware"
 	"MUJ_AMG/pkg/model"
-	"MUJ_AMG/pkg/util"
 	"MUJ_AMG/portal_service/config"
 	"MUJ_AMG/portal_service/repository"
 	submissionRepository "MUJ_AMG/submission_service/repository"
@@ -184,6 +183,34 @@ func UpdateHoDHandler(c *gin.Context) {
 		return
 	}
 
+	filters := model.GetHoDFilters{ID: id}
+	hods, err := repository.GetHoDs(filters)
+	if err != nil || len(hods) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "HoD not found"})
+		return
+	}
+	originalHoD := hods[0]
+
+	name := originalHoD.Name
+	if input.Name != nil {
+		name = *input.Name
+	}
+
+	email := originalHoD.Email
+	if input.Email != nil {
+		email = *input.Email
+	}
+
+	appPassword := originalHoD.AppPassword
+	if input.AppPassword != nil {
+		appPassword = *input.AppPassword
+	}
+
+	department := originalHoD.Department
+	if input.Department != nil {
+		department = *input.Department
+	}
+
 	var hashedPassword string
 	if input.Password != nil && *input.Password != "" {
 		hashedBytes, err := bcrypt.GenerateFromPassword([]byte(*input.Password), bcrypt.DefaultCost)
@@ -192,16 +219,11 @@ func UpdateHoDHandler(c *gin.Context) {
 			return
 		}
 		hashedPassword = string(hashedBytes)
+	} else {
+		hashedPassword = originalHoD.PasswordHash
 	}
 
-	err := repository.UpdateHoD(
-		id,
-		util.GetStringOrDefault(input.Name),
-		util.GetStringOrDefault(input.Email),
-		hashedPassword,
-		util.GetStringOrDefault(input.AppPassword),
-		util.GetStringOrDefault(input.Department),
-	)
+	err = repository.UpdateHoD(id, name, email, hashedPassword, appPassword, department)
 	if err != nil {
 		log.Printf("Error updating HoD with ID %s: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update HoD"})

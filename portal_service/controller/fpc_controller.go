@@ -3,7 +3,6 @@ package controller
 import (
 	"MUJ_AMG/pkg/middleware"
 	"MUJ_AMG/pkg/model"
-	"MUJ_AMG/pkg/util"
 	"MUJ_AMG/portal_service/config"
 	"MUJ_AMG/portal_service/repository"
 	submissionRepository "MUJ_AMG/submission_service/repository"
@@ -167,6 +166,34 @@ func UpdateFpCHandler(c *gin.Context) {
 		return
 	}
 
+	filters := model.GetFpCFilters{ID: id}
+	fpcs, err := repository.GetFpCs(filters)
+	if err != nil || len(fpcs) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "FPC not found"})
+		return
+	}
+	originalFpc := fpcs[0]
+
+	name := originalFpc.Name
+	if input.Name != nil {
+		name = *input.Name
+	}
+
+	email := originalFpc.Email
+	if input.Email != nil {
+		email = *input.Email
+	}
+
+	appPassword := originalFpc.AppPassword
+	if input.AppPassword != nil {
+		appPassword = *input.AppPassword
+	}
+
+	department := originalFpc.Department
+	if input.Department != nil {
+		department = *input.Department
+	}
+
 	var hashedPassword string
 	if input.Password != nil && *input.Password != "" {
 		hashedBytes, err := bcrypt.GenerateFromPassword([]byte(*input.Password), bcrypt.DefaultCost)
@@ -175,18 +202,13 @@ func UpdateFpCHandler(c *gin.Context) {
 			return
 		}
 		hashedPassword = string(hashedBytes)
+	} else {
+		hashedPassword = originalFpc.PasswordHash
 	}
 
-	err := repository.UpdateFpC(
-		id,
-		util.GetStringOrDefault(input.Name),
-		util.GetStringOrDefault(input.Email),
-		hashedPassword,
-		util.GetStringOrDefault(input.AppPassword),
-		util.GetStringOrDefault(input.Department),
-	)
+	err = repository.UpdateFpC(id, name, email, hashedPassword, appPassword, department)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update fpc"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update FPC"})
 		return
 	}
 

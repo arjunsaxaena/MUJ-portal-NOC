@@ -58,13 +58,13 @@ CREATE TABLE fpc (
 CREATE TABLE fpc_reviews (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     submission_id UUID NOT NULL,
-    fpc_id UUID NOT NULL,
+    fpc_id UUID,
     status VARCHAR(20) NOT NULL, 
     comments TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     FOREIGN KEY (submission_id) REFERENCES student_submissions(id),
-    FOREIGN KEY (fpc_id) REFERENCES fpc(id)
+    FOREIGN KEY (fpc_id) REFERENCES fpc(id) ON DELETE SET NULL
 );
 
 CREATE TABLE hod ( 
@@ -80,13 +80,13 @@ CREATE TABLE hod (
 CREATE TABLE hod_reviews (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     submission_id UUID NOT NULL,
-    hod_id UUID NOT NULL,
+    hod_id UUID,
     action VARCHAR(20) NOT NULL, 
     remarks TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     FOREIGN KEY (submission_id) REFERENCES student_submissions(id),
-    FOREIGN KEY (hod_id) REFERENCES hod(id)
+    FOREIGN KEY (hod_id) REFERENCES hod(id) ON DELETE SET NULL
 );
 
 CREATE TABLE admin (
