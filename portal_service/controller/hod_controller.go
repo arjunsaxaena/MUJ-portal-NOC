@@ -3,6 +3,7 @@ package controller
 import (
 	"MUJ_AMG/pkg/middleware"
 	"MUJ_AMG/pkg/model"
+	"MUJ_AMG/pkg/util"
 	"MUJ_AMG/portal_service/config"
 	"MUJ_AMG/portal_service/repository"
 	submissionRepository "MUJ_AMG/submission_service/repository"
@@ -165,11 +166,11 @@ func GetSubmissionsForHoDcontroller(c *gin.Context) {
 
 func UpdateHoDHandler(c *gin.Context) {
 	var input struct {
-		Name        string `json:"name"`
-		Email       string `json:"email" binding:"email"`
-		Password    string `json:"password"`
-		AppPassword string `json:"app_password"`
-		Department  string `json:"department"`
+		Name        *string `json:"name"`
+		Email       *string `json:"email"`
+		Password    *string `json:"password"`
+		AppPassword *string `json:"app_password"`
+		Department  *string `json:"department"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -184,16 +185,23 @@ func UpdateHoDHandler(c *gin.Context) {
 	}
 
 	var hashedPassword string
-	if input.Password != "" {
-		hashedPasswordBytes, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	if input.Password != nil && *input.Password != "" {
+		hashedBytes, err := bcrypt.GenerateFromPassword([]byte(*input.Password), bcrypt.DefaultCost)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 			return
 		}
-		hashedPassword = string(hashedPasswordBytes)
+		hashedPassword = string(hashedBytes)
 	}
 
-	err := repository.UpdateHoD(id, input.Name, input.Email, hashedPassword, input.AppPassword, input.Department)
+	err := repository.UpdateHoD(
+		id,
+		util.GetStringOrDefault(input.Name),
+		util.GetStringOrDefault(input.Email),
+		hashedPassword,
+		util.GetStringOrDefault(input.AppPassword),
+		util.GetStringOrDefault(input.Department),
+	)
 	if err != nil {
 		log.Printf("Error updating HoD with ID %s: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update HoD"})

@@ -3,6 +3,7 @@ package controller
 import (
 	"MUJ_AMG/pkg/middleware"
 	"MUJ_AMG/pkg/model"
+	"MUJ_AMG/pkg/util"
 	"MUJ_AMG/portal_service/config"
 	"MUJ_AMG/portal_service/repository"
 	submissionRepository "MUJ_AMG/submission_service/repository"
@@ -148,11 +149,11 @@ func GetSubmissionscontroller(c *gin.Context) {
 
 func UpdateFpCHandler(c *gin.Context) {
 	var input struct {
-		Name        string `json:"name"`
-		Email       string `json:"email"`
-		Password    string `json:"password"`
-		AppPassword string `json:"app_password"`
-		Department  string `json:"department"`
+		Name        *string `json:"name"`
+		Email       *string `json:"email"`
+		Password    *string `json:"password"`
+		AppPassword *string `json:"app_password"`
+		Department  *string `json:"department"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -167,8 +168,8 @@ func UpdateFpCHandler(c *gin.Context) {
 	}
 
 	var hashedPassword string
-	if input.Password != "" {
-		hashedBytes, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	if input.Password != nil && *input.Password != "" {
+		hashedBytes, err := bcrypt.GenerateFromPassword([]byte(*input.Password), bcrypt.DefaultCost)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 			return
@@ -176,7 +177,14 @@ func UpdateFpCHandler(c *gin.Context) {
 		hashedPassword = string(hashedBytes)
 	}
 
-	err := repository.UpdateFpC(id, input.Name, input.Email, hashedPassword, input.AppPassword, input.Department)
+	err := repository.UpdateFpC(
+		id,
+		util.GetStringOrDefault(input.Name),
+		util.GetStringOrDefault(input.Email),
+		hashedPassword,
+		util.GetStringOrDefault(input.AppPassword),
+		util.GetStringOrDefault(input.Department),
+	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update fpc"})
 		return
