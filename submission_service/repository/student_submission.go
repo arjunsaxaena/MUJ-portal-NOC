@@ -4,7 +4,6 @@ import (
 	"MUJ_AMG/pkg/database"
 	"MUJ_AMG/pkg/model"
 	"fmt"
-	"log"
 	"strconv"
 	"time"
 )
@@ -25,11 +24,7 @@ func CreateSubmission(submission *model.StudentSubmission) error {
 		)
 	`, submission)
 
-	if err != nil {
-		fmt.Println("Error inserting submission:", err)
-		return err
-	}
-	return nil
+	return err
 }
 
 func GetSubmissions(filters model.GetSubmissionFilters) ([]model.StudentSubmission, error) {
@@ -60,15 +55,10 @@ func GetSubmissions(filters model.GetSubmissionFilters) ([]model.StudentSubmissi
 
 	var submissions []model.StudentSubmission
 	err := database.DB.Select(&submissions, query, args...)
-	if err != nil {
-		log.Printf("Error fetching submissions with filters %v: %v", filters, err)
-		return nil, err
-	}
-
-	return submissions, nil
+	return submissions, err
 }
 
-func UpdateSubmission(submissionID int, status string, nocPath string) error {
+func UpdateSubmission(submissionID, status, nocPath string) error {
 	query := `UPDATE student_submissions
 	          SET updated_at = $1`
 	args := []interface{}{time.Now()}
@@ -88,25 +78,15 @@ func UpdateSubmission(submissionID int, status string, nocPath string) error {
 	args = append(args, submissionID)
 
 	_, err := database.DB.Exec(query, args...)
-	if err != nil {
-		fmt.Printf("Error updating submission: %v\n", err)
-		return err
-	}
-
-	return nil
+	return err
 }
 
-func DeleteSubmission(submissionID int) error {
+func DeleteSubmission(submissionID string) error {
 	query := `
 		DELETE FROM student_submissions
 		WHERE id = $1
 	`
 
 	_, err := database.DB.Exec(query, submissionID)
-	if err != nil {
-		fmt.Printf("Error deleting submission: %v\n", err)
-		return err
-	}
-
-	return nil
+	return err
 }

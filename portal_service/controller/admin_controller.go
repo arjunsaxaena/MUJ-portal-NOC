@@ -7,7 +7,6 @@ import (
 	"MUJ_AMG/portal_service/repository"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -49,7 +48,7 @@ func CreateAdminHandler(c *gin.Context) {
 		return
 	}
 
-	log.Printf("Admin created successfully with ID: %d", id)
+	log.Printf("Admin created successfully with ID: %s", id)
 
 	c.JSON(http.StatusCreated, gin.H{"id": id, "message": "Admin created successfully"})
 }
@@ -145,15 +144,9 @@ func UpdateAdminHandler(c *gin.Context) {
 		return
 	}
 
-	idStr := c.Query("id")
-	if idStr == "" {
+	id := c.Query("id") // Use string directly for UUID
+	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "ID is required in the query parameter"})
-		return
-	}
-
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
 
@@ -173,7 +166,7 @@ func UpdateAdminHandler(c *gin.Context) {
 		hashedPassword = &hashedStr
 	}
 
-	err = repository.UpdateAdmin(id, input.Name, hashedPassword)
+	err := repository.UpdateAdmin(id, input.Name, hashedPassword) // Pass string ID
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update admin"})
 		return

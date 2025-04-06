@@ -10,18 +10,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateFpC(name, email, passwordHash, appPassword, department string) (int, error) {
+func CreateFpC(name, email, passwordHash, appPassword, department string) (string, error) {
 	query := `
 		INSERT INTO fpc (name, email, password_hash, app_password, department)
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id
 	`
-	var id int
+	var id string
 	err := database.DB.QueryRow(query, name, email, passwordHash, appPassword, department).Scan(&id)
-	if err != nil {
-		return 0, err
-	}
-	return id, nil
+	return id, err
 }
 
 func GetFpCs(filters model.GetFpCFilters) ([]model.FpC, error) {
@@ -75,7 +72,7 @@ func ValidateFpCPassword(email, password string) (bool, error) {
 	return true, nil
 }
 
-func UpdateFpC(id int, name, email, passwordHash, appPassword, department string) error {
+func UpdateFpC(id, name, email, passwordHash, appPassword, department string) error {
 	query := `
 		UPDATE fpc
 		SET name = COALESCE($1, name),
@@ -86,22 +83,16 @@ func UpdateFpC(id int, name, email, passwordHash, appPassword, department string
 		WHERE id = $6
 	`
 	_, err := database.DB.Exec(query, name, email, passwordHash, appPassword, department, id)
-	if err != nil {
-		log.Printf("Error updating reviewer with ID %d: %v", id, err)
-		return err
-	}
-
-	return nil
+	return err
 }
 
-func DeleteFpC(id int) error {
+func DeleteFpC(id string) error {
 	query := `
 		DELETE FROM fpc
 		WHERE id = $1
 	`
 	result, err := database.DB.Exec(query, id)
 	if err != nil {
-		log.Printf("Error deleting reviewer with ID %d: %v", id, err)
 		return err
 	}
 

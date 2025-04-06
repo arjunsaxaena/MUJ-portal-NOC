@@ -7,16 +7,16 @@ import (
 	"time"
 )
 
-func CreateHodReview(submissionID, hodID int, action, remarks string) (int, error) {
+func CreateHodReview(submissionID, hodID, action, remarks string) (string, error) { // Changed submissionID and hodID to string
 	query := `
 		INSERT INTO hod_reviews (submission_id, hod_id, action, remarks, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id
 	`
-	var reviewID int
+	var reviewID string
 	err := database.DB.QueryRow(query, submissionID, hodID, action, remarks, time.Now(), time.Now()).Scan(&reviewID)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 	return reviewID, nil
 }

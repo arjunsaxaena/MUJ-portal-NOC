@@ -8,7 +8,6 @@ import (
 	submissionRepository "MUJ_AMG/submission_service/repository"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -161,15 +160,9 @@ func UpdateFpCHandler(c *gin.Context) {
 		return
 	}
 
-	idParam := c.DefaultQuery("id", "")
-	if idParam == "" {
+	id := c.Query("id")
+	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "FPC ID is required"})
-		return
-	}
-
-	id, err := strconv.Atoi(idParam)
-	if err != nil || id <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid FPC ID"})
 		return
 	}
 
@@ -183,7 +176,7 @@ func UpdateFpCHandler(c *gin.Context) {
 		hashedPassword = string(hashedBytes)
 	}
 
-	err = repository.UpdateFpC(id, input.Name, input.Email, hashedPassword, input.AppPassword, input.Department)
+	err := repository.UpdateFpC(id, input.Name, input.Email, hashedPassword, input.AppPassword, input.Department)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update fpc"})
 		return
@@ -193,19 +186,13 @@ func UpdateFpCHandler(c *gin.Context) {
 }
 
 func DeleteFpCHandler(c *gin.Context) {
-	idParam := c.Query("id")
-	if idParam == "" {
+	id := c.Query("id")
+	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "fpc ID is required"})
 		return
 	}
 
-	id, err := strconv.Atoi(idParam)
-	if err != nil || id <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid fpc ID"})
-		return
-	}
-
-	err = repository.DeleteFpC(id)
+	err := repository.DeleteFpC(id)
 	if err != nil {
 		if err.Error() == "no reviewer found with the given ID" {
 			c.JSON(http.StatusNotFound, gin.H{"error": "No fpc found with the given ID"})

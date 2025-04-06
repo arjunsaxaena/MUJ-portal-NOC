@@ -2,15 +2,19 @@ CREATE DATABASE student_portal;
 
 \c student_portal;
 
+-- TODO: Create is_active field for admin, hod, fpc tablesso that the reviews table can be referenced
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE students (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     registration_number VARCHAR(20) UNIQUE NOT NULL,
     name VARCHAR(100) NOT NULL,
     official_mail_id VARCHAR(100) UNIQUE NOT NULL
 );
 
 CREATE TABLE student_submissions (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     registration_number VARCHAR(20) NOT NULL,
     name VARCHAR(100) NOT NULL,
     gender VARCHAR(10),
@@ -42,7 +46,7 @@ CREATE TABLE student_submissions (
 );
 
 CREATE TABLE fpc (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(100) NOT NULL, 
     email VARCHAR(100) NOT NULL UNIQUE,
     app_password TEXT,
@@ -52,9 +56,9 @@ CREATE TABLE fpc (
 );
 
 CREATE TABLE fpc_reviews (
-    id SERIAL PRIMARY KEY,
-    submission_id INT NOT NULL,
-    fpc_id INT NOT NULL,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    submission_id UUID NOT NULL,
+    fpc_id UUID NOT NULL,
     status VARCHAR(20) NOT NULL, 
     comments TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -63,9 +67,8 @@ CREATE TABLE fpc_reviews (
     FOREIGN KEY (fpc_id) REFERENCES fpc(id)
 );
 
-
 CREATE TABLE hod ( 
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(100) NOT NULL, 
     email VARCHAR(255) UNIQUE NOT NULL,
     app_password TEXT,
@@ -75,9 +78,9 @@ CREATE TABLE hod (
 );
 
 CREATE TABLE hod_reviews (
-    id SERIAL PRIMARY KEY,
-    submission_id INT NOT NULL,
-    hod_id INT NOT NULL,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    submission_id UUID NOT NULL,
+    hod_id UUID NOT NULL,
     action VARCHAR(20) NOT NULL, 
     remarks TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -87,7 +90,7 @@ CREATE TABLE hod_reviews (
 );
 
 CREATE TABLE admin (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(100) NOT NULL, 
     email VARCHAR(255) UNIQUE NOT NULL,
     app_password TEXT,

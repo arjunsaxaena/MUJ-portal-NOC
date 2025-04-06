@@ -8,7 +8,6 @@ import (
 	submissionRepository "MUJ_AMG/submission_service/repository"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -178,15 +177,9 @@ func UpdateHoDHandler(c *gin.Context) {
 		return
 	}
 
-	idParam := c.DefaultQuery("id", "")
-	if idParam == "" {
+	id := c.Query("id")
+	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "HoD ID is required"})
-		return
-	}
-
-	id, err := strconv.Atoi(idParam)
-	if err != nil || id <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid HoD ID"})
 		return
 	}
 
@@ -200,9 +193,9 @@ func UpdateHoDHandler(c *gin.Context) {
 		hashedPassword = string(hashedPasswordBytes)
 	}
 
-	err = repository.UpdateHoD(id, input.Name, input.Email, hashedPassword, input.AppPassword, input.Department)
+	err := repository.UpdateHoD(id, input.Name, input.Email, hashedPassword, input.AppPassword, input.Department)
 	if err != nil {
-		log.Printf("Error updating HoD with ID %d: %v", id, err)
+		log.Printf("Error updating HoD with ID %s: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update HoD"})
 		return
 	}
@@ -211,24 +204,18 @@ func UpdateHoDHandler(c *gin.Context) {
 }
 
 func DeleteHoDHandler(c *gin.Context) {
-	idParam := c.Query("id")
-	if idParam == "" {
+	id := c.Query("id")
+	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "HoD ID is required"})
 		return
 	}
 
-	id, err := strconv.Atoi(idParam)
-	if err != nil || id <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid HoD ID"})
-		return
-	}
-
-	err = repository.DeleteHoD(id)
+	err := repository.DeleteHoD(id)
 	if err != nil {
 		if err.Error() == "no HoD found with the given ID" {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		} else {
-			log.Printf("Error deleting HoD with ID %d: %v", id, err)
+			log.Printf("Error deleting HoD with ID %s: %v", id, err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete HoD"})
 		}
 		return

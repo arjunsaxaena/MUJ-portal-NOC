@@ -7,21 +7,21 @@ import (
 	"time"
 )
 
-func CreateFpcReview(submissionID, fpcID int, status, comments string) (int, error) {
+func CreateFpcReview(submissionID, fpcID, status, comments string) (string, error) {
 	query := `
 		INSERT INTO fpc_reviews (submission_id, fpc_id, status, comments, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id
 	`
-	var reviewID int
+	var reviewID string
 	err := database.DB.QueryRow(query, submissionID, fpcID, status, comments, time.Now(), time.Now()).Scan(&reviewID)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
-	return reviewID, nil
+	return reviewID, err
 }
 
-func UpdateFpcReview(reviewID int, status, comments string) error {
+func UpdateFpcReview(reviewID, status, comments string) error {
 	query := `
 		UPDATE fpc_reviews
 		SET status = $1, comments = $2, updated_at = $3
@@ -52,7 +52,7 @@ func GetFpcReviews(filters model.GetFpcReviewFilters) ([]model.FpcReview, error)
 		argIndex++
 	}
 	if filters.FpcID != "" {
-		query += fmt.Sprintf(" AND reviewer_id = $%d", argIndex)
+		query += fmt.Sprintf(" AND fpc_id = $%d", argIndex)
 		args = append(args, filters.FpcID)
 		argIndex++
 	}
@@ -64,8 +64,5 @@ func GetFpcReviews(filters model.GetFpcReviewFilters) ([]model.FpcReview, error)
 
 	var reviews []model.FpcReview
 	err := database.DB.Select(&reviews, query, args...)
-	if err != nil {
-		return nil, err
-	}
-	return reviews, nil
+	return reviews, err
 }

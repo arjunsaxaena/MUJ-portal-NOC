@@ -15,8 +15,8 @@ import (
 
 func CreateFpcReviewHandler(c *gin.Context) {
 	var input struct {
-		SubmissionID int    `json:"submission_id" binding:"required"`
-		FpcID        int    `json:"fpc_id" binding:"required"`
+		SubmissionID string `json:"submission_id" binding:"required"`
+		FpcID        string `json:"fpc_id" binding:"required"`
 		Status       string `json:"status" binding:"required"`
 		Comments     string `json:"comments"`
 	}
@@ -27,7 +27,7 @@ func CreateFpcReviewHandler(c *gin.Context) {
 	}
 
 	fpcFilters := model.GetFpCFilters{
-		ID: strconv.Itoa(input.FpcID),
+		ID: input.FpcID,
 	}
 
 	fpcs, err := repository.GetFpCs(fpcFilters)
@@ -65,7 +65,7 @@ func CreateFpcReviewHandler(c *gin.Context) {
 		}
 
 		submissions, err := submissionRepository.GetSubmissions(model.GetSubmissionFilters{
-			ID: strconv.Itoa(input.SubmissionID),
+			ID: input.SubmissionID,
 		})
 		if err != nil || len(submissions) == 0 {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Submission not found"})
@@ -97,9 +97,9 @@ func UpdateFpcReviewHandler(c *gin.Context) {
 		Comments string `json:"comments"`
 	}
 
-	reviewID, err := strconv.Atoi(c.DefaultQuery("id", ""))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid review ID"})
+	reviewID := c.Query("id")
+	if reviewID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Review ID is required"})
 		return
 	}
 
@@ -109,7 +109,7 @@ func UpdateFpcReviewHandler(c *gin.Context) {
 	}
 
 	fpcReviewFilters := model.GetFpcReviewFilters{
-		ID: strconv.Itoa(reviewID),
+		ID: reviewID,
 	}
 	fpcReviews, err := repository.GetFpcReviews(fpcReviewFilters)
 	if err != nil {
@@ -182,23 +182,11 @@ func UpdateFpcReviewHandler(c *gin.Context) {
 }
 
 func GetFpcReviewsHandler(c *gin.Context) {
-	submissionID := c.DefaultQuery("submission_id", "")
-	fpcID := c.DefaultQuery("fpc_id", "")
-	status := c.DefaultQuery("status", "")
-	reviewID := c.DefaultQuery("review_id", "")
-
-	filters := model.GetFpcReviewFilters{}
-	if reviewID != "" {
-		filters.ID = reviewID
-	}
-	if submissionID != "" {
-		filters.SubmissionID = submissionID
-	}
-	if fpcID != "" {
-		filters.FpcID = fpcID
-	}
-	if status != "" {
-		filters.Status = status
+	filters := model.GetFpcReviewFilters{
+		ID:           c.DefaultQuery("review_id", ""),
+		SubmissionID: c.DefaultQuery("submission_id", ""),
+		FpcID:        c.DefaultQuery("fpc_id", ""),
+		Status:       c.DefaultQuery("status", ""),
 	}
 
 	reviews, err := repository.GetFpcReviews(filters)

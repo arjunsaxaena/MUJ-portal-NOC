@@ -10,17 +10,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateHoD(name, email, passwordHash, appPassword, department string) (int, error) {
+func CreateHoD(name, email, passwordHash, appPassword, department string) (string, error) {
 	query := `
 		INSERT INTO hod (name, email, password_hash, app_password, department)
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id
 	`
-	var id int
+	var id string
 	err := database.DB.QueryRow(query, name, email, passwordHash, appPassword, department).Scan(&id)
 	if err != nil {
 		log.Printf("Error creating HoD: %v", err)
-		return 0, err
+		return "", err
 	}
 	return id, nil
 }
@@ -76,7 +76,7 @@ func ValidateHoDPassword(email, password string) (bool, error) {
 	return true, nil
 }
 
-func UpdateHoD(id int, name, email, passwordHash, appPassword, department string) error {
+func UpdateHoD(id, name, email, passwordHash, appPassword, department string) error { // Changed id to string
 	query := `
 		UPDATE hod
 		SET name = COALESCE($1, name),
@@ -88,21 +88,21 @@ func UpdateHoD(id int, name, email, passwordHash, appPassword, department string
 	`
 	_, err := database.DB.Exec(query, name, email, passwordHash, appPassword, department, id)
 	if err != nil {
-		log.Printf("Error updating HoD with ID %d: %v", id, err)
+		log.Printf("Error updating HoD with ID %s: %v", id, err)
 		return err
 	}
 
 	return nil
 }
 
-func DeleteHoD(id int) error {
+func DeleteHoD(id string) error {
 	query := `
 		DELETE FROM hod
 		WHERE id = $1
 	`
 	result, err := database.DB.Exec(query, id)
 	if err != nil {
-		log.Printf("Error deleting HoD with ID %d: %v", id, err)
+		log.Printf("Error deleting HoD with ID %s: %v", id, err)
 		return err
 	}
 

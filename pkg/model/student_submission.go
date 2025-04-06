@@ -3,7 +3,7 @@ package model
 import "time"
 
 type StudentSubmission struct {
-	ID                  int       `json:"id" db:"id"`
+	ID                  string    `json:"id" db:"id"`
 	RegistrationNumber  string    `json:"registration_number" form:"registrationNumber" binding:"required" db:"registration_number"`
 	Name                string    `json:"name" form:"name" binding:"required" db:"name"`
 	Gender              string    `json:"gender" form:"gender" db:"gender"`
@@ -35,7 +35,7 @@ type StudentSubmission struct {
 }
 
 type GetSubmissionFilters struct {
-	ID         string `form:"id"`
+	ID         string `json:"id" db:"id"`
 	Department string `form:"department"`
 	Status     string `form:"status"`
 	NocType    string `form:"noc_type"`

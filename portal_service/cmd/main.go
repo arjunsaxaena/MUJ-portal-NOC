@@ -75,9 +75,6 @@ func main() {
 		authAdmin.GET("/fpcs", controller.GetFpcsHandler)
 		authAdmin.GET("/hods", controller.GetHoDsHandler)
 
-		authAdmin.PATCH("/fpc", controller.UpdateFpCHandler)
-		authAdmin.PATCH("/hod", controller.UpdateHoDHandler)
-
 		authAdmin.DELETE("/fpc", controller.DeleteFpCHandler)
 		authAdmin.DELETE("/hod", controller.DeleteHoDHandler)
 
@@ -89,6 +86,7 @@ func main() {
 	authFpc := r.Group("/fpc")
 	authFpc.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "fpc"))
 	{
+		authFpc.PATCH("/", controller.UpdateFpCHandler)
 		authFpc.POST("/logout", controller.LogoutFpcHandler)
 		authFpc.GET("/submissions", controller.GetSubmissionscontroller)
 		authFpc.POST("/fpc_reviews", controller.CreateFpcReviewHandler)
@@ -99,6 +97,7 @@ func main() {
 	authHoD := r.Group("/hod")
 	authHoD.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "hod"))
 	{
+		authHoD.PATCH("/", controller.UpdateHoDHandler)
 		authHoD.POST("/logout", controller.LogoutHodHandler)
 		authHoD.GET("/submissions", controller.GetSubmissionsForHoDcontroller)
 		authHoD.POST("/hod_reviews", controller.CreateHodReviewHandler)

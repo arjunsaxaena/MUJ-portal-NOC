@@ -12,16 +12,16 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateAdmin(name, email, passwordHash, appPassword string) (int, error) {
+func CreateAdmin(name, email, passwordHash, appPassword string) (string, error) {
 	query := `
 		INSERT INTO admin (name, email, password_hash, app_password)
 		VALUES ($1, $2, $3, $4)
 		RETURNING id
 	`
-	var id int
+	var id string
 	err := database.DB.QueryRow(query, name, email, passwordHash, appPassword).Scan(&id)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 	return id, nil
 }
@@ -72,7 +72,7 @@ func ValidateAdminPassword(email, password string) (bool, error) {
 	return true, nil
 }
 
-func UpdateAdmin(id int, name *string, passwordHash *string) error {
+func UpdateAdmin(id string, name *string, passwordHash *string) error {
 	query := "UPDATE admin SET "
 	args := []interface{}{}
 	argCount := 1
@@ -91,25 +91,25 @@ func UpdateAdmin(id int, name *string, passwordHash *string) error {
 
 	query = strings.TrimSuffix(query, ", ")
 	query += " WHERE id = $" + fmt.Sprint(argCount)
-	args = append(args, id)
+	args = append(args, id) // Changed id to string
 
 	_, err := database.DB.Exec(query, args...)
 	if err != nil {
-		log.Printf("Error updating admin with ID %d: %v", id, err)
+		log.Printf("Error updating admin with ID %s: %v", id, err)
 		return err
 	}
 
 	return nil
 }
 
-func DeleteAdmin(id int) error {
+func DeleteAdmin(id string) error {
 	query := `
 		DELETE FROM admin
 		WHERE id = $1
 	`
 	result, err := database.DB.Exec(query, id)
 	if err != nil {
-		log.Printf("Error deleting admin with ID %d: %v", id, err)
+		log.Printf("Error deleting admin with ID %s: %v", id, err)
 		return err
 	}
 

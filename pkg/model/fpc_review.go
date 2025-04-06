@@ -5,7 +5,7 @@ import (
 )
 
 type FpcReview struct {
-	ID           int       `json:"id" db:"id"`
+	ID           string    `json:"id" db:"id"`
 	SubmissionID int       `json:"submission_id" db:"submission_id"`
 	FpcID        int       `json:"fpc_id" db:"fpc_id"`
 	Status       string    `json:"status" db:"status"`

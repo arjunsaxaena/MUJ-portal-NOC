@@ -8,15 +8,14 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 func CreateHodReviewHandler(c *gin.Context) {
 	var input struct {
-		SubmissionID int    `json:"submission_id" binding:"required"`
-		HodID        int    `json:"hod_id" binding:"required"`
+		SubmissionID string `json:"submission_id" binding:"required"`
+		HodID        string `json:"hod_id" binding:"required"`
 		Action       string `json:"action" binding:"required"`
 		Remarks      string `json:"remarks"`
 	}
@@ -27,7 +26,7 @@ func CreateHodReviewHandler(c *gin.Context) {
 	}
 
 	hodFilters := model.GetHoDFilters{
-		ID: strconv.Itoa(input.HodID),
+		ID: input.HodID,
 	}
 	hods, err := repository.GetHoDs(hodFilters)
 	if err != nil {
@@ -43,7 +42,7 @@ func CreateHodReviewHandler(c *gin.Context) {
 	hod := hods[0]
 
 	submissionFilters := model.GetSubmissionFilters{
-		ID: strconv.Itoa(input.SubmissionID),
+		ID: input.SubmissionID,
 	}
 	submissions, err := submissionRepository.GetSubmissions(submissionFilters)
 	if err != nil {
