@@ -148,11 +148,7 @@ func GetSubmissionscontroller(c *gin.Context) {
 
 func UpdateFpCHandler(c *gin.Context) {
 	var input struct {
-		Name        *string `json:"name"`
-		Email       *string `json:"email"`
-		Password    *string `json:"password"`
-		AppPassword *string `json:"app_password"`
-		Department  *string `json:"department"`
+		Password *string `json:"password"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -166,53 +162,25 @@ func UpdateFpCHandler(c *gin.Context) {
 		return
 	}
 
-	filters := model.GetFpCFilters{ID: id}
-	fpcs, err := repository.GetFpCs(filters)
-	if err != nil || len(fpcs) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "FPC not found"})
+	if input.Password == nil || *input.Password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Password is required"})
 		return
 	}
-	originalFpc := fpcs[0]
 
-	name := originalFpc.Name
-	if input.Name != nil {
-		name = *input.Name
-	}
-
-	email := originalFpc.Email
-	if input.Email != nil {
-		email = *input.Email
-	}
-
-	appPassword := originalFpc.AppPassword
-	if input.AppPassword != nil {
-		appPassword = *input.AppPassword
-	}
-
-	department := originalFpc.Department
-	if input.Department != nil {
-		department = *input.Department
-	}
-
-	var hashedPassword string
-	if input.Password != nil && *input.Password != "" {
-		hashedBytes, err := bcrypt.GenerateFromPassword([]byte(*input.Password), bcrypt.DefaultCost)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
-			return
-		}
-		hashedPassword = string(hashedBytes)
-	} else {
-		hashedPassword = originalFpc.PasswordHash
-	}
-
-	err = repository.UpdateFpC(id, name, email, hashedPassword, appPassword, department)
+	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(*input.Password), bcrypt.DefaultCost)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update FPC"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		return
+	}
+	hashedPassword := string(hashedBytes)
+
+	err = repository.UpdateFpC(id, hashedPassword)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update password"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "FPC updated successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "Password updated successfully"})
 }
 
 func DeleteFpCHandler(c *gin.Context) {

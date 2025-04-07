@@ -72,18 +72,18 @@ func ValidateFpCPassword(email, password string) (bool, error) {
 	return true, nil
 }
 
-func UpdateFpC(id, name, email, passwordHash, appPassword, department string) error {
+func UpdateFpC(id, passwordHash string) error {
 	query := `
 		UPDATE fpc
-		SET name = COALESCE($1, name),
-		    email = COALESCE($2, email),
-		    password_hash = COALESCE($3, password_hash),
-		    app_password = COALESCE($4, app_password),
-		    department = COALESCE($5, department)
-		WHERE id = $6
+		SET password_hash = $1
+		WHERE id = $2
 	`
-	_, err := database.DB.Exec(query, name, email, passwordHash, appPassword, department, id)
-	return err
+	_, err := database.DB.Exec(query, passwordHash, id)
+	if err != nil {
+		log.Printf("Error updating FPC password with ID %s: %v", id, err)
+		return err
+	}
+	return nil
 }
 
 func DeleteFpC(id string) error {

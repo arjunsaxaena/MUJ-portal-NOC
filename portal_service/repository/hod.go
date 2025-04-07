@@ -76,22 +76,17 @@ func ValidateHoDPassword(email, password string) (bool, error) {
 	return true, nil
 }
 
-func UpdateHoD(id, name, email, passwordHash, appPassword, department string) error { // Changed id to string
+func UpdateHoD(id, passwordHash string) error {
 	query := `
 		UPDATE hod
-		SET name = COALESCE($1, name),
-		    email = COALESCE($2, email),
-		    password_hash = COALESCE($3, password_hash),
-		    app_password = COALESCE($4, app_password),
-		    department = COALESCE($5, department)
-		WHERE id = $6
+		SET password_hash = $1
+		WHERE id = $2
 	`
-	_, err := database.DB.Exec(query, name, email, passwordHash, appPassword, department, id)
+	_, err := database.DB.Exec(query, passwordHash, id)
 	if err != nil {
-		log.Printf("Error updating HoD with ID %s: %v", id, err)
+		log.Printf("Error updating HoD password with ID %s: %v", id, err)
 		return err
 	}
-
 	return nil
 }
 

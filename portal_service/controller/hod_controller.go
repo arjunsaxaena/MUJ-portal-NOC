@@ -165,11 +165,7 @@ func GetSubmissionsForHoDcontroller(c *gin.Context) {
 
 func UpdateHoDHandler(c *gin.Context) {
 	var input struct {
-		Name        *string `json:"name"`
-		Email       *string `json:"email"`
-		Password    *string `json:"password"`
-		AppPassword *string `json:"app_password"`
-		Department  *string `json:"department"`
+		Password *string `json:"password"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -183,54 +179,26 @@ func UpdateHoDHandler(c *gin.Context) {
 		return
 	}
 
-	filters := model.GetHoDFilters{ID: id}
-	hods, err := repository.GetHoDs(filters)
-	if err != nil || len(hods) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "HoD not found"})
+	if input.Password == nil || *input.Password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Password is required"})
 		return
 	}
-	originalHoD := hods[0]
 
-	name := originalHoD.Name
-	if input.Name != nil {
-		name = *input.Name
-	}
-
-	email := originalHoD.Email
-	if input.Email != nil {
-		email = *input.Email
-	}
-
-	appPassword := originalHoD.AppPassword
-	if input.AppPassword != nil {
-		appPassword = *input.AppPassword
-	}
-
-	department := originalHoD.Department
-	if input.Department != nil {
-		department = *input.Department
-	}
-
-	var hashedPassword string
-	if input.Password != nil && *input.Password != "" {
-		hashedBytes, err := bcrypt.GenerateFromPassword([]byte(*input.Password), bcrypt.DefaultCost)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
-			return
-		}
-		hashedPassword = string(hashedBytes)
-	} else {
-		hashedPassword = originalHoD.PasswordHash
-	}
-
-	err = repository.UpdateHoD(id, name, email, hashedPassword, appPassword, department)
+	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(*input.Password), bcrypt.DefaultCost)
 	if err != nil {
-		log.Printf("Error updating HoD with ID %s: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update HoD"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		return
+	}
+	hashedPassword := string(hashedBytes)
+
+	err = repository.UpdateHoD(id, hashedPassword)
+	if err != nil {
+		log.Printf("Error updating HoD password with ID %s: %v", id, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update password"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "HoD updated successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "Password updated successfully"})
 }
 
 func DeleteHoDHandler(c *gin.Context) {
