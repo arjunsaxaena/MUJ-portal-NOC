@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "9b92b96d-d3c8-4680-8f48-c82c08ad0200",
-		"name": "MUJ localhost",
+		"name": "MUJ",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "39713995"
 	},
@@ -186,6 +186,80 @@
 			"name": "fpc",
 			"item": [
 				{
+					"name": "get-submissions-FilterByFpcDept",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTc0MzY2MzA1NSwiaWQiOjEsInJvbGUiOiJmcGMifQ.XM56yXkUWUYoF20TObCIcMmxCMCseBGSeDgsm-ATDnE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8002/fpc/submissions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"fpc",
+								"submissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update - fpc",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJmcGMuY3NlbXVqQGdtYWlsLmNvbSIsImV4cCI6MTc0NDAxNjkyMSwiaWQiOiI5Yjk1NDE1ZC1jNDgyLTQ3ZDgtYjgyMC1mN2I5YjIyNmE1MjciLCJyb2xlIjoiZnBjIn0.TavJncyScVAzBQvFxZojGyTN8bxwoL-NVesviAPycDQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"fpccseMUJ123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8002/fpc?id=74e3e2eb-5b6b-4e28-b213-d7dc19974bc9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"fpc"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "74e3e2eb-5b6b-4e28-b213-d7dc19974bc9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "fpc - login",
 					"request": {
 						"auth": {
@@ -195,7 +269,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"arjunsaxena04@gmail.com\",\r\n  \"password\": \"fpc123\"\r\n}",
+							"raw": "{\r\n  \"email\": \"fpc.csemuj@gmail.com\",\r\n  \"password\": \"fpccseMUJ123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -242,36 +316,6 @@
 							"path": [
 								"fpc",
 								"logout"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get-submissions-FilterByFpcDept",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJhcmp1bnNheGVuYTA0QGdtYWlsLmNvbSIsImV4cCI6MTc0MzY2MzA1NSwiaWQiOjEsInJvbGUiOiJmcGMifQ.XM56yXkUWUYoF20TObCIcMmxCMCseBGSeDgsm-ATDnE",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8002/fpc/submissions",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8002",
-							"path": [
-								"fpc",
-								"submissions"
 							]
 						}
 					},
@@ -366,7 +410,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"shusheelavishnoi@gmail.com\",\r\n    \"password\": \"hod123\"\r\n}",
+							"raw": "{\r\n    \"email\": \"hod.csemuj@gmail.com\",\r\n    \"password\": \"hodcseMUJ123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -399,7 +443,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJzaHVzaGVlbGF2aXNobm9pQGdtYWlsLmNvbSIsImV4cCI6MTc0Mzc5Mzc0NSwiaWQiOjMsInJvbGUiOiJob2QifQ.QaMv4Jnd0Bnob5U4xQmcqVwaQjyg8mdRnksyy8oDz-M",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJob2QuY3NlbXVqQGdtYWlsLmNvbSIsImV4cCI6MTc0MzgzNzg0MSwiaWQiOjIsInJvbGUiOiJob2QifQ.XckowqVco4d9_v0NjTOHePwXvhpOQevZwxIjWhnIkbk",
 									"type": "string"
 								}
 							]
@@ -473,7 +517,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJzaHVzaGVlbGF2aXNobm9pQGdtYWlsLmNvbSIsImV4cCI6MTc0Mzc5Mzc0NSwiaWQiOjMsInJvbGUiOiJob2QifQ.QaMv4Jnd0Bnob5U4xQmcqVwaQjyg8mdRnksyy8oDz-M",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiQ1NFIiwiZW1haWwiOiJob2QuY3NlbXVqQGdtYWlsLmNvbSIsImV4cCI6MTc0MzkzNzgxMywiaWQiOjIsInJvbGUiOiJob2QifQ.4tiBuulbOI07X57Rc3_ZVWqme0EtM_98lSlckGCTgTM",
 									"type": "string"
 								}
 							]
@@ -482,7 +526,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"submission_id\": 4,\r\n  \"hod_id\": 3,\r\n  \"action\": \"Approved\"\r\n}\r\n",
+							"raw": "{\r\n  \"submission_id\": 4,\r\n  \"hod_id\": 2,\r\n  \"action\": \"Approved\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -589,7 +633,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"arjunsaxena04@gmail.com\",\r\n  \"password\": \"admin123\"\r\n}",
+							"raw": "{\r\n  \"email\": \"mujmanipalofficial@gmail.com\",\r\n  \"password\": \"Admin123@\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -649,7 +693,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im11am1hbmlwYWxvZmZpY2lhbEBnbWFpbC5jb20iLCJleHAiOjE3NDM2Nzk5ODMsImlkIjoxLCJyb2xlIjoiYWRtaW4ifQ.J_n8J1M39VOvGDXIvOVY3NySqNcl5MgLR2R7XLclhX4",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im11am1hbmlwYWxvZmZpY2lhbEBnbWFpbC5jb20iLCJleHAiOjE3NDQwMTY4MzYsImlkIjoiZjUzMGZhYzktMTc2NS00YjYxLTgzNWItZDEwOTk3M2Y3MGU0Iiwicm9sZSI6ImFkbWluIn0.wjjd2NSb-Gxqlsq48TvLCLKt5H8JHvhmHxNVztPg7D0",
 									"type": "string"
 								}
 							]
@@ -658,7 +702,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"fpc.cse@gmail.com\",\r\n  \"name\": \"FPC MUJ\",\r\n  \"password\": \"fpccseMUJ123\",\r\n  \"department\": \"CSE\",\r\n  \"app_password\": \"henmqxrdszgcusnp\"\r\n}",
+							"raw": "{\r\n  \"email\": \"fpc.csemuj@gmail.com\",\r\n  \"name\": \"FPC MUJ\",\r\n  \"password\": \"fpccseMUJ123\",\r\n  \"department\": \"CSE\",\r\n  \"app_password\": \"henmqxrdszgcusnp\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -666,13 +710,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://192.168.97.65:8002/admin/fpc",
+							"raw": "http://localhost:8002/admin/fpc",
 							"protocol": "http",
 							"host": [
-								"192",
-								"168",
-								"97",
-								"65"
+								"localhost"
 							],
 							"port": "8002",
 							"path": [
@@ -684,14 +725,14 @@
 					"response": []
 				},
 				{
-					"name": "create - hod",
+					"name": "create - hod - Shushila",
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFyanVuc2F4ZW5hMDRAZ21haWwuY29tIiwiZXhwIjoxNzQzNzA2NjQ4LCJpZCI6MSwicm9sZSI6ImFkbWluIn0.YBlQxLlrAoZPk48zDuWeTYRk09NrmRgD-dhRTZsDVgI",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im11am1hbmlwYWxvZmZpY2lhbEBnbWFpbC5jb20iLCJleHAiOjE3NDQwMTY4MzYsImlkIjoiZjUzMGZhYzktMTc2NS00YjYxLTgzNWItZDEwOTk3M2Y3MGU0Iiwicm9sZSI6ImFkbWluIn0.wjjd2NSb-Gxqlsq48TvLCLKt5H8JHvhmHxNVztPg7D0",
 									"type": "string"
 								}
 							]
@@ -700,7 +741,46 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"shusheelavishnoi@gmail.com\",\r\n  \"name\": \"Shusheela Vishnoi\",\r\n  \"password\": \"hod123\",\r\n  \"department\": \"CSE\",\r\n  \"app_password\": \"hjzvpvfkqzsssgfo\"\r\n}",
+							"raw": "{\r\n  \"email\": \"shusheelavishnoi@gmail.com\",\r\n  \"name\": \"Shusheela Vishnoi\",\r\n  \"password\": \"MuJ1497\",\r\n  \"department\": \"CSE\",\r\n  \"app_password\": \"hjzvpvfkqzsssgfo\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8002/admin/hod",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"admin",
+								"hod"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create - hod - HOD",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im11am1hbmlwYWxvZmZpY2lhbEBnbWFpbC5jb20iLCJleHAiOjE3NDQwMTY4MzYsImlkIjoiZjUzMGZhYzktMTc2NS00YjYxLTgzNWItZDEwOTk3M2Y3MGU0Iiwicm9sZSI6ImFkbWluIn0.wjjd2NSb-Gxqlsq48TvLCLKt5H8JHvhmHxNVztPg7D0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"hod.csemuj@gmail.com\",\r\n  \"name\": \"HOD MUJ\",\r\n  \"password\": \"hodcseMUJ123\",\r\n  \"department\": \"CSE\",\r\n  \"app_password\": \"itdkwyqxxlkzeexj\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -763,31 +843,19 @@
 				},
 				{
 					"name": "get - fpcs",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im11am1hbmlwYWxvZmZpY2lhbEBnbWFpbC5jb20iLCJleHAiOjE3NDM2Nzk5ODMsImlkIjoxLCJyb2xlIjoiYWRtaW4ifQ.J_n8J1M39VOvGDXIvOVY3NySqNcl5MgLR2R7XLclhX4",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im11am1hbmlwYWxvZmZpY2lhbEBnbWFpbC5jb20iLCJleHAiOjE3NDQwMjA0NjUsImlkIjoiZjUzMGZhYzktMTc2NS00YjYxLTgzNWItZDEwOTk3M2Y3MGU0Iiwicm9sZSI6ImFkbWluIn0.Zy7q-DMEDOz4n2KUrsJWDjCPLZRHHHpRaK0OEATCyWA",
 									"type": "string"
 								}
 							]
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "\r\n\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
 							"raw": "http://localhost:8002/admin/fpcs",
 							"protocol": "http",
@@ -811,7 +879,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im11am1hbmlwYWxvZmZpY2lhbEBnbWFpbC5jb20iLCJleHAiOjE3NDM2Nzk5ODMsImlkIjoxLCJyb2xlIjoiYWRtaW4ifQ.J_n8J1M39VOvGDXIvOVY3NySqNcl5MgLR2R7XLclhX4",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im11am1hbmlwYWxvZmZpY2lhbEBnbWFpbC5jb20iLCJleHAiOjE3NDQwMTI1MzIsImlkIjoiOGU2ODUyNGMtZjIxZi00M2E3LTg5MzctMTg4MzZlYmJlODMxIiwicm9sZSI6ImFkbWluIn0.53cMSw-PAwUeLo-EBBSvGDN3qjAPLfKzpFyt8vpvbyI",
 									"type": "string"
 								}
 							]
@@ -819,7 +887,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8002/admin/hods",
+							"raw": "http://localhost:8002/admin/hods?id=e4d39099-b6c6-450e-96d0-ef2dcd35c3fb",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -828,6 +896,12 @@
 							"path": [
 								"admin",
 								"hods"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "e4d39099-b6c6-450e-96d0-ef2dcd35c3fb"
+								}
 							]
 						}
 					},
@@ -841,7 +915,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFudXNoa2Fzb25pMDA0QGdtYWlsLmNvbSIsImV4cCI6MTczNzcxNTgwNCwiaWQiOjIsInJvbGUiOiJhZG1pbiJ9.CAYmmfWWoF11rVmql3HS7MivELhOcPQ-7U5b8mEEKQw",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im11am1hbmlwYWxvZmZpY2lhbEBnbWFpbC5jb20iLCJleHAiOjE3NDQwMTI1MzIsImlkIjoiOGU2ODUyNGMtZjIxZi00M2E3LTg5MzctMTg4MzZlYmJlODMxIiwicm9sZSI6ImFkbWluIn0.53cMSw-PAwUeLo-EBBSvGDN3qjAPLfKzpFyt8vpvbyI",
 									"type": "string"
 								}
 							]
@@ -918,51 +992,6 @@
 					"response": []
 				},
 				{
-					"name": "update - admin",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFyanVuc2F4ZW5hMDRAZ21haWwuY29tIiwiZXhwIjoxNzQwMDMzOTc4LCJpZCI6MSwicm9sZSI6ImFkbWluIn0.ohrQNvjIfI7B6hwXeVJr9Q-NjNVHKVgrHKf23a0e4-c",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"password\": \"secure\"\r\n}\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8002/admin/update?id=1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8002",
-							"path": [
-								"admin",
-								"update"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "1"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "delete - fpc",
 					"request": {
 						"auth": {
@@ -970,7 +999,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFudXNoa2Fzb25pMDA0QGdtYWlsLmNvbSIsImV4cCI6MTczODA3MDI1OCwiaWQiOjIsInJvbGUiOiJhZG1pbiJ9.wrzqwthcH5RZMPeq25NIoYBXhq5z1yowe-z_ozOgTq4",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im11am1hbmlwYWxvZmZpY2lhbEBnbWFpbC5jb20iLCJleHAiOjE3NDQwMTI1MzIsImlkIjoiOGU2ODUyNGMtZjIxZi00M2E3LTg5MzctMTg4MzZlYmJlODMxIiwicm9sZSI6ImFkbWluIn0.53cMSw-PAwUeLo-EBBSvGDN3qjAPLfKzpFyt8vpvbyI",
 									"type": "string"
 								}
 							]
@@ -987,7 +1016,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8002/admin/fpc?id=1",
+							"raw": "http://localhost:8002/admin/fpc?id=9b95415d-c482-47d8-b820-f7b9b226a527",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1000,7 +1029,43 @@
 							"query": [
 								{
 									"key": "id",
-									"value": "1"
+									"value": "9b95415d-c482-47d8-b820-f7b9b226a527"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete - hod",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im11am1hbmlwYWxvZmZpY2lhbEBnbWFpbC5jb20iLCJleHAiOjE3NDQwMTI1MzIsImlkIjoiOGU2ODUyNGMtZjIxZi00M2E3LTg5MzctMTg4MzZlYmJlODMxIiwicm9sZSI6ImFkbWluIn0.53cMSw-PAwUeLo-EBBSvGDN3qjAPLfKzpFyt8vpvbyI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8002/admin/hod?id=e4d39099-b6c6-450e-96d0-ef2dcd35c3fb",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8002",
+							"path": [
+								"admin",
+								"hod"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "e4d39099-b6c6-450e-96d0-ef2dcd35c3fb"
 								}
 							]
 						}
