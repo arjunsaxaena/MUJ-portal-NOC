@@ -23,7 +23,7 @@ func main() {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
+		AllowOrigins:     []string{"localhost:3000", "10.56.153.148:3000"},
 		AllowMethods:     []string{"GET", "POST", "PATCH", "OPTIONS", "DELETE"},
 		AllowHeaders:     []string{"Content-Type", "Authorization", "ngrok-skip-browser-warning"},
 		AllowCredentials: true,
@@ -82,7 +82,6 @@ func main() {
 	}
 
 	r.POST("/fpc/login", controller.LoginFpcHandler)
-
 	r.PATCH("/fpc", controller.UpdateFpCHandler)
 
 	authFpc := r.Group("/fpc")
@@ -94,7 +93,6 @@ func main() {
 	}
 
 	r.POST("/hod/login", controller.LoginHoDHandler)
-
 	r.PATCH("/hod", controller.UpdateHoDHandler)
 
 	authHoD := r.Group("/hod")
