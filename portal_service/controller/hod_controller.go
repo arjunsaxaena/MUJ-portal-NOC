@@ -92,11 +92,19 @@ func LoginHoDHandler(c *gin.Context) {
 }
 
 func GetHoDsHandler(c *gin.Context) {
+	id := c.Query("id")
 	department := c.DefaultQuery("department", "")
+	email := c.Query("email")
 
 	var filters model.GetHoDFilters
+	if id != "" {
+		filters.ID = id
+	}
 	if department != "" {
 		filters.Department = department
+	}
+	if email != "" {
+		filters.Email = email
 	}
 
 	hods, err := repository.GetHoDs(filters)
@@ -106,11 +114,7 @@ func GetHoDsHandler(c *gin.Context) {
 	}
 
 	if len(hods) == 0 {
-		if department != "" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "No HoDs found for the specified department"})
-		} else {
-			c.JSON(http.StatusNotFound, gin.H{"error": "No HoDs found"})
-		}
+		c.JSON(http.StatusNotFound, gin.H{"error": "No HoDs found matching the query"})
 		return
 	}
 

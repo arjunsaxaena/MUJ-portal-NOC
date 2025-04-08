@@ -92,11 +92,19 @@ func LoginFpcHandler(c *gin.Context) {
 }
 
 func GetFpcsHandler(c *gin.Context) {
+	id := c.Query("id")
 	department := c.DefaultQuery("department", "")
+	email := c.Query("email")
 
 	var filters model.GetFpCFilters
+	if id != "" {
+		filters.ID = id
+	}
 	if department != "" {
 		filters.Department = department
+	}
+	if email != "" {
+		filters.Email = email
 	}
 
 	fpcs, err := repository.GetFpCs(filters)
@@ -106,11 +114,7 @@ func GetFpcsHandler(c *gin.Context) {
 	}
 
 	if len(fpcs) == 0 {
-		if department != "" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "No fpcs found for the specified department"})
-		} else {
-			c.JSON(http.StatusNotFound, gin.H{"error": "No fpcs found"})
-		}
+		c.JSON(http.StatusNotFound, gin.H{"error": "No fpcs found matching the query"})
 		return
 	}
 
