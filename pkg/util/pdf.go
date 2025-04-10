@@ -94,7 +94,7 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	romanSemester := getRoman(submission.Semester)
 
 	var subjectText string
-	subjectText = fmt.Sprintf("Sub: Recommendation for %s %s carrying out internship cum project in your esteemed Organization",
+	subjectText = fmt.Sprintf("Sub: Recommendation for %s %s carrying out internship cum project in your esteemed Organization.",
 		title, submission.Name)
 
 	pdf.SetFont("Arial", "", 12)

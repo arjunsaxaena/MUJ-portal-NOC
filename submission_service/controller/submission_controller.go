@@ -126,21 +126,11 @@ func GenerateOTPHandler(c *gin.Context) {
 	}
 
 	email = strings.ToLower(email)
-	studentFilters := model.GetStudentFilters{
-		EmailID: email,
-	}
-
-	students, err := repository.GetStudents(studentFilters)
-	if err != nil || len(students) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Student not found with given Email ID"})
-		fmt.Printf("Student validation failed: %v\n", err)
-		return
-	}
 
 	generatedOTP := util.GenerateOTP(email)
 	emailBody := fmt.Sprintf("Your OTP for email verification is: %s. It is valid for 5 minutes.", generatedOTP)
 
-	err = util.SendEmail("mujmanipalofficial@gmail.com", email, "Email Verification OTP", emailBody, os.Getenv("ADMIN_APP_PASSWORD"))
+	err := util.SendEmail("mujmanipalofficial@gmail.com", email, "Email Verification OTP", emailBody, os.Getenv("ADMIN_APP_PASSWORD"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send OTP email"})
 		fmt.Printf("Error sending OTP email: %v\n", err)
