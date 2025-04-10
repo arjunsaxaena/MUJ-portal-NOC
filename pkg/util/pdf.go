@@ -21,14 +21,14 @@ func getFullDepartmentName(dept string) string {
 	}
 }
 
-func getOrdinal(semester string) string {
+func getRoman(semester string) string {
 	switch semester {
-	case "2":
-		return "2nd"
-	case "3":
-		return "3rd"
+	case "5":
+		return "V"
+	case "7":
+		return "VII"
 	default:
-		return semester + "th"
+		return semester
 	}
 }
 
@@ -61,7 +61,7 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.Ln(20) // remove this if letterhead
 
 	pdf.SetFont("Arial", "", 12)
-	nocText := fmt.Sprintf("MUJ/FoSTA/DCSE/2025/%s%s/%s", submission.Semester, submission.Section, submission.RegistrationNumber[len(submission.RegistrationNumber)-4:])
+	nocText := fmt.Sprintf("MUJ/FoSTA/D%s/2025/%s%s/%s", submission.Department, submission.Semester, submission.Section, submission.RegistrationNumber[len(submission.RegistrationNumber)-4:])
 	pdf.CellFormat(95, 10, nocText, "", 0, "L", false, 0, "") // left-aligned text
 
 	currentDate := time.Now().Format("02-Jan-2006")
@@ -91,16 +91,11 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	}
 
 	fullDept := getFullDepartmentName(submission.Department)
-	ordinalSemester := getOrdinal(submission.Semester)
+	romanSemester := getRoman(submission.Semester)
 
 	var subjectText string
-	if submission.NocType != "generic" && submission.CompanyName != nil {
-		subjectText = fmt.Sprintf("Sub: Recommendation for %s %s carrying out internship cum project in your esteemed Organization, %s",
-			title, submission.Name, *submission.CompanyName)
-	} else {
-		subjectText = fmt.Sprintf("Sub: Recommendation for %s %s carrying out internship cum project in your esteemed Organization",
-			title, submission.Name)
-	}
+	subjectText = fmt.Sprintf("Sub: Recommendation for %s %s carrying out internship cum project in your esteemed Organization",
+		title, submission.Name)
 
 	pdf.SetFont("Arial", "", 12)
 	pdf.MultiCell(0, 6, subjectText, "", "J", false)
@@ -109,7 +104,7 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.MultiCell(0, 6, "Dear Sir/Madam,", "", "J", false)
 	pdf.Ln(5)
 
-	bodyText := fmt.Sprintf("This is to certify that %s %s (Reg No. %s) is a student of Manipal University Jaipur, India, studying in the %s semester of the four-year B.Tech Degree Programme in the Department of %s.", title, submission.Name, submission.RegistrationNumber, ordinalSemester, fullDept)
+	bodyText := fmt.Sprintf("This is to certify that %s %s (Reg No. %s) is a student of Manipal University Jaipur, India, studying in the %s Semester of the four-year B.Tech Degree Programme in the Department of %s.", title, submission.Name, submission.RegistrationNumber, romanSemester, fullDept)
 
 	pdf.MultiCell(0, 6, bodyText, "", "J", false)
 	pdf.Ln(5)
