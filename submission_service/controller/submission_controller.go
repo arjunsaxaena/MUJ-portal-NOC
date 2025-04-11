@@ -27,14 +27,11 @@ func SubmitHandler(c *gin.Context) {
 
 	studentFilters := model.GetStudentFilters{
 		RegistrationNumber: submission.RegistrationNumber,
-		EmailID:            submission.OfficialMailID,
 	}
-
-	studentFilters.EmailID = strings.ToLower(studentFilters.EmailID)
 
 	students, err := repository.GetStudents(studentFilters)
 	if err != nil || len(students) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Student not found with given Registration Number and Email ID"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Student not found with given Registration Number"})
 		fmt.Printf("Student validation failed: %v\n", err)
 		return
 	}
