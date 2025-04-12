@@ -23,7 +23,7 @@ func main() {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "http://10.56.153.148:3000"},
+		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PATCH", "OPTIONS", "DELETE"},
 		AllowHeaders:     []string{"Content-Type", "Authorization", "ngrok-skip-browser-warning"},
 		AllowCredentials: true,
@@ -66,15 +66,18 @@ func main() {
 
 	r.GET("/fpcs", controller.GetFpcsHandler)
 	r.GET("/hods", controller.GetHoDsHandler)
+	r.GET("/offices", controller.GetOfficesHandler)
 
 	authAdmin := r.Group("/admin")
 	authAdmin.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "admin"))
 	{
 		authAdmin.POST("/logout", controller.LogoutAdminHandler)
 
+		authAdmin.POST("/office", controller.CreateOfficeHandler)
 		authAdmin.POST("/fpc", controller.CreateFpCHandler)
 		authAdmin.POST("/hod", controller.CreateHoDHandler)
 
+		authAdmin.DELETE("/office", controller.DeleteOfficeHandler)
 		authAdmin.DELETE("/fpc", controller.DeleteFpCHandler)
 		authAdmin.DELETE("/hod", controller.DeleteHoDHandler)
 
