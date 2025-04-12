@@ -18,6 +18,8 @@ CREATE TABLE student_submissions (
     registration_number VARCHAR(20) NOT NULL,
     name VARCHAR(100) NOT NULL,
     gender VARCHAR(10),
+    cgpa DECIMAL(3, 2),
+    backlogs INT,
     semester VARCHAR(10),
     official_mail_id VARCHAR(100) NOT NULL,
     mobile_number VARCHAR(15),
@@ -52,6 +54,7 @@ CREATE TABLE fpc (
     app_password TEXT,
     password_hash TEXT NOT NULL,
     department VARCHAR(50) NOT NULL,
+    role_type VARCHAR(50) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -74,6 +77,7 @@ CREATE TABLE hod (
     app_password TEXT,
     password_hash TEXT NOT NULL,
     department VARCHAR(50) NOT NULL,
+    role_type VARCHAR(50) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -96,4 +100,12 @@ CREATE TABLE admin (
     app_password TEXT,
     password_hash TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE office (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    department VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
