@@ -10,14 +10,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateHoD(name, email, passwordHash, appPassword, department string) (string, error) {
+func CreateHoD(name, email, passwordHash, appPassword, roleType, department string) (string, error) {
 	query := `
-		INSERT INTO hod (name, email, password_hash, app_password, department)
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO hod (name, email, password_hash, app_password, role_type, department)
+		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id
 	`
 	var id string
-	err := database.DB.QueryRow(query, name, email, passwordHash, appPassword, department).Scan(&id)
+	err := database.DB.QueryRow(query, name, email, passwordHash, appPassword, roleType, department).Scan(&id)
 	if err != nil {
 		log.Printf("Error creating HoD: %v", err)
 		return "", err

@@ -13,6 +13,8 @@ type StudentSubmission struct {
 	Department          string    `json:"department" form:"department" binding:"required" db:"department"`
 	Section             string    `json:"section" form:"section" binding:"required" db:"section"`
 	OfferType           string    `json:"offer_type" form:"offerType" binding:"required" db:"offer_type"`
+	Cgpa                *string   `json:"cgpa" form:"cgpa" binding:"omitempty" db:"cgpa"`
+	Backlogs            *string   `json:"backlogs" form:"backlogs" binding:"omitempty" db:"backlogs"`
 	CompanyName         *string   `json:"company_name" form:"companyName" binding:"omitempty" db:"company_name"`
 	CompanyState        *string   `json:"company_state" form:"companyState" binding:"omitempty" db:"company_state"`
 	CompanyCity         *string   `json:"company_city" form:"companyCity" binding:"omitempty" db:"company_city"`

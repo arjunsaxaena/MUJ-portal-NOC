@@ -21,6 +21,7 @@ func CreateFpCHandler(c *gin.Context) {
 		Email       string `json:"email"`
 		Password    string `json:"password"`
 		AppPassword string `json:"app_password"`
+		RoleType    string `json:"role_type"`
 		Department  string `json:"department"`
 	}
 
@@ -35,7 +36,7 @@ func CreateFpCHandler(c *gin.Context) {
 		return
 	}
 
-	id, err := repository.CreateFpC(input.Name, input.Email, string(hashedPassword), input.AppPassword, input.Department)
+	id, err := repository.CreateFpC(input.Name, input.Email, string(hashedPassword), input.AppPassword, input.RoleType, input.Department)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create fpc"})
 		return
@@ -93,12 +94,16 @@ func LoginFpcHandler(c *gin.Context) {
 
 func GetFpcsHandler(c *gin.Context) {
 	id := c.Query("id")
+	roleType := c.Query("role_type")
 	department := c.DefaultQuery("department", "")
 	email := c.Query("email")
 
 	var filters model.GetFpCFilters
 	if id != "" {
 		filters.ID = id
+	}
+	if roleType != "" {
+		filters.RoleType = roleType
 	}
 	if department != "" {
 		filters.Department = department

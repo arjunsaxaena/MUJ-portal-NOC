@@ -71,6 +71,17 @@ func SubmitHandler(c *gin.Context) {
 		return
 	}
 
+	if submission.NocType == "Specific" {
+		if submission.Cgpa == nil || *submission.Cgpa == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "CGPA is required for 'Specific' NOC type"})
+			return
+		}
+		if submission.Backlogs == nil || *submission.Backlogs == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Backlogs information is required for 'Specific' NOC type"})
+			return
+		}
+	}
+
 	if submission.NocType == "Generic" {
 		fmt.Println("NOC type is 'Generic', offer letter is not required")
 		submission.CompanyName = nil

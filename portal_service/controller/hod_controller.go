@@ -21,6 +21,7 @@ func CreateHoDHandler(c *gin.Context) {
 		Email       string `json:"email" binding:"required,email"`
 		Password    string `json:"password" binding:"required"`
 		AppPassword string `json:"app_password" binding:"required"`
+		RoleType    string `json:"role_type" binding:"required"`
 		Department  string `json:"department" binding:"required"`
 	}
 
@@ -35,7 +36,7 @@ func CreateHoDHandler(c *gin.Context) {
 		return
 	}
 
-	id, err := repository.CreateHoD(input.Name, input.Email, string(hashedPassword), input.AppPassword, input.Department)
+	id, err := repository.CreateHoD(input.Name, input.Email, string(hashedPassword), input.AppPassword, input.RoleType, input.Department)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create HoD"})
 		return
@@ -93,6 +94,7 @@ func LoginHoDHandler(c *gin.Context) {
 
 func GetHoDsHandler(c *gin.Context) {
 	id := c.Query("id")
+	roleType := c.Query("role_type")
 	department := c.DefaultQuery("department", "")
 	email := c.Query("email")
 
@@ -102,6 +104,9 @@ func GetHoDsHandler(c *gin.Context) {
 	}
 	if department != "" {
 		filters.Department = department
+	}
+	if roleType != "" {
+		filters.RoleType = roleType
 	}
 	if email != "" {
 		filters.Email = email
@@ -128,18 +133,6 @@ func GetSubmissionsForHoDcontroller(c *gin.Context) {
 		return
 	}
 
-	email, exists := c.Get("email")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Email not found in context"})
-		return
-	}
-
-	emailStr, ok := email.(string)
-	if !ok {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email format"})
-		return
-	}
-
 	var filters model.GetSubmissionFilters
 	if err := c.ShouldBindQuery(&filters); err != nil {
 		log.Printf("Invalid filters: %v", err)
@@ -148,7 +141,19 @@ func GetSubmissionsForHoDcontroller(c *gin.Context) {
 	}
 
 	filters.Department = department.(string)
-	if emailStr == "shusheelavishnoi@gmail.com" { // All generic noc visible to shushila ma'am
+	roleType, exists := c.Get("roleType")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Role type not found in context"})
+		return
+	}
+
+	roleTypeStr, ok := roleType.(string)
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid role type format"})
+		return
+	}
+
+	if roleTypeStr == "Generic" {
 		filters.NocType = "Generic"
 	} else {
 		filters.NocType = "Specific"

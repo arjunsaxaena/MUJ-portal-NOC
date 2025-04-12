@@ -10,14 +10,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateFpC(name, email, passwordHash, appPassword, department string) (string, error) {
+func CreateFpC(name, email, passwordHash, appPassword, roleType, department string) (string, error) {
 	query := `
-		INSERT INTO fpc (name, email, password_hash, app_password, department)
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO fpc (name, email, password_hash, app_password, role_type, department)
+		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id
 	`
 	var id string
-	err := database.DB.QueryRow(query, name, email, passwordHash, appPassword, department).Scan(&id)
+	err := database.DB.QueryRow(query, name, email, passwordHash, appPassword, roleType, department).Scan(&id)
 	return id, err
 }
 
@@ -34,6 +34,11 @@ func GetFpCs(filters model.GetFpCFilters) ([]model.FpC, error) {
 	if filters.Department != "" {
 		query += " AND department = $" + strconv.Itoa(paramIndex)
 		args = append(args, filters.Department)
+		paramIndex++
+	}
+	if filters.RoleType != "" {
+		query += " AND role_type = $" + strconv.Itoa(paramIndex)
+		args = append(args, filters.RoleType)
 		paramIndex++
 	}
 	if filters.Email != "" {
