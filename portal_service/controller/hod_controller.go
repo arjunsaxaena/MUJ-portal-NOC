@@ -77,6 +77,7 @@ func LoginHoDHandler(c *gin.Context) {
 		"email":      hod.Email,
 		"department": hod.Department,
 		"role":       "hod",
+		"roleType":   hod.RoleType,
 		"exp":        time.Now().Add(time.Hour * 24).Unix(),
 	})
 

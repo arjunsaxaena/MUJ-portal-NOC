@@ -58,8 +58,8 @@ func CreateHodReviewHandler(c *gin.Context) {
 	submission := submissions[0]
 
 	if input.Action == "Rejected" {
-		err := submissionRepository.UpdateSubmission(input.SubmissionID, input.Action, "")
-		if err != nil {
+		submissionErr := submissionRepository.UpdateSubmission(input.SubmissionID, input.Action, "")
+		if submissionErr != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update submission status"})
 			return
 		}
@@ -96,10 +96,26 @@ func CreateHodReviewHandler(c *gin.Context) {
 			return
 		}
 
+		var officeFilter = model.GetOfficeFilters{
+			Department: submission.Department,
+		}
+
+		offices, err := repository.GetOffices(officeFilter)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get office email: " + err.Error()})
+			return
+		}
+
+		if len(offices) == 0 {
+			c.JSON(http.StatusNotFound, gin.H{"error": "No office found for department: " + submission.Department})
+			return
+		}
+
+		officeEmail := offices[0].Email
 		officeSubject := "NOC Generated"
 		officeBody := fmt.Sprintf("NOC for %s", submission.Name)
 
-		err = util.SendEmailWithAttachment(hod.Email, "arjunsaxena04@gmail.com", officeSubject, officeBody, hod.AppPassword, nocPath) // change arjunsaxena04@gmail.com to office.cse@jaipur.manipal.edu
+		err = util.SendEmailWithAttachment(hod.Email, officeEmail, officeSubject, officeBody, hod.AppPassword, nocPath)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send NOC to Office"})
 			return

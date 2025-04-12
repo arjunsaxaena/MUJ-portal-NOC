@@ -86,6 +86,11 @@ func AuthMiddleware(jwtSecretKey string, allowedRoles ...string) gin.HandlerFunc
 		c.Set("email", claims["email"])
 		c.Set("role", userRole)
 		c.Set("department", claims["department"])
+
+		if roleType, exists := claims["roleType"]; exists {
+			c.Set("roleType", roleType)
+		}
+
 		c.Next()
 	}
 }

@@ -77,6 +77,7 @@ func LoginFpcHandler(c *gin.Context) {
 		"email":      fpc.Email,
 		"department": fpc.Department,
 		"role":       "fpc",
+		"roleType":   fpc.RoleType,
 		"exp":        time.Now().Add(time.Hour * 24).Unix(),
 	})
 
