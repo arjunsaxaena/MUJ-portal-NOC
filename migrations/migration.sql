@@ -54,7 +54,6 @@ CREATE TABLE fpc (
     app_password TEXT,
     password_hash TEXT NOT NULL,
     department VARCHAR(50) NOT NULL,
-    role_type VARCHAR(50) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

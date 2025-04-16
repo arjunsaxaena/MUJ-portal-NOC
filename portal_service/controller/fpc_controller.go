@@ -63,7 +63,7 @@ func LoginFpcHandler(c *gin.Context) {
 		return
 	}
 
-	fpc := fpcs[0] // incase multiple, unlikely
+	fpc := fpcs[0]
 
 	if err := bcrypt.CompareHashAndPassword([]byte(fpc.PasswordHash), []byte(input.Password)); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
@@ -77,7 +77,6 @@ func LoginFpcHandler(c *gin.Context) {
 		"email":      fpc.Email,
 		"department": fpc.Department,
 		"role":       "fpc",
-		"roleType":   fpc.RoleType,
 		"exp":        time.Now().Add(time.Hour * 24).Unix(),
 	})
 
@@ -95,16 +94,12 @@ func LoginFpcHandler(c *gin.Context) {
 
 func GetFpcsHandler(c *gin.Context) {
 	id := c.Query("id")
-	roleType := c.Query("role_type")
 	department := c.DefaultQuery("department", "")
 	email := c.Query("email")
 
 	var filters model.GetFpCFilters
 	if id != "" {
 		filters.ID = id
-	}
-	if roleType != "" {
-		filters.RoleType = roleType
 	}
 	if department != "" {
 		filters.Department = department
