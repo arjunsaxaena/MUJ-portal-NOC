@@ -57,6 +57,12 @@ func CreateHodReviewHandler(c *gin.Context) {
 
 	submission := submissions[0]
 
+	reviewID, err := repository.CreateHodReview(input.SubmissionID, input.HodID, input.Action, input.Remarks)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create HoD review"})
+		return
+	}
+
 	if input.Action == "Rejected" {
 		submissionErr := submissionRepository.UpdateSubmission(input.SubmissionID, input.Action, "")
 		if submissionErr != nil {
@@ -73,9 +79,7 @@ func CreateHodReviewHandler(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send email to student"})
 			return
 		}
-	}
-
-	if input.Action == "Approved" {
+	} else if input.Action == "Approved" {
 		var nocPath string
 		var err error
 		nocPath, err = util.CreateNocPdf(submission)
@@ -129,13 +133,7 @@ func CreateHodReviewHandler(c *gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "NOC generated successfully", "noc_path": nocPath})
-		return
-	}
-
-	reviewID, err := repository.CreateHodReview(input.SubmissionID, input.HodID, input.Action, input.Remarks)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create HoD review"})
+		c.JSON(http.StatusOK, gin.H{"review_id": reviewID, "message": "NOC generated successfully", "noc_path": nocPath})
 		return
 	}
 

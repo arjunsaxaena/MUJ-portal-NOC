@@ -4,20 +4,27 @@ import (
 	"MUJ_AMG/pkg/database"
 	"MUJ_AMG/pkg/model"
 	"fmt"
+	"log"
 	"time"
 )
 
-func CreateHodReview(submissionID, hodID, action, remarks string) (string, error) { // Changed submissionID and hodID to string
+func CreateHodReview(submissionID, hodID, action, remarks string) (string, error) {
 	query := `
 		INSERT INTO hod_reviews (submission_id, hod_id, action, remarks, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id
 	`
 	var reviewID string
-	err := database.DB.QueryRow(query, submissionID, hodID, action, remarks, time.Now(), time.Now()).Scan(&reviewID)
+	now := time.Now()
+	log.Printf("Inserting HoD review: submissionID=%s, hodID=%s, action=%s", submissionID, hodID, action)
+
+	err := database.DB.QueryRow(query, submissionID, hodID, action, remarks, now, now).Scan(&reviewID)
 	if err != nil {
+		log.Printf("Error creating HoD review: %v", err)
 		return "", err
 	}
+
+	log.Printf("Successfully created HoD review with ID: %s", reviewID)
 	return reviewID, nil
 }
 
