@@ -2,10 +2,7 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -15,20 +12,18 @@ type Config struct {
 }
 
 func LoadConfig() (*Config, error) {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-		return nil, err
-	}
-
 	config := &Config{
 		Port:         os.Getenv("PORTAL_SERVICE_PORT"),
 		Database:     os.Getenv("DB_URL"),
 		JwtSecretKey: os.Getenv("JWT_SECRET_KEY"),
 	}
 
-	if config.JwtSecretKey == "" {
-		return nil, fmt.Errorf("JWT secret key is required")
+	if config.Port == "" {
+		config.Port = "8002"
+	}
+
+	if config.Database == "" {
+		return nil, fmt.Errorf("database URL is required")
 	}
 
 	return config, nil

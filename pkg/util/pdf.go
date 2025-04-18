@@ -37,7 +37,8 @@ func CreateNocPdf(submission model.StudentSubmission) (string, error) {
 	pdf.SetMargins(10, 10, 10)
 	pdf.AddPage()
 
-	uploadsDir := filepath.Join("../uploads", "NOC")
+	// uploadsDir := filepath.Join("../uploads", "NOC")
+	uploadsDir := filepath.Join("/app/uploads", "NOC")
 
 	if _, err := os.Stat(uploadsDir); os.IsNotExist(err) {
 		err := os.MkdirAll(uploadsDir, os.ModePerm)

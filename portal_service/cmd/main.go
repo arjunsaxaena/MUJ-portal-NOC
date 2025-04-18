@@ -6,7 +6,6 @@ import (
 	"MUJ_AMG/portal_service/config"
 	"MUJ_AMG/portal_service/controller"
 	"log"
-	"path/filepath"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -58,7 +57,8 @@ func main() {
 	authFiles := r.Group("/files")
 	authFiles.Use(middleware.AuthMiddleware(cfg.JwtSecretKey, "fpc", "hod"))
 	{
-		authFiles.Static("/", filepath.Join("..", "uploads"))
+		// authFiles.Static("/", filepath.Join("..", "uploads"))
+		authFiles.Static("/", "/app/uploads")
 	}
 
 	r.POST("/admin", controller.CreateAdminHandler)

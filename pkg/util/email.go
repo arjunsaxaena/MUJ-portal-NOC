@@ -44,11 +44,13 @@ func SendEmailWithAttachment(from, to, subject, body, appPassword, nocFileName s
 	auth := smtp.PlainAuth("", from, appPassword, smtpHost)
 
 	// Resolve the absolute path of the attachment
-	nocPath, err := filepath.Abs(filepath.Join("..", "uploads", "NOC", nocFileName))
-	if err != nil {
-		log.Printf("Error resolving file path: %v", err)
-		return fmt.Errorf("failed to resolve file path: %v", err)
-	}
+	// nocPath, err := filepath.Abs(filepath.Join("..", "uploads", "NOC", nocFileName))
+	// if err != nil {
+	// 	log.Printf("Error resolving file path: %v", err)
+	// 	return fmt.Errorf("failed to resolve file path: %v", err)
+	// }
+
+	nocPath := filepath.Join("/app/uploads", "NOC", nocFileName)
 
 	// Check if the file exists
 	if _, err := os.Stat(nocPath); os.IsNotExist(err) {

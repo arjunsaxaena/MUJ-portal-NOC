@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:17.2-alpine
+    container_name: muj_amg_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  portal_service:
+    build:
+      context: .
+      dockerfile: portal_service/Dockerfile
+    container_name: muj_amg_portal
+    ports:
+      - "8002:8002"
+    environment:
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/student_portal?sslmode=disable
+      - PORTAL_SERVICE_PORT=8002
+      - SUBMISSION_SERVICE_URL=http://submission_service:8001
+      - ADMIN_APP_PASSWORD=${ADMIN_APP_PASSWORD}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./uploads:/app/uploads
+
+  submission_service:
+    build:
+      context: .
+      dockerfile: submission_service/Dockerfile
+    container_name: muj_amg_submission
+    ports:
+      - "8001:8001"
+    environment:
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/student_portal?sslmode=disable
+      - SUBMISSION_SERVICE_PORT=8001
+      - ADMIN_APP_PASSWORD=${ADMIN_APP_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./uploads:/app/uploads
+
+volumes:
+  postgres_data:
